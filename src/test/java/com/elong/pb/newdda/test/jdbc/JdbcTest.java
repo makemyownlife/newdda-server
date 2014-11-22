@@ -9,7 +9,8 @@ import org.junit.Test;
 public class JdbcTest {
 
     @Test
-    public void getBlog(){
+    public void getBlog() throws Exception {
+        Class.forName("com.mysql.jdbc.Driver");
 
     }
 
