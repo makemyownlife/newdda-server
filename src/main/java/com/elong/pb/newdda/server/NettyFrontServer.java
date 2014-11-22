@@ -72,7 +72,7 @@ public class NettyFrontServer {
 
                     @Override
                     public Thread newThread(Runnable r) {
-                        return new Thread(r, "NettyServerWorkerThread_" + this.threadIndex.incrementAndGet());
+                        return new Thread(r, "NettyFrontServerWorkerThread_" + this.threadIndex.incrementAndGet());
                     }
                 });
 
@@ -103,7 +103,7 @@ public class NettyFrontServer {
                                         new NettyFrontDecoder(), //
                                         new IdleStateHandler(0, 0, nettyServerConfig
                                                 .getServerChannelMaxIdleTimeSeconds()),//
-                                    //  new NettyConnetManageHandler(),
+                                        new NettyFrontConnetManageHandler(),
                                         new NettyFrontHandler());
                             }
                         });
