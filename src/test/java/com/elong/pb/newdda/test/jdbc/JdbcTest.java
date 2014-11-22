@@ -1,0 +1,16 @@
+package com.elong.pb.newdda.test.jdbc;
+
+import org.junit.Test;
+
+/**
+ * Created by zhangyong on 14/11/22.
+ * jdbc测试
+ */
+public class JdbcTest {
+
+    @Test
+    public void getBlog(){
+
+    }
+
+}
