@@ -29,8 +29,6 @@ import java.net.SocketAddress;
  */
 public class RemotingHelper {
 
-    public static final String RemotingLogName = "RocketmqRemoting";
-
     public static String exceptionSimpleDesc(final Throwable e) {
         StringBuffer sb = new StringBuffer();
         if (e != null) {
@@ -54,7 +52,7 @@ public class RemotingHelper {
     public static SocketAddress string2SocketAddress(final String addr) {
         String[] s = addr.split(":");
         InetSocketAddress isa = new InetSocketAddress(s[0], Integer.valueOf(s[1]));
-        return isa;
+        return isa
     }
 
 
