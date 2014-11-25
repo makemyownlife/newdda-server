@@ -12,6 +12,9 @@ public abstract class MysqlPacket {
 
     public byte packetId;
 
+
+    public abstract ByteBuffer encode();
+
     /**
      * 计算数据包大小，不包含包头长度。
      */

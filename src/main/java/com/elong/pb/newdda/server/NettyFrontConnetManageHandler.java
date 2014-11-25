@@ -1,14 +1,18 @@
 package com.elong.pb.newdda.server;
 
+import com.elong.pb.newdda.common.RandomUtil;
 import com.elong.pb.newdda.common.RemotingHelper;
 import com.elong.pb.newdda.common.RemotingUtil;
+import com.elong.pb.newdda.config.Versions;
+import com.elong.pb.newdda.server.mysql.HandshakePacket;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  * Created by zhangyong on 14/11/22.
@@ -23,6 +27,18 @@ public class NettyFrontConnetManageHandler extends ChannelDuplexHandler {
         final String remoteAddress = RemotingHelper.parseChannelRemoteAddr(ctx.channel());
         logger.info("NETTY SERVER PIPELINE: channelRegistered {}", remoteAddress);
         super.channelRegistered(ctx);
+
+        //封装前端连接
+        Channel channel = ctx.channel();
+        NettyFrontChannel nettyFrontChannel = new NettyFrontChannel(channel);
+
+        //发送握手数据包
+        HandshakePacket handshakePacket = new HandshakePacket();
+        handshakePacket.packetId = 0;
+        handshakePacket.threadId = nettyFrontChannel.getId();
+        handshakePacket.protocolVersion = Versions.PROTOCOL_VERSION;
+        handshakePacket.serverVersion = Versions.SERVER_VERSION;
+        handshakePacket.seed = null;
     }
 
     @Override

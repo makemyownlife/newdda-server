@@ -1,5 +1,7 @@
 package com.elong.pb.newdda.server.mysql;
 
+import java.nio.ByteBuffer;
+
 /**
  * Created by zhangyong on 14/11/23.
  * From server to client during initial handshake.
@@ -7,6 +9,27 @@ package com.elong.pb.newdda.server.mysql;
  *
  */
 public class HandshakePacket extends MysqlPacket{
+
+    public byte protocolVersion;
+
+    public byte[] serverVersion;
+
+    public long threadId;
+
+    public byte[] seed;
+
+    public int serverCapabilities;
+
+    public byte serverCharsetIndex;
+
+    public int serverStatus;
+
+    public byte[] restOfScrambleBuff;
+
+    @Override
+    public ByteBuffer encode() {
+        return null;
+    }
 
     @Override
     public int calcPacketSize() {
