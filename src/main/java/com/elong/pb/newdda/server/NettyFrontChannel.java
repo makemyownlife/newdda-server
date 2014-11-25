@@ -15,6 +15,8 @@ public class NettyFrontChannel {
 
     private Channel channel;
 
+    protected byte[] seed;
+
     public NettyFrontChannel(Channel channel){
         this.channel = channel;
         this.id = acceptIdGenerator.getId();
@@ -34,6 +36,14 @@ public class NettyFrontChannel {
 
     public void setChannel(Channel channel) {
         this.channel = channel;
+    }
+
+    public byte[] getSeed() {
+        return seed;
+    }
+
+    public void setSeed(byte[] seed) {
+        this.seed = seed;
     }
 
     /**
