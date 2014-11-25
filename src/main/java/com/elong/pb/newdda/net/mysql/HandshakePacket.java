@@ -1,4 +1,4 @@
-package com.elong.pb.newdda.server.mysql;
+package com.elong.pb.newdda.net.mysql;
 
 import java.nio.ByteBuffer;
 
@@ -8,7 +8,7 @@ import java.nio.ByteBuffer;
  * mysql jdbc 链接 mysql server 服务端发送给客户端 握手包
  *
  */
-public class HandshakePacket extends MysqlPacket{
+public class HandshakePacket extends MysqlPacket {
 
     public byte protocolVersion;
 

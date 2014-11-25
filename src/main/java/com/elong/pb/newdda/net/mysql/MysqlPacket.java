@@ -1,4 +1,4 @@
-package com.elong.pb.newdda.server.mysql;
+package com.elong.pb.newdda.net.mysql;
 
 import java.nio.ByteBuffer;
 
