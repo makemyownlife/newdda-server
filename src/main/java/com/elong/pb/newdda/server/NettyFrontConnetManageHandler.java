@@ -1,9 +1,11 @@
 package com.elong.pb.newdda.server;
 
+import com.elong.pb.newdda.common.CharsetUtil;
 import com.elong.pb.newdda.common.RandomUtil;
 import com.elong.pb.newdda.common.RemotingHelper;
 import com.elong.pb.newdda.common.RemotingUtil;
 import com.elong.pb.newdda.config.DdaCapability;
+import com.elong.pb.newdda.config.SystemConfig;
 import com.elong.pb.newdda.config.Versions;
 import com.elong.pb.newdda.net.mysql.HandshakePacket;
 import io.netty.channel.Channel;
@@ -33,14 +35,6 @@ public class NettyFrontConnetManageHandler extends ChannelDuplexHandler {
         Channel channel = ctx.channel();
         NettyFrontChannel nettyFrontChannel = new NettyFrontChannel(channel);
 
-        //发送握手数据包
-        HandshakePacket handshakePacket = new HandshakePacket();
-        handshakePacket.packetId = 0;
-        handshakePacket.threadId = nettyFrontChannel.getId();
-        handshakePacket.protocolVersion = Versions.PROTOCOL_VERSION;
-        handshakePacket.serverVersion = Versions.SERVER_VERSION;
-        handshakePacket.seed = null;
-
         // 生成认证数据
         byte[] rand1 = RandomUtil.randomBytes(8);
         byte[] rand2 = RandomUtil.randomBytes(12);
@@ -49,6 +43,7 @@ public class NettyFrontConnetManageHandler extends ChannelDuplexHandler {
         byte[] seed = new byte[rand1.length + rand2.length];
         System.arraycopy(rand1, 0, seed, 0, rand1.length);
         System.arraycopy(rand2, 0, seed, rand1.length, rand2.length);
+        nettyFrontChannel.setSeed(seed);
 
         // 发送握手数据包
         HandshakePacket hs = new HandshakePacket();
@@ -58,7 +53,7 @@ public class NettyFrontConnetManageHandler extends ChannelDuplexHandler {
         hs.threadId = nettyFrontChannel.getId();
         hs.seed = rand1;
         hs.serverCapabilities = DdaCapability.getServerCapabilities();
-    //    hs.serverCharsetIndex = (byte) (charsetIndex & 0xff);
+        hs.serverCharsetIndex = (byte) (CharsetUtil.getIndex(SystemConfig.DEFAULT_CHARSET) & 0xff);
         hs.serverStatus = 2;
         hs.restOfScrambleBuff = rand2;
 
