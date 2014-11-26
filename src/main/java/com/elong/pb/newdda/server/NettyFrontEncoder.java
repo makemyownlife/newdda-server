@@ -18,7 +18,8 @@ public class NettyFrontEncoder extends MessageToByteEncoder{
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws Exception {
-
+        logger.info("msg==" + msg);
+        System.out.println(1111);
     }
 
 }
