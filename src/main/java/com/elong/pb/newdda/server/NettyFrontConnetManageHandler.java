@@ -16,6 +16,8 @@ import io.netty.handler.timeout.IdleStateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 
 /**
  * Created by zhangyong on 14/11/22.
@@ -24,6 +26,9 @@ import org.slf4j.LoggerFactory;
 public class NettyFrontConnetManageHandler extends ChannelDuplexHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(NettyFrontConnetManageHandler.class);
+
+    private final static ConcurrentHashMap<String /* addr */, NettyFrontChannel> frontChannelTables =
+            new ConcurrentHashMap<String, NettyFrontChannel>();
 
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
@@ -34,6 +39,9 @@ public class NettyFrontConnetManageHandler extends ChannelDuplexHandler {
         //封装前端连接
         Channel channel = ctx.channel();
         NettyFrontChannel nettyFrontChannel = new NettyFrontChannel(channel);
+
+        //假如到连接缓存中
+        frontChannelTables.put(remoteAddress, nettyFrontChannel);
 
         // 生成认证数据
         byte[] rand1 = RandomUtil.randomBytes(8);
@@ -65,6 +73,9 @@ public class NettyFrontConnetManageHandler extends ChannelDuplexHandler {
         final String remoteAddress = RemotingHelper.parseChannelRemoteAddr(ctx.channel());
         logger.info("NETTY SERVER PIPELINE: channelUnregistered, the channel[{}]", remoteAddress);
         super.channelUnregistered(ctx);
+
+        //删除连接中的前端对象
+        frontChannelTables.remove(remoteAddress);
     }
 
     @Override
@@ -102,6 +113,14 @@ public class NettyFrontConnetManageHandler extends ChannelDuplexHandler {
         logger.warn("NETTY SERVER PIPELINE: exceptionCaught exception.", cause);
 
         RemotingUtil.closeChannel(ctx.channel());
+
+        //删除连接中的前端对象
+        frontChannelTables.remove(remoteAddress);
+    }
+
+    //=======================================get set method ===================================================
+    public static NettyFrontChannel getFrontChannelTables(String remoteAddress) {
+        return frontChannelTables.get(remoteAddress);
     }
 
 }

@@ -2,6 +2,8 @@ package com.elong.pb.newdda.server;
 
 import io.netty.channel.Channel;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * Created by zhangyong on 14/11/24.
  * <p/>
@@ -11,13 +13,15 @@ public class NettyFrontChannel {
 
     private static AcceptIdGenerator acceptIdGenerator = new AcceptIdGenerator();
 
-    private Long id ;
+    private volatile boolean isAuthenticated = false;
+
+    private Long id;
 
     private Channel channel;
 
     protected byte[] seed;
 
-    public NettyFrontChannel(Channel channel){
+    public NettyFrontChannel(Channel channel) {
         this.channel = channel;
         this.id = acceptIdGenerator.getId();
     }
@@ -44,6 +48,14 @@ public class NettyFrontChannel {
 
     public void setSeed(byte[] seed) {
         this.seed = seed;
+    }
+
+    public boolean isAuthenticated() {
+        return isAuthenticated;
+    }
+
+    public void setAuthenticated(boolean isAuthenticated) {
+        this.isAuthenticated = isAuthenticated;
     }
 
     /**
