@@ -23,7 +23,7 @@ public interface Versions {
     /** 协议版本 */
     byte PROTOCOL_VERSION = 10;
 
-    /** 服务器版本 */
-    byte[] SERVER_VERSION = "newdda-server".getBytes();
+    /** 服务器版本 千万要注意因为前端jdbc协议 需要解析来着  */
+    byte[] SERVER_VERSION = "5.1.48-ddaserver-1.2.7".getBytes();
 
 }
