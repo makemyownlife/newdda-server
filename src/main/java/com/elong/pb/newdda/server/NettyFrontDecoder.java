@@ -20,8 +20,8 @@ public class NettyFrontDecoder extends ByteToMessageDecoder{
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         if(logger.isDebugEnabled()){
             logger.debug("对象：" + in);
+            logger.debug("byteBuf.readableBytes():" + in.readableBytes());
         }
-
     }
 
 }
