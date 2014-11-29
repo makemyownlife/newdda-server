@@ -1,5 +1,7 @@
 package com.elong.pb.newdda.server;
 
+import com.elong.pb.newdda.net.handler.NettyHandler;
+import com.elong.pb.newdda.net.handler.front.FrontAuthHandler;
 import io.netty.channel.Channel;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -21,9 +23,12 @@ public class NettyFrontChannel {
 
     protected byte[] seed;
 
+    private  NettyHandler nettyHandler;
+
     public NettyFrontChannel(Channel channel) {
         this.channel = channel;
         this.id = acceptIdGenerator.getId();
+        nettyHandler = new FrontAuthHandler(this);
     }
 
     public Long getId() {
@@ -56,6 +61,14 @@ public class NettyFrontChannel {
 
     public void setAuthenticated(boolean isAuthenticated) {
         this.isAuthenticated = isAuthenticated;
+    }
+
+    public NettyHandler getNettyHandler() {
+        return nettyHandler;
+    }
+
+    public void setNettyHandler(NettyHandler nettyHandler) {
+        this.nettyHandler = nettyHandler;
     }
 
     /**

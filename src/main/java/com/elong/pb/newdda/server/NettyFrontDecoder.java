@@ -31,8 +31,8 @@ public class NettyFrontDecoder extends ByteToMessageDecoder {
         //解析数据 第一步 判断有无认证
         if (!nettyFrontChannel.isAuthenticated()) {
             logger.warn("地址:" + remoteAddress + " 没有认证,需要认证");
-
         }
+        nettyFrontChannel.getNettyHandler().handle(byteBuf);
     }
 
 }
