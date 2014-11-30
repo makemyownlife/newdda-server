@@ -26,7 +26,6 @@ public class NettyFrontDecoder extends ByteToMessageDecoder {
         NettyFrontChannel nettyFrontChannel = NettyFrontConnetManageHandler.getFrontChannelTables(remoteAddress);
         if (nettyFrontChannel == null) {
             logger.error("地址:" + remoteAddress + "在连接池中没有注册，需要删除该连接");
-            RemotingUtil.closeChannel(ctx.channel());
             return;
         }
         //解析数据 第一步 判断有无认证
@@ -35,7 +34,8 @@ public class NettyFrontDecoder extends ByteToMessageDecoder {
         }
         //读取mysqlPacket
         MysqlPacket mysqlPacket = nettyFrontChannel.getNettyHandler().handle(byteBuf);
-        if(mysqlPacket != null){
+        logger.info("前端连接接收包信息：" + mysqlPacket);
+        if (mysqlPacket != null) {
             out.add(mysqlPacket);
         }
     }

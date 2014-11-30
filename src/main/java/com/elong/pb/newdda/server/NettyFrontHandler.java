@@ -16,7 +16,8 @@ public class NettyFrontHandler extends SimpleChannelInboundHandler {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-        logger.debug("handler msg==" + msg);
+        logger.info("handler msg==" + msg);
+        ctx.writeAndFlush(msg);
     }
 
 }

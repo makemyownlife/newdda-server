@@ -10,6 +10,8 @@ import java.nio.ByteBuffer;
  */
 public class AuthPacket extends MysqlPacket implements Packet {
 
+    private static final byte[] FILLER = new byte[23];
+
     public long clientFlags;
 
     public long maxPacketSize;

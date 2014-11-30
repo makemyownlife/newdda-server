@@ -1,5 +1,7 @@
 package com.elong.pb.newdda.net.mysql;
 
+import io.netty.buffer.ByteBuf;
+
 import java.nio.ByteBuffer;
 
 /**
@@ -11,6 +13,6 @@ import java.nio.ByteBuffer;
  */
 public interface Packet {
 
-    public  ByteBuffer encode();
+    public ByteBuffer encode();
 
 }
