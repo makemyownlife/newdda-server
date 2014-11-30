@@ -3,6 +3,7 @@ package com.elong.pb.newdda.server;
 import com.elong.pb.newdda.common.RemotingHelper;
 import com.elong.pb.newdda.common.RemotingUtil;
 import com.elong.pb.newdda.net.mysql.MysqlPacket;
+import com.elong.pb.newdda.net.mysql.Packet;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -23,8 +24,8 @@ public class NettyFrontEncoder extends MessageToByteEncoder {
     @Override
     protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws Exception {
         try {
-            MysqlPacket mysqlPacket = (MysqlPacket) msg;
-            ByteBuffer byteBuffer = mysqlPacket.encode();
+            Packet packet = (Packet) msg;
+            ByteBuffer byteBuffer = packet.encode();
             out.writeBytes(byteBuffer);
         } catch (Exception e) {
             logger.error("encode exception, " + RemotingHelper.parseChannelRemoteAddr(ctx.channel()), e);

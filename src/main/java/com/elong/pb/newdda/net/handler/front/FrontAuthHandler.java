@@ -1,6 +1,7 @@
 package com.elong.pb.newdda.net.handler.front;
 
 import com.elong.pb.newdda.net.handler.NettyHandler;
+import com.elong.pb.newdda.net.mysql.MysqlPacket;
 import com.elong.pb.newdda.server.NettyFrontChannel;
 import io.netty.buffer.ByteBuf;
 
@@ -10,6 +11,8 @@ import io.netty.buffer.ByteBuf;
  */
 public class FrontAuthHandler implements NettyHandler {
 
+    private static final byte[] AUTH_OK = new byte[] { 7, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0 };
+
     private NettyFrontChannel nettyFrontChannel;
 
     public FrontAuthHandler(NettyFrontChannel nettyFrontChannel){
@@ -17,8 +20,8 @@ public class FrontAuthHandler implements NettyHandler {
     }
 
     @Override
-    public void handle(ByteBuf byteBuf) {
-
+    public MysqlPacket handle(ByteBuf byteBuf) {
+        return null;
     }
 
 }

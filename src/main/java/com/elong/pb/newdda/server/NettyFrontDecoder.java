@@ -2,6 +2,7 @@ package com.elong.pb.newdda.server;
 
 import com.elong.pb.newdda.common.RemotingHelper;
 import com.elong.pb.newdda.common.RemotingUtil;
+import com.elong.pb.newdda.net.mysql.MysqlPacket;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -32,7 +33,11 @@ public class NettyFrontDecoder extends ByteToMessageDecoder {
         if (!nettyFrontChannel.isAuthenticated()) {
             logger.warn("地址:" + remoteAddress + " 没有认证,需要认证");
         }
-        nettyFrontChannel.getNettyHandler().handle(byteBuf);
+        //读取mysqlPacket
+        MysqlPacket mysqlPacket = nettyFrontChannel.getNettyHandler().handle(byteBuf);
+        if(mysqlPacket != null){
+            out.add(mysqlPacket);
+        }
     }
 
 }

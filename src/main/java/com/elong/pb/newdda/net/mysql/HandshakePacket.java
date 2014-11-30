@@ -9,7 +9,7 @@ import java.nio.ByteBuffer;
  * From server to client during initial handshake.
  * mysql jdbc 链接 mysql server 服务端发送给客户端 握手包
  */
-public class HandshakePacket extends MysqlPacket {
+public class HandshakePacket extends MysqlPacket implements Packet {
 
     private static final byte[] FILLER_13 = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
@@ -65,7 +65,7 @@ public class HandshakePacket extends MysqlPacket {
     }
 
     @Override
-    protected String getPacketInfo() {
+    public String getPacketInfo() {
         return "MySQL Handshake Packet";
     }
 

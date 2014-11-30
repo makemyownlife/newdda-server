@@ -1,5 +1,6 @@
 package com.elong.pb.newdda.net.handler;
 
+import com.elong.pb.newdda.net.mysql.MysqlPacket;
 import io.netty.buffer.ByteBuf;
 
 /**
@@ -7,6 +8,6 @@ import io.netty.buffer.ByteBuf;
  */
 public interface NettyHandler {
 
-    public void handle(ByteBuf byteBuf);
+    public MysqlPacket handle(ByteBuf byteBuf);
 
 }
