@@ -57,9 +57,6 @@ public class FrontAuthHandler implements NettyHandler {
         ByteBuffer byteBuffer = data.nioBuffer();
 
         AuthPacket authPacket = new AuthPacket();
-        authPacket.packetLength = length;
-        authPacket.packetId = byteBuf.getByte(readerIndex);
-
         //添加验证成功
         boolean flag = authPacket.decode(byteBuffer);
 

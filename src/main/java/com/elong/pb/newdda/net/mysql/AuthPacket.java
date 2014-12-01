@@ -37,7 +37,12 @@ public class AuthPacket extends MysqlPacket implements Packet {
 
     @Override
     public boolean decode(ByteBuffer byteBuffer) {
+        this.packetLength = BufferUtil.readUB3(byteBuffer);
+        this.packetId = byteBuffer.get();
         this.clientFlags = BufferUtil.readUB4(byteBuffer);
+        this.maxPacketSize = BufferUtil.readUB4(byteBuffer);
+        this.charsetIndex = (byteBuffer.get() & 0xff);
+
         return false;
     }
 
