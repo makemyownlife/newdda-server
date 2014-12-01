@@ -1,5 +1,9 @@
 package com.elong.pb.newdda.net.mysql;
 
+
+import com.elong.pb.newdda.common.BufferUtil;
+import com.elong.pb.newdda.common.ByteUtil;
+
 import java.nio.ByteBuffer;
 
 /**
@@ -29,6 +33,12 @@ public class AuthPacket extends MysqlPacket implements Packet {
     @Override
     public ByteBuffer encode() {
         return null;
+    }
+
+    @Override
+    public boolean decode(ByteBuffer byteBuffer) {
+        this.clientFlags = BufferUtil.readUB4(byteBuffer);
+        return false;
     }
 
     @Override
@@ -96,5 +106,7 @@ public class AuthPacket extends MysqlPacket implements Packet {
     public String getPacketInfo() {
         return "MySQL Authentication Packet";
     }
+
+
 
 }

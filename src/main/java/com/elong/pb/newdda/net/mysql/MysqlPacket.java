@@ -1,5 +1,9 @@
 package com.elong.pb.newdda.net.mysql;
 
+import io.netty.buffer.ByteBuf;
+
+import java.nio.ByteBuffer;
+
 /**
  * Created by zhangyong on 14/11/23.
  * mysql包抽象类
@@ -19,6 +23,8 @@ public abstract class MysqlPacket {
      * 取得数据包信息
      */
     public abstract String getPacketInfo();
+
+    public abstract boolean decode(ByteBuffer byteBuffer);
 
     @Override
     public String toString() {

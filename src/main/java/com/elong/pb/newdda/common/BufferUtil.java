@@ -136,14 +136,31 @@ public class BufferUtil {
         }
     }
 
+
+    //============================================ 相关信息 索引相关 ==================================================
     public static final boolean stepBuffer(ByteBuffer buffer, int remaining) {
         if (buffer.remaining() >= remaining) {
             buffer.position(buffer.position() + remaining);
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
+
+    public static int readUB3(ByteBuffer byteBuffer) {
+        int i = byteBuffer.get() & 0xff;
+        i |= (byteBuffer.get() & 0xff) << 8;
+        i |= (byteBuffer.get() & 0xff) << 16;
+        return i;
+    }
+
+    public static long readUB4(ByteBuffer byteBuffer) {
+        long l = (long) (byteBuffer.get() & 0xff);
+        l |= (long) (byteBuffer.get() & 0xff) << 8;
+        l |= (long) (byteBuffer.get() & 0xff) << 16;
+        l |= (long) (byteBuffer.get() & 0xff) << 24;
+        return l;
+    }
+
 
 }

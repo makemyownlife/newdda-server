@@ -55,13 +55,17 @@ public class FrontAuthHandler implements NettyHandler {
 
         ByteBuf data = byteBuf.slice(byteBuf.readerIndex(), length + 1 + 3);
         ByteBuffer byteBuffer = data.nioBuffer();
-        byte[] bytes = new byte[length + 1 + 3];
-        byteBuffer.get(bytes);
 
         AuthPacket authPacket = new AuthPacket();
         authPacket.packetLength = length;
         authPacket.packetId = byteBuf.getByte(readerIndex);
-        return null;
+
+        //添加验证成功
+        boolean flag = authPacket.decode(byteBuffer);
+
+        //过滤掉相关的字节 使读索引跳到相关的索引
+        byteBuf.skipBytes(length + 1 + 3);
+        return authPacket;
     }
 
 }
