@@ -1,6 +1,7 @@
 package com.elong.pb.newdda.net.mysql;
 
 import com.elong.pb.newdda.common.BufferUtil;
+import io.netty.buffer.ByteBuf;
 
 import java.nio.ByteBuffer;
 
@@ -67,6 +68,11 @@ public class HandshakePacket extends MysqlPacket implements Packet {
     @Override
     public String getPacketInfo() {
         return "MySQL Handshake Packet";
+    }
+
+    /** 因为是握手包是DDA服务器直接返回false 不会直接调用 **/
+    public boolean decode(ByteBuffer byteBuffer) {
+        return false;
     }
 
 }
