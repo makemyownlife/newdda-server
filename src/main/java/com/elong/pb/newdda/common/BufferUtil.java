@@ -136,4 +136,14 @@ public class BufferUtil {
         }
     }
 
+    public static final boolean stepBuffer(ByteBuffer buffer, int remaining) {
+        if (buffer.remaining() >= remaining) {
+            buffer.position(buffer.position() + remaining);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
 }
