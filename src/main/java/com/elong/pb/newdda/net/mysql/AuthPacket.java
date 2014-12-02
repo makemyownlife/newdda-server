@@ -43,6 +43,14 @@ public class AuthPacket extends MysqlPacket implements Packet {
         this.maxPacketSize = BufferUtil.readUB4(byteBuffer);
         this.charsetIndex = (byteBuffer.get() & 0xff);
 
+        int current = byteBuffer.position();
+        //read extra
+        int len = (int)BufferUtil.readLength(byteBuffer);
+        if(len > 0 && len < FILLER.length){
+            byte[] ab = new byte[len];
+
+        }
+
         return false;
     }
 

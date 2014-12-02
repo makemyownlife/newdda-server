@@ -147,6 +147,12 @@ public class BufferUtil {
         }
     }
 
+    public static int readUB2(ByteBuffer byteBuffer) {
+        int i = byteBuffer.get() & 0xff;
+        i |= (byteBuffer.get()) << 8;
+        return i;
+    }
+
     public static int readUB3(ByteBuffer byteBuffer) {
         int i = byteBuffer.get() & 0xff;
         i |= (byteBuffer.get() & 0xff) << 8;
@@ -160,6 +166,36 @@ public class BufferUtil {
         l |= (long) (byteBuffer.get() & 0xff) << 16;
         l |= (long) (byteBuffer.get() & 0xff) << 24;
         return l;
+    }
+
+    public static long readLong(ByteBuffer byteBuffer) {
+        long l = (long) (byteBuffer.get() & 0xff);
+        l |= (long) (byteBuffer.get() & 0xff) << 8;
+        l |= (long) (byteBuffer.get() & 0xff) << 16;
+        l |= (long) (byteBuffer.get() & 0xff) << 24;
+        l |= (long) (byteBuffer.get() & 0xff) << 32;
+        l |= (long) (byteBuffer.get() & 0xff) << 40;
+        l |= (long) (byteBuffer.get() & 0xff) << 48;
+        l |= (long) (byteBuffer.get() & 0xff) << 56;
+        return l;
+    }
+
+    public static final long NULL_LENGTH = -1;
+
+    public static long readLength(ByteBuffer byteBuffer) {
+        int length = byteBuffer.get() & 0xff;
+        switch (length) {
+            case 251:
+                return NULL_LENGTH;
+            case 252:
+                return readUB2(byteBuffer);
+            case 253:
+                return readUB3(byteBuffer);
+            case 254:
+                return readLong(byteBuffer);
+            default:
+                return length;
+        }
     }
 
 
