@@ -209,7 +209,7 @@ public class BufferUtil {
             }
         }
 
-        if (offset == 0) {
+        if (offset == -1) {
             byteBuffer.position(originalPos);
             byte[] data = new byte[remaining];
             byteBuffer.get(data, originalPos, remaining);
