@@ -36,7 +36,6 @@ public class FrontAuthHandler implements NettyHandler {
         if (readableLength < 3) {
             return null;
         }
-        logger.info("readableLength==" + readableLength + " readerIndex==" + byteBuf.readerIndex());
         byteBuf.markReaderIndex();
         int readerIndex = byteBuf.readerIndex();
 
@@ -45,7 +44,6 @@ public class FrontAuthHandler implements NettyHandler {
         length |= (byteBuf.getByte(++readerIndex) & 0xff) << 8;
         length |= (byteBuf.getByte(++readerIndex) & 0xff) << 16;
 
-        logger.info("包的长度length==" + length);
         //数据包不够解析直接返回
         if (readableLength < length + 3 + 1) {
             byteBuf.resetReaderIndex();

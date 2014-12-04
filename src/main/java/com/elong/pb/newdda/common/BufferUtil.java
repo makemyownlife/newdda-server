@@ -198,5 +198,45 @@ public class BufferUtil {
         }
     }
 
+    public static String readTerminateStringWithNull(ByteBuffer byteBuffer) {
+        int originalPos = byteBuffer.position();
+        int remaining = byteBuffer.remaining();
+        int offset = -1;
+        for (int i = 0; i < remaining; i++) {
+            if (byteBuffer.get() == 0) {
+                offset = i;
+                break;
+            }
+        }
+
+        if (offset == 0) {
+            byteBuffer.position(originalPos);
+            byte[] data = new byte[remaining];
+            byteBuffer.get(data, originalPos, remaining);
+            return new String(data);
+        }
+
+        if (offset > 0) {
+            byteBuffer.position(originalPos);
+            byte[] data = new byte[offset];
+            byteBuffer.get(data, 0, offset);
+            String str = new String(data);
+            return str;
+        }
+        return null;
+    }
+
+    private static final byte[] EMPTY_BYTES = new byte[0];
+
+    public static byte[] readBytesWithLength(ByteBuffer byteBuffer) {
+        int length = (int) readLength(byteBuffer);
+        if (length <= 0) {
+            return EMPTY_BYTES;
+        }
+        byte[] ab = new byte[length];
+        byteBuffer.get(ab);
+        return ab;
+    }
+
 
 }

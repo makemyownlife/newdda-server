@@ -3,6 +3,7 @@ package com.elong.pb.newdda.net.mysql;
 
 import com.elong.pb.newdda.common.BufferUtil;
 import com.elong.pb.newdda.common.ByteUtil;
+import com.elong.pb.newdda.config.Capabilities;
 
 import java.nio.ByteBuffer;
 
@@ -48,10 +49,21 @@ public class AuthPacket extends MysqlPacket implements Packet {
         int len = (int)BufferUtil.readLength(byteBuffer);
         if(len > 0 && len < FILLER.length){
             byte[] ab = new byte[len];
-
+            byteBuffer.get(ab, current, len);
         }
 
-        return false;
+        byteBuffer.position(current + FILLER.length);
+        this.user = BufferUtil.readTerminateStringWithNull(byteBuffer);
+
+        //因为最后一个是 byte 0 所以必须skip掉
+        byteBuffer.get();
+        this.password = BufferUtil.readBytesWithLength(byteBuffer);
+
+        if (((clientFlags & Capabilities.CLIENT_CONNECT_WITH_DB) != 0) && byteBuffer.hasRemaining()) {
+            database = BufferUtil.readTerminateStringWithNull(byteBuffer);
+        }
+
+        return true;
     }
 
     @Override
