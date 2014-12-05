@@ -9,6 +9,10 @@ import io.netty.buffer.ByteBuf;
  */
 public interface NettyHandler {
 
+    //decode 成 MysqlPacket
     public MysqlPacket handle(ByteBuf byteBuf);
+
+    // MysqlPacket 转 packet
+    public Packet handle(MysqlPacket mysqlPacket);
 
 }

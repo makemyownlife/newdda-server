@@ -1,8 +1,11 @@
 package com.elong.pb.newdda.net.handler.front;
 
+import com.elong.pb.newdda.common.RemotingHelper;
 import com.elong.pb.newdda.net.handler.NettyHandler;
 import com.elong.pb.newdda.net.mysql.AuthPacket;
 import com.elong.pb.newdda.net.mysql.MysqlPacket;
+import com.elong.pb.newdda.net.mysql.Packet;
+import com.elong.pb.newdda.net.mysql.SimplePacket;
 import com.elong.pb.newdda.server.NettyFrontChannel;
 import io.netty.buffer.ByteBuf;
 import org.slf4j.Logger;
@@ -61,6 +64,28 @@ public class FrontAuthHandler implements NettyHandler {
         //过滤掉相关的字节 使读索引跳到相关的索引
         byteBuf.skipBytes(length + 1 + 3);
         return authPacket;
+    }
+
+    @Override
+    public Packet handle(MysqlPacket mysqlPacket) {
+        AuthPacket authPacket = (AuthPacket) mysqlPacket;
+        return success(authPacket);
+    }
+
+    protected SimplePacket success(AuthPacket auth) {
+        if (logger.isInfoEnabled()) {
+            StringBuilder s = new StringBuilder();
+            s.append(RemotingHelper.parseChannelRemoteAddr(nettyFrontChannel.getChannel())).append('\'').append(auth.user).append("' login success");
+            byte[] extra = auth.extra;
+            if (extra != null && extra.length > 0) {
+                s.append(",extra:").append(new String(extra));
+            }
+            logger.info(s.toString());
+        }
+        ByteBuffer byteBuffer = ByteBuffer.allocate(AUTH_OK.length);
+        byteBuffer.put(AUTH_OK);
+        SimplePacket simplePacket = new SimplePacket(byteBuffer);
+        return simplePacket;
     }
 
 }
