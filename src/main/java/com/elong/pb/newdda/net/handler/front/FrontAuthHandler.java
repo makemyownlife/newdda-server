@@ -69,10 +69,15 @@ public class FrontAuthHandler implements NettyHandler {
     @Override
     public Packet handle(MysqlPacket mysqlPacket) {
         AuthPacket authPacket = (AuthPacket) mysqlPacket;
+
+
+
         return success(authPacket);
     }
 
     protected SimplePacket success(AuthPacket auth) {
+        nettyFrontChannel.setAuthenticated(true);
+        nettyFrontChannel.setNettyHandler(new FrontCommandHandler(nettyFrontChannel));
         if (logger.isInfoEnabled()) {
             StringBuilder s = new StringBuilder();
             s.append(RemotingHelper.parseChannelRemoteAddr(nettyFrontChannel.getChannel())).append('\'').append(auth.user).append("' login success");
