@@ -69,13 +69,21 @@ public class FrontAuthHandler implements NettyHandler {
         AuthPacket authPacket = (AuthPacket) mysqlPacket;
         //检测用户
         boolean checkUserFlag = checkUser(authPacket.user);
-        if (!checkUserFlag) {
+        if (checkUserFlag) {
+            return failure(ErrorCode.ER_ACCESS_DENIED_ERROR, "Access denied for user '" + authPacket.user + "'");
+        }
+        //检测password
+        if(checkPassword(authPacket.password)) {
             return failure(ErrorCode.ER_ACCESS_DENIED_ERROR, "Access denied for user '" + authPacket.user + "'");
         }
         return success(authPacket);
     }
 
     protected boolean checkUser(String user) {
+        return false;
+    }
+
+    protected boolean checkPassword(byte[] password) {
         return false;
     }
 
@@ -98,7 +106,7 @@ public class FrontAuthHandler implements NettyHandler {
     }
 
     protected Packet failure(int errno, String info) {
-        logger.error(RemotingHelper.parseChannelRemoteAddr(nettyFrontChannel.getChannel()) + info);
+        logger.error(RemotingHelper.parseChannelRemoteAddr(nettyFrontChannel.getChannel()) + " " + info);
         ErrorPacket errorPacket = new ErrorPacket();
         errorPacket.packetId = (byte) 2;
         errorPacket.errno = errno;

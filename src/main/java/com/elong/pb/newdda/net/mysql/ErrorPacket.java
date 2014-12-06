@@ -75,13 +75,13 @@ public class ErrorPacket extends MysqlPacket implements Packet {
     @Override
     public ByteBuffer encode() {
         ByteBuffer buffer = ByteBuffer.allocate(
-               3
+                 3
                + 1
                + calcPacketSize()
         );
         BufferUtil.writeUB3(buffer, calcPacketSize());
         buffer.put(packetId);
-        buffer.put(packetId);
+        buffer.put(fieldCount);
         BufferUtil.writeUB2(buffer, errno);
         buffer.put(mark);
         buffer.put(sqlState);
