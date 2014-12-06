@@ -1,11 +1,9 @@
 package com.elong.pb.newdda.net.handler.front;
 
 import com.elong.pb.newdda.common.RemotingHelper;
+import com.elong.pb.newdda.config.ErrorCode;
 import com.elong.pb.newdda.net.handler.NettyHandler;
-import com.elong.pb.newdda.net.mysql.AuthPacket;
-import com.elong.pb.newdda.net.mysql.MysqlPacket;
-import com.elong.pb.newdda.net.mysql.Packet;
-import com.elong.pb.newdda.net.mysql.SimplePacket;
+import com.elong.pb.newdda.net.mysql.*;
 import com.elong.pb.newdda.server.NettyFrontChannel;
 import io.netty.buffer.ByteBuf;
 import org.slf4j.Logger;
@@ -59,7 +57,7 @@ public class FrontAuthHandler implements NettyHandler {
 
         AuthPacket authPacket = new AuthPacket();
         //添加验证成功
-        boolean flag = authPacket.decode(byteBuffer);
+        authPacket.decode(byteBuffer);
 
         //过滤掉相关的字节 使读索引跳到相关的索引
         byteBuf.skipBytes(length + 1 + 3);
@@ -69,13 +67,19 @@ public class FrontAuthHandler implements NettyHandler {
     @Override
     public Packet handle(MysqlPacket mysqlPacket) {
         AuthPacket authPacket = (AuthPacket) mysqlPacket;
-
-
-
+        //检测用户
+        boolean checkUserFlag = checkUser(authPacket.user);
+        if (!checkUserFlag) {
+            return failure(ErrorCode.ER_ACCESS_DENIED_ERROR, "Access denied for user '" + authPacket.user + "'");
+        }
         return success(authPacket);
     }
 
-    protected SimplePacket success(AuthPacket auth) {
+    protected boolean checkUser(String user) {
+        return false;
+    }
+
+    protected Packet success(AuthPacket auth) {
         nettyFrontChannel.setAuthenticated(true);
         nettyFrontChannel.setNettyHandler(new FrontCommandHandler(nettyFrontChannel));
         if (logger.isInfoEnabled()) {
@@ -91,6 +95,15 @@ public class FrontAuthHandler implements NettyHandler {
         byteBuffer.put(AUTH_OK);
         SimplePacket simplePacket = new SimplePacket(byteBuffer);
         return simplePacket;
+    }
+
+    protected Packet failure(int errno, String info) {
+        logger.error(RemotingHelper.parseChannelRemoteAddr(nettyFrontChannel.getChannel()) + info);
+        ErrorPacket errorPacket = new ErrorPacket();
+        errorPacket.packetId = (byte) 2;
+        errorPacket.errno = errno;
+        errorPacket.msg = info;
+        return errorPacket;
     }
 
 }
