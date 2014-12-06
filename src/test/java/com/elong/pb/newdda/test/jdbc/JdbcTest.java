@@ -14,7 +14,7 @@ public class JdbcTest {
     @Test
     public void getBlog() throws Exception {
         System.out.println(123);
-        String url = "jdbc:mysql://localhost:8888/blog?user=root&password=ilxw";
+        String url = "jdbc:mysql://localhost:8066/blog?user=root&password=ilxw";
         Class.forName("com.mysql.jdbc.Driver");
         Connection connection = DriverManager.getConnection(url);
         if (connection != null) {
