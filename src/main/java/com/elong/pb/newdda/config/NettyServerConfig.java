@@ -23,7 +23,7 @@ package com.elong.pb.newdda.config;
  */
 public class NettyServerConfig {
 
-    private int listenPort = 8888;
+    private int listenPort = 8066;
 
     private int serverWorkerThreads = 8;
 
