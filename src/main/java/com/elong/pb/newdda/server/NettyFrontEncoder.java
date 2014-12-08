@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class NettyFrontEncoder extends MessageToByteEncoder {
 
-    private Logger logger = LoggerFactory.getLogger(NettyFrontEncoder.class);
+    private static Logger logger = LoggerFactory.getLogger(NettyFrontEncoder.class);
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws Exception {
