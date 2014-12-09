@@ -3,7 +3,7 @@ package com.elong.pb.newdda.net.mysql;
 import java.nio.ByteBuffer;
 
 /**
- * Created with IntelliJ IDEA.
+ * 抽象的二进制包
  * User: zhangyong
  * Date: 2014/12/8
  * Time: 22:37
