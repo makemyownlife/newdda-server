@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Created by zhangyong on 14/11/22.
+ * 中间线程池处理相关数据
  */
 public class NettyFrontHandler extends SimpleChannelInboundHandler {
 
@@ -27,20 +28,17 @@ public class NettyFrontHandler extends SimpleChannelInboundHandler {
         //解析数据 第一步 判断有无认证
         if (!nettyFrontChannel.isAuthenticated()) {
             logger.warn("地址:" + remoteAddress + " 认证收到auth包，正在处理");
-            final MysqlPacket mysqlPacket = (MysqlPacket) msg;
-            netteyFrontExecutor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    Packet packet = nettyFrontChannel.getNettyHandler().handle(mysqlPacket);
-                    if (packet != null) {
-                        ctx.writeAndFlush(packet);
-                    }
-                }
-            });
-        } else {
-            //处理命令
-
         }
+        final MysqlPacket mysqlPacket = (MysqlPacket) msg;
+        netteyFrontExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                Packet packet = nettyFrontChannel.getNettyHandler().handle(mysqlPacket);
+                if (packet != null) {
+                    ctx.writeAndFlush(packet);
+                }
+            }
+        });
     }
 
 
