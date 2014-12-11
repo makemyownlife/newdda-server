@@ -1,6 +1,7 @@
 package com.elong.pb.newdda.net.handler.front;
 
 import com.elong.pb.newdda.net.handler.NettyHandler;
+import com.elong.pb.newdda.net.mysql.BinaryPacket;
 import com.elong.pb.newdda.net.mysql.MysqlPacket;
 import com.elong.pb.newdda.net.mysql.Packet;
 import com.elong.pb.newdda.server.NettyFrontChannel;
@@ -53,11 +54,12 @@ public class FrontCommandHandler implements NettyHandler {
         ByteBuf data = byteBuf.slice(byteBuf.readerIndex(), length + 1 + 3);
         ByteBuffer byteBuffer = data.nioBuffer();
 
-        switch (byteBuffer.get(4)) {
-            case MysqlPacket.COM_INIT_DB :
-
+        //直接发送二进制数据
+        BinaryPacket binaryPacket = new BinaryPacket(byteBuffer);
+        if (logger.isDebugEnabled()) {
+            logger.debug("binaryPacket==" + binaryPacket);
         }
-        return null;
+        return binaryPacket;
     }
 
     @Override

@@ -4,6 +4,8 @@ import org.junit.Test;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 /**
  * Created by zhangyong on 14/11/22.
@@ -14,11 +16,15 @@ public class JdbcTest {
     @Test
     public void getBlog() throws Exception {
         System.out.println(123);
-        String url = "jdbc:mysql://localhost:8066/blog?user=root&password=ilxw";
+        String url = "jdbc:mysql://localhost:8066/dbtest?user=test&password=test";
         Class.forName("com.mysql.jdbc.Driver");
         Connection connection = DriverManager.getConnection(url);
         if (connection != null) {
-            System.out.println(connection);
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery("select * from posts where id = 1");
+            while (rs.next()) {
+                System.out.println(rs.getString("text"));
+            }
         }
     }
 

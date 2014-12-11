@@ -2,11 +2,9 @@ package com.elong.pb.newdda.server;
 
 import com.elong.pb.newdda.common.RemotingHelper;
 import com.elong.pb.newdda.common.RemotingUtil;
-import com.elong.pb.newdda.net.mysql.MysqlPacket;
 import com.elong.pb.newdda.net.mysql.Packet;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.MessageToByteEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +23,7 @@ public class NettyFrontEncoder extends MessageToByteEncoder {
     protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws Exception {
         try {
             Packet packet = (Packet) msg;
+            logger.info("发送的包:" + packet);
             ByteBuffer byteBuffer = packet.encode();
             out.writeBytes(byteBuffer);
         } catch (Exception e) {

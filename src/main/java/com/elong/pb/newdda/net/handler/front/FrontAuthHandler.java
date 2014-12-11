@@ -69,11 +69,14 @@ public class FrontAuthHandler implements NettyHandler {
         AuthPacket authPacket = (AuthPacket) mysqlPacket;
         //检测用户
         boolean checkUserFlag = checkUser(authPacket.user);
+        logger.info("检测用户状态:" + checkUserFlag);
         if (checkUserFlag) {
             return failure(ErrorCode.ER_ACCESS_DENIED_ERROR, "Access denied for user '" + authPacket.user + "'");
         }
+        boolean checkPwdFlag = checkPassword(authPacket.password);
+        logger.info("检测密码状态:" + checkPwdFlag);
         //检测password
-        if(checkPassword(authPacket.password)) {
+        if (checkPwdFlag) {
             return failure(ErrorCode.ER_ACCESS_DENIED_ERROR, "Access denied for user '" + authPacket.user + "'");
         }
         return success(authPacket);
@@ -101,7 +104,9 @@ public class FrontAuthHandler implements NettyHandler {
         }
         ByteBuffer byteBuffer = ByteBuffer.allocate(AUTH_OK.length);
         byteBuffer.put(AUTH_OK);
+        byteBuffer.flip();
         SimplePacket simplePacket = new SimplePacket(byteBuffer);
+        logger.info("success packet=="+ simplePacket);
         return simplePacket;
     }
 
