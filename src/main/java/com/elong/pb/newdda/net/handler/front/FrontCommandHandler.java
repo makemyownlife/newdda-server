@@ -1,7 +1,11 @@
 package com.elong.pb.newdda.net.handler.front;
 
+import com.elong.pb.newdda.common.BufferUtil;
+import com.elong.pb.newdda.config.ErrorCode;
+import com.elong.pb.newdda.config.SystemConfig;
 import com.elong.pb.newdda.net.handler.NettyHandler;
 import com.elong.pb.newdda.net.mysql.BinaryPacket;
+import com.elong.pb.newdda.net.mysql.ErrorPacketFactory;
 import com.elong.pb.newdda.net.mysql.MysqlPacket;
 import com.elong.pb.newdda.net.mysql.Packet;
 import com.elong.pb.newdda.server.NettyFrontChannel;
@@ -63,8 +67,45 @@ public class FrontCommandHandler implements NettyHandler {
     }
 
     @Override
+    //handler处理
     public Packet handle(MysqlPacket mysqlPacket) {
+        BinaryPacket binaryPacket = (BinaryPacket) mysqlPacket;
+        ByteBuffer byteBuffer = binaryPacket.getByteBuffer();
+        System.out.println("byteBuffer.get(4)==" + byteBuffer.get(4));
+
+        Packet packet = null;
+        switch (byteBuffer.get(4)) {
+            case MysqlPacket.COM_INIT_DB:
+                logger.info("处理INIT_DB命令");
+                break;
+            case MysqlPacket.COM_QUERY:
+                logger.info("处理COM_QUERY命令");
+                packet =  handleQuery(byteBuffer);
+                break;
+            default:
+                //unknown command
+        }
+        return packet;
+    }
+
+    //处理查询相关
+    private Packet handleQuery(ByteBuffer byteBuffer) {
+        BufferUtil.stepBuffer(byteBuffer, 5);
+        byte[] data = new byte[byteBuffer.remaining()];
+        byteBuffer.get(data);
+        String sql = null;
+        try {
+            sql = new String(data, SystemConfig.DEFAULT_CHARSET);
+        } catch (Exception e) {
+            return ErrorPacketFactory.createErrorPacket((byte) 1, ErrorCode.ER_UNKNOWN_CHARACTER_SET, "Unknown charset '" + SystemConfig.DEFAULT_CHARSET + "'");
+        }
+        if (sql == null || sql.length() == 0) {
+            return ErrorPacketFactory.createErrorPacket((byte) 1,ErrorCode.ER_NOT_ALLOWED_COMMAND, "Empty SQL");
+        }
+        logger.info("sql==" + sql);
         return null;
     }
+
+
 
 }

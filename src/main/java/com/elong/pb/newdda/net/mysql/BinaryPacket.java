@@ -27,6 +27,10 @@ public class BinaryPacket extends MysqlPacket implements Packet {
         return "MySQL Binary Packet";
     }
 
+    public ByteBuffer getByteBuffer() {
+        return this.byteBuffer;
+    }
+
     @Override
     public boolean decode(ByteBuffer byteBuffer) {
         return false;
@@ -34,7 +38,8 @@ public class BinaryPacket extends MysqlPacket implements Packet {
 
     @Override
     public ByteBuffer encode() {
-        return null;
+        return this.byteBuffer;
     }
+
 
 }
