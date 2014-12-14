@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dda>
+    <!-- 数据源定义，数据源是一个具体的后端数据连接的表示。-->
+    <dataSource name="blogDatasource">
+        <property name="location">
+            <location>127.0.0.1:3306/blog</location>
+            <location>127.0.0.1:3306/blog</location>
+            <location>127.0.0.1:3306/blog</location>
+        </property>
+        <property name="user">root</property>
+        <property name="password">ilxw</property>
+    </dataSource>
+
+</dda>
