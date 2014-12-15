@@ -11,11 +11,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by zhangyong on 14/11/22.
- * Netty后端服务
+ * Netty后端服务(连接mysql服务)
  */
 public class NettyBackendServer {
 
     private final static Logger logger = LoggerFactory.getLogger(NettyBackendServer.class);
-
 
 }
