@@ -10,7 +10,6 @@
         <property name="user">root</property>
         <property name="password">ilxw</property>
         <property name="initConn">1</property>
-        <property name="minConn">1</property>
         <property name="maxConn">60</property>
     </dataSource>
 
