@@ -1,5 +1,6 @@
 package com.elong.pb.newdda.server;
 
+import com.elong.pb.newdda.config.NettyClientConfig;
 import com.elong.pb.newdda.config.NettyServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +28,9 @@ public class DdaServer {
         nettyFrontServer.start();
 
         logger.info("开始启动DDA后端连mysql服务");
-
+        NettyClientConfig nettyClientConfig = new NettyClientConfig();
+        NettyBackendServer nettyBackendServer = new NettyBackendServer(nettyClientConfig);
+        nettyBackendServer.start();
 
         logger.info("结束启动DDAserver...O(∩_∩)O");
     }
