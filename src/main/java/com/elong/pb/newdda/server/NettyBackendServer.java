@@ -81,10 +81,6 @@ public class NettyBackendServer {
         initDataSource();
     }
 
-    public void stop() {
-
-    }
-
     private synchronized void initDataSource() {
         String address = "127.0.0.1:3306";
         ChannelFuture channelFuture =
@@ -92,8 +88,8 @@ public class NettyBackendServer {
         logger.info("createChannel: begin to connect remote host[{}] asynchronously", address);
 
         NettyBackendChannel backendChannel = new NettyBackendChannel(channelFuture);
-        ConcurrentHashMap backendConnections = NettyBackendConnectManageHandler.getBackendConnections();
-        backendConnections.put(backendChannel.getId(), backendChannel);
+        ConcurrentHashMap<String, NettyBackendChannel> backendConnections = NettyBackendConnectManageHandler.getBackendConnections();
+        backendConnections.put(address, backendChannel);
     }
 
 }

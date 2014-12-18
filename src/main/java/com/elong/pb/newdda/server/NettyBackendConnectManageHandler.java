@@ -20,9 +20,9 @@ public class NettyBackendConnectManageHandler extends ChannelDuplexHandler {
 
     private static Logger logger = LoggerFactory.getLogger(NettyBackendConnectManageHandler.class);
 
-    private final static ConcurrentHashMap<Long, NettyBackendChannel>
+    private final static ConcurrentHashMap<String, NettyBackendChannel>
             backendConnections =
-            new ConcurrentHashMap<Long, NettyBackendChannel>();
+            new ConcurrentHashMap<String, NettyBackendChannel>();
 
     @Override
     public void connect(ChannelHandlerContext ctx, SocketAddress remoteAddress,
@@ -50,7 +50,6 @@ public class NettyBackendConnectManageHandler extends ChannelDuplexHandler {
         super.close(ctx, promise);
     }
 
-
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         final String remoteAddress = RemotingHelper.parseChannelRemoteAddr(ctx.channel());
@@ -72,7 +71,7 @@ public class NettyBackendConnectManageHandler extends ChannelDuplexHandler {
         ctx.fireUserEventTriggered(evt);
     }
 
-    public static ConcurrentHashMap<Long, NettyBackendChannel> getBackendConnections() {
+    public static ConcurrentHashMap<String, NettyBackendChannel> getBackendConnections() {
         return backendConnections;
     }
 
