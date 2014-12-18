@@ -1,7 +1,9 @@
 package com.elong.pb.newdda.server;
 
+import com.elong.pb.newdda.common.RemotingHelper;
 import com.elong.pb.newdda.config.NettyClientConfig;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
@@ -13,6 +15,7 @@ import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -73,11 +76,24 @@ public class NettyBackendServer {
                                 new NettyBackendHandler());
                     }
                 });
+
+        //初始化链接池
+        initDataSource();
     }
 
     public void stop() {
 
     }
 
+    private synchronized void initDataSource() {
+        String address = "127.0.0.1:3306";
+        ChannelFuture channelFuture =
+                this.bootstrap.connect(RemotingHelper.string2SocketAddress(address));
+        logger.info("createChannel: begin to connect remote host[{}] asynchronously", address);
+
+        NettyBackendChannel backendChannel = new NettyBackendChannel(channelFuture);
+        ConcurrentHashMap backendConnections = NettyBackendConnectManageHandler.getBackendConnections();
+        backendConnections.put(backendChannel.getId(), backendChannel);
+    }
 
 }

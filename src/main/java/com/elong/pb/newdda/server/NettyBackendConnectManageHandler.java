@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.SocketAddress;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by zhangyong on 14/12/15.
@@ -19,6 +20,10 @@ public class NettyBackendConnectManageHandler extends ChannelDuplexHandler {
 
     private static Logger logger = LoggerFactory.getLogger(NettyBackendConnectManageHandler.class);
 
+    private final static ConcurrentHashMap<Long, NettyBackendChannel>
+            backendConnections =
+            new ConcurrentHashMap<Long, NettyBackendChannel>();
+
     @Override
     public void connect(ChannelHandlerContext ctx, SocketAddress remoteAddress,
                         SocketAddress localAddress, ChannelPromise promise) throws Exception {
@@ -26,9 +31,7 @@ public class NettyBackendConnectManageHandler extends ChannelDuplexHandler {
         final String remote = remoteAddress == null ? "UNKNOW" : remoteAddress.toString();
         logger.info("NETTY CLIENT PIPELINE: CONNECT  {} => {}", local, remote);
         super.connect(ctx, remoteAddress, localAddress, promise);
-
     }
-
 
     @Override
     public void disconnect(ChannelHandlerContext ctx, ChannelPromise promise) throws Exception {
@@ -56,7 +59,6 @@ public class NettyBackendConnectManageHandler extends ChannelDuplexHandler {
         //  closeChannel(ctx.channel());
     }
 
-
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent) {
@@ -68,6 +70,10 @@ public class NettyBackendConnectManageHandler extends ChannelDuplexHandler {
             }
         }
         ctx.fireUserEventTriggered(evt);
+    }
+
+    public static ConcurrentHashMap<Long, NettyBackendChannel> getBackendConnections() {
+        return backendConnections;
     }
 
 }
