@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Created by zhangyong on 14/11/22.
+ * 后端链接发送数据给 mysql server
  */
 public class NettyBackendEncoder extends MessageToByteEncoder {
 
