@@ -5,6 +5,8 @@ import com.elong.pb.newdda.net.handler.front.FrontAuthHandler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * Created by zhangyong on 14/12/18.
  * <p/>
@@ -15,6 +17,20 @@ public class NettyBackendChannel {
     private static ConnectIdGenerator connectIdGenerator = new ConnectIdGenerator();
 
     private volatile boolean isAuthenticated = false;
+
+    private long threadId;
+
+    private int charsetIndex;
+
+    private String charset;
+
+    private volatile int txIsolation;
+
+    private volatile boolean autocommit;
+
+    private volatile boolean isRunning;
+
+    private final AtomicBoolean isClosed;
 
     private Long id;
 
@@ -27,6 +43,9 @@ public class NettyBackendChannel {
     public NettyBackendChannel(ChannelFuture channelFuture) {
         this.channelFuture = channelFuture;
         this.id = connectIdGenerator.getId();
+        this.autocommit = true;
+        this.isRunning = false;
+        this.isClosed = new AtomicBoolean(false);
     }
 
     public Long getId() {
