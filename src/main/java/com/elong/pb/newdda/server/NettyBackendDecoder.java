@@ -21,7 +21,23 @@ public class NettyBackendDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> out) throws Exception {
-        logger.info("decode=="+ byteBuf);
+        String remoteAddress = RemotingHelper.parseChannelRemoteAddr(ctx.channel());
+        NettyBackendChannel backendChannel = NettyBackendConnectManageHandler
+                .getBackendConnections()
+                .get(remoteAddress);
+        if (backendChannel == null) {
+            logger.error("error 地址:" + remoteAddress + "在后端连接池没有有注册");
+            return;
+        }
+        if(!backendChannel.isAuthenticated()){
+            logger.info("后端链接:" + remoteAddress + " 正要注册。。");
+            //读取mysqlPacket
+            MysqlPacket mysqlPacket = backendChannel.getNettyHandler().handle(byteBuf);
+            logger.info("前端连接接收包信息：" + mysqlPacket);
+            if (mysqlPacket != null) {
+                out.add(mysqlPacket);
+            }
+        }
     }
 
 }

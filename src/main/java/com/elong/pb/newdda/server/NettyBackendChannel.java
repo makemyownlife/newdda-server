@@ -1,7 +1,7 @@
 package com.elong.pb.newdda.server;
 
 import com.elong.pb.newdda.net.handler.NettyHandler;
-import com.elong.pb.newdda.net.handler.front.FrontAuthHandler;
+import com.elong.pb.newdda.net.handler.backend.BackendAuthHandler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 
@@ -38,7 +38,7 @@ public class NettyBackendChannel {
 
     protected byte[] seed;
 
-    private  NettyHandler nettyHandler;
+    private NettyHandler nettyHandler;
 
     public NettyBackendChannel(ChannelFuture channelFuture) {
         this.channelFuture = channelFuture;
@@ -46,6 +46,7 @@ public class NettyBackendChannel {
         this.autocommit = true;
         this.isRunning = false;
         this.isClosed = new AtomicBoolean(false);
+        this.nettyHandler = new BackendAuthHandler(this);
     }
 
     public Long getId() {
@@ -56,7 +57,7 @@ public class NettyBackendChannel {
         this.id = id;
     }
 
-    public Channel getChannel(){
+    public Channel getChannel() {
         return channelFuture.channel();
     }
 

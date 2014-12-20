@@ -21,7 +21,7 @@ public class NettyBackendHandler extends SimpleChannelInboundHandler {
 
     @Override
     protected void channelRead0(final ChannelHandlerContext ctx, Object msg) throws Exception {
-
+        logger.info("NettyBackendHandler msg==" + msg);
     }
 
 }

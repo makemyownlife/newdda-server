@@ -70,9 +70,26 @@ public class HandshakePacket extends MysqlPacket implements Packet {
         return "MySQL Handshake Packet";
     }
 
-    /** 因为是握手包是DDA服务器直接返回false 不会直接调用 **/
+    //读取byteBuffer 并初始化值
     public boolean decode(ByteBuffer byteBuffer) {
-        return false;
+        this.packetLength = BufferUtil.readUB3(byteBuffer);
+        this.packetId =  byteBuffer.get();
+        this.protocolVersion = byteBuffer.get();
+        this.serverVersion = BufferUtil.readTerminateBytesWithNull(byteBuffer);
+        //skip null
+        byteBuffer.get();
+        this.threadId = BufferUtil.readUB4(byteBuffer);
+        this.seed = BufferUtil.readTerminateBytesWithNull(byteBuffer);
+        //skip null
+        byteBuffer.get();
+        this.serverCapabilities = BufferUtil.readUB2(byteBuffer);
+        this.serverCharsetIndex = byteBuffer.get();
+        this.serverStatus = BufferUtil.readUB2(byteBuffer);
+        BufferUtil.stepBuffer(byteBuffer , 13);
+        this.restOfScrambleBuff = BufferUtil.readTerminateBytesWithNull(byteBuffer);
+        //skip null
+        byteBuffer.get();
+        return true;
     }
 
 }
