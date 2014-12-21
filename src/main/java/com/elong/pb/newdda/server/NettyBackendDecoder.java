@@ -31,12 +31,12 @@ public class NettyBackendDecoder extends ByteToMessageDecoder {
         }
         if(!backendChannel.isAuthenticated()){
             logger.info("后端链接:" + remoteAddress + " 正要注册。。");
-            //读取mysqlPacket
-            MysqlPacket mysqlPacket = backendChannel.getNettyHandler().handle(byteBuf);
-            logger.info("前端连接接收包信息：" + mysqlPacket);
-            if (mysqlPacket != null) {
-                out.add(mysqlPacket);
-            }
+        }
+        //读取mysqlPacket
+        MysqlPacket mysqlPacket = backendChannel.getNettyHandler().handle(byteBuf);
+        logger.info("后端连接接收包信息：" + mysqlPacket);
+        if (mysqlPacket != null) {
+            out.add(mysqlPacket);
         }
     }
 

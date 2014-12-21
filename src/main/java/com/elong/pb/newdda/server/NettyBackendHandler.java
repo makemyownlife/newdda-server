@@ -19,9 +19,12 @@ public class NettyBackendHandler extends SimpleChannelInboundHandler {
 
     private Logger logger = LoggerFactory.getLogger(NettyBackendHandler.class);
 
+    private static NameableExecutor netteyBackendExecutor = ExecutorUtil.create("NetteyBackendExecutor", SystemConfig.DEFAULT_PROCESSORS);
+
     @Override
     protected void channelRead0(final ChannelHandlerContext ctx, Object msg) throws Exception {
         logger.info("NettyBackendHandler msg==" + msg);
+
     }
 
 }
