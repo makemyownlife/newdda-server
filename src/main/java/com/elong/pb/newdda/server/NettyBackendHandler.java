@@ -4,6 +4,7 @@ import com.elong.pb.newdda.common.ExecutorUtil;
 import com.elong.pb.newdda.common.NameableExecutor;
 import com.elong.pb.newdda.common.RemotingHelper;
 import com.elong.pb.newdda.config.SystemConfig;
+import com.elong.pb.newdda.net.handler.NettyHandler;
 import com.elong.pb.newdda.net.mysql.MysqlPacket;
 import com.elong.pb.newdda.net.mysql.Packet;
 import io.netty.channel.ChannelHandlerContext;
@@ -23,8 +24,21 @@ public class NettyBackendHandler extends SimpleChannelInboundHandler {
 
     @Override
     protected void channelRead0(final ChannelHandlerContext ctx, Object msg) throws Exception {
-        logger.info("NettyBackendHandler msg==" + msg);
-
+        String remoteAddress = RemotingHelper.parseChannelRemoteAddr(ctx.channel());
+        NettyBackendChannel nettyBackendChannel =
+                NettyBackendConnectManageHandler.getBackendConnections().
+                        get(remoteAddress);
+        final MysqlPacket mysqlPacket = (MysqlPacket) msg;
+        final NettyHandler nettyHandler = nettyBackendChannel.getNettyHandler();
+        netteyBackendExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                Packet packet = nettyHandler.handle(mysqlPacket);
+                if (packet != null) {
+                    ctx.writeAndFlush(packet);
+                }
+            }
+        });
     }
 
 }

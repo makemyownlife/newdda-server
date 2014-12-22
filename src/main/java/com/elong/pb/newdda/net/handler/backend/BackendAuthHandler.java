@@ -61,6 +61,7 @@ public class BackendAuthHandler implements NettyHandler {
 
     @Override
     public Packet handle(MysqlPacket mysqlPacket) {
+        HandshakePacket handshakePacket = (HandshakePacket)mysqlPacket;
         return null;
     }
 
