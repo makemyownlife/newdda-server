@@ -61,6 +61,8 @@ public class BackendAuthHandler implements NettyHandler {
         HandshakePacket handshakePacket = new HandshakePacket();
         handshakePacket.decode(byteBuffer);
 
+        //过滤掉相关的字节 使读索引跳到相关的索引 需要加相关代码 其实 是挺 silly的事情 下一版的dda必须修改这条
+        byteBuf.skipBytes(length + 1 + 3);
         return handshakePacket;
     }
 

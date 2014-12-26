@@ -60,6 +60,7 @@ public class AuthPacket extends MysqlPacket implements Packet {
             byte[] databaseData = database.getBytes();
             BufferUtil.writeWithNull(buffer, databaseData);
         }
+        buffer.flip();
         return buffer;
     }
 
