@@ -2,7 +2,6 @@ package com.elong.pb.newdda.net.mysql;
 
 
 import com.elong.pb.newdda.common.BufferUtil;
-import com.elong.pb.newdda.common.ByteUtil;
 import com.elong.pb.newdda.config.Capabilities;
 
 import java.nio.ByteBuffer;
@@ -23,7 +22,7 @@ public class AuthPacket extends MysqlPacket implements Packet {
 
     public int charsetIndex;
 
-    public byte[] extra;// from FILLER(23)
+    public byte[] extra;//from FILLER(23)
 
     public String user;
 
@@ -33,7 +32,35 @@ public class AuthPacket extends MysqlPacket implements Packet {
 
     @Override
     public ByteBuffer encode() {
-        return null;
+        ByteBuffer buffer = ByteBuffer.allocate(
+                3
+                        + 1
+                        + calcPacketSize()
+        );
+        BufferUtil.writeUB3(buffer, calcPacketSize());
+        buffer.put(packetId);
+        BufferUtil.writeUB4(buffer, clientFlags);
+        BufferUtil.writeUB4(buffer, maxPacketSize);
+        buffer.put((byte) charsetIndex);
+        buffer.put(FILLER);
+        if (user == null) {
+            buffer.put((byte) 0);
+        } else {
+            byte[] userData = user.getBytes();
+            BufferUtil.writeWithNull(buffer , userData);
+        }
+        if (password == null) {
+            buffer.put((byte) 0);
+        } else {
+            BufferUtil.writeWithLength(buffer, password);
+        }
+        if (database == null) {
+            buffer.put((byte) 0);
+        } else {
+            byte[] databaseData = database.getBytes();
+            BufferUtil.writeWithNull(buffer, databaseData);
+        }
+        return buffer;
     }
 
     @Override
@@ -46,8 +73,8 @@ public class AuthPacket extends MysqlPacket implements Packet {
 
         int current = byteBuffer.position();
         //read extra
-        int len = (int)BufferUtil.readLength(byteBuffer);
-        if(len > 0 && len < FILLER.length){
+        int len = (int) BufferUtil.readLength(byteBuffer);
+        if (len > 0 && len < FILLER.length) {
             byte[] ab = new byte[len];
             byteBuffer.get(ab, current, len);
         }
@@ -68,7 +95,11 @@ public class AuthPacket extends MysqlPacket implements Packet {
 
     @Override
     public int calcPacketSize() {
-        return 0;
+        int size = 32;// 4+4+1+23;
+        size += (user == null) ? 1 : user.length() + 1;
+        size += (password == null) ? 1 : BufferUtil.getLength(password);
+        size += (database == null) ? 1 : database.length() + 1;
+        return size;
     }
 
     public long getClientFlags() {
@@ -131,7 +162,6 @@ public class AuthPacket extends MysqlPacket implements Packet {
     public String getPacketInfo() {
         return "MySQL Authentication Packet";
     }
-
 
 
 }

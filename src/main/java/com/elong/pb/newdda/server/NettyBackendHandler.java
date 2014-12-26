@@ -33,12 +33,20 @@ public class NettyBackendHandler extends SimpleChannelInboundHandler {
         netteyBackendExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                Packet packet = nettyHandler.handle(mysqlPacket);
-                if (packet != null) {
-                    ctx.writeAndFlush(packet);
+                try {
+                    Packet packet = nettyHandler.handle(mysqlPacket);
+                    if (packet != null) {
+                        ctx.writeAndFlush(packet);
+                    }
+                } catch (Exception e) {
+                    logger.error("NettyBackendHandler handle error : ", e);
                 }
             }
         });
+    }
+
+    public static void main(String[] args) {
+        System.out.println(Long.MAX_VALUE);
     }
 
 }

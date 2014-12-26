@@ -26,6 +26,7 @@ public class NettyClientConfig {
 
     private boolean clientPooledByteBufAllocatorEnable = false;
 
+    public static final long MAX_PACKET_SIZE = 1024 * 1024 * 16;
 
     public int getClientWorkerThreads() {
         return clientWorkerThreads;

@@ -1,6 +1,11 @@
 package com.elong.pb.newdda.net.handler.backend;
 
+import com.elong.pb.newdda.common.CharsetUtil;
+import com.elong.pb.newdda.common.SecurityUtil;
+import com.elong.pb.newdda.config.DdaCapability;
+import com.elong.pb.newdda.config.NettyClientConfig;
 import com.elong.pb.newdda.net.handler.NettyHandler;
+import com.elong.pb.newdda.net.mysql.AuthPacket;
 import com.elong.pb.newdda.net.mysql.HandshakePacket;
 import com.elong.pb.newdda.net.mysql.MysqlPacket;
 import com.elong.pb.newdda.net.mysql.Packet;
@@ -60,9 +65,47 @@ public class BackendAuthHandler implements NettyHandler {
     }
 
     @Override
+    //将握手包转成 （411验证包）
     public Packet handle(MysqlPacket mysqlPacket) {
-        HandshakePacket handshakePacket = (HandshakePacket)mysqlPacket;
+        HandshakePacket handshakePacket = (HandshakePacket) mysqlPacket;
+        nettyBackendChannel.setThreadId(handshakePacket.threadId);
+        //设置字符集
+        int charsetIndex = handshakePacket.serverCharsetIndex & 0xff;
+        String charset = null;
+        if ((charset = CharsetUtil.getCharset(charsetIndex)) != null) {
+            nettyBackendChannel.setCharset(charset);
+        }
+        AuthPacket authPacket = sendAuthPacketToMySqlServer(handshakePacket);
+        return authPacket;
+    }
+
+    private AuthPacket sendAuthPacketToMySqlServer(HandshakePacket handshakePacket) {
+        try {
+            AuthPacket authPacket = new AuthPacket();
+            authPacket.packetId = 1;
+            authPacket.clientFlags = DdaCapability.getClientFlags();
+            authPacket.maxPacketSize = NettyClientConfig.MAX_PACKET_SIZE;
+            authPacket.charsetIndex = handshakePacket.serverCharsetIndex & 0xff;
+            //默认用户名 以及密码先写死
+            authPacket.user = "root";
+            String passwd = "ilxw";
+            String database = "blog";
+            if (passwd != null && passwd.length() > 0) {
+                byte[] password = passwd.getBytes(nettyBackendChannel.getCharset());
+                byte[] seed = handshakePacket.seed;
+                byte[] restOfScramble = handshakePacket.restOfScrambleBuff;
+                byte[] authSeed = new byte[seed.length + restOfScramble.length];
+                System.arraycopy(seed, 0, authSeed, 0, seed.length);
+                System.arraycopy(restOfScramble, 0, authSeed, seed.length, restOfScramble.length);
+                authPacket.password = SecurityUtil.scramble411(password, authSeed);
+            }
+            authPacket.database = database;
+            return authPacket;
+        } catch (Exception e) {
+            logger.error("sendAuthPacketToMySqlServer error :", e);
+        }
         return null;
     }
+
 
 }
