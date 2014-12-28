@@ -58,12 +58,19 @@ public class BackendAuthHandler implements NettyHandler {
         ByteBuf data = byteBuf.slice(byteBuf.readerIndex(), length + 1 + 3);
         ByteBuffer byteBuffer = data.nioBuffer();
 
-        HandshakePacket handshakePacket = new HandshakePacket();
-        handshakePacket.decode(byteBuffer);
-
-        //过滤掉相关的字节 使读索引跳到相关的索引 需要加相关代码 其实 是挺 silly的事情 下一版的dda必须修改这条
-        byteBuf.skipBytes(length + 1 + 3);
-        return handshakePacket;
+        MysqlPacket mysqlPacket = null;
+        if(!nettyBackendChannel.isSendAuth) {
+            mysqlPacket = new HandshakePacket();
+            mysqlPacket.decode(byteBuffer);
+            //过滤掉相关的字节 使读索引跳到相关的索引 需要加相关代码 其实 是挺 silly的事情 下一版的dda必须修改这条
+            byteBuf.skipBytes(length + 1 + 3);
+        }else {
+            logger.info("已经发送了Auth,执行auth");
+            byte[] authOk = new byte[byteBuffer.remaining()];
+            byteBuffer.get(authOk);
+            byteBuffer.flip();
+        }
+        return mysqlPacket;
     }
 
     @Override
@@ -77,8 +84,12 @@ public class BackendAuthHandler implements NettyHandler {
         if ((charset = CharsetUtil.getCharset(charsetIndex)) != null) {
             nettyBackendChannel.setCharset(charset);
         }
-        AuthPacket authPacket = sendAuthPacketToMySqlServer(handshakePacket);
-        return authPacket;
+        try {
+            AuthPacket authPacket = sendAuthPacketToMySqlServer(handshakePacket);
+            return authPacket;
+        }finally {
+            nettyBackendChannel.isSendAuth = true;
+        }
     }
 
     private AuthPacket sendAuthPacketToMySqlServer(HandshakePacket handshakePacket) {

@@ -18,6 +18,8 @@ public class NettyBackendChannel {
 
     private volatile boolean isAuthenticated = false;
 
+    public volatile boolean isSendAuth = false;
+
     private long threadId;
 
     private int charsetIndex;
