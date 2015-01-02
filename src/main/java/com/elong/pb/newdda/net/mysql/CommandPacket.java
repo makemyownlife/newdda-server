@@ -33,6 +33,7 @@ public class CommandPacket extends MysqlPacket implements Packet {
         buffer.put(packetId);
         buffer.put(command);
         buffer.put(arg);
+        buffer.flip();
         return buffer;
     }
 
