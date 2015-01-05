@@ -79,7 +79,6 @@ public class BackendCommandHandler implements NettyHandler {
                 logger.info("sql==" + sql);
                 break;
         }
-
         return commandPacket;
     }
 
