@@ -15,7 +15,10 @@ public class NettySessionExecutor {
 
     private final static Logger logger = LoggerFactory.getLogger(NettySessionExecutor.class);
 
-    public static Packet execute(NettyBackendChannel nettyBackendChannel, boolean autocommit) throws IOException {
+    public static Packet execute(NettyBackendChannel nettyBackendChannel,  final long timeoutMillis) throws IOException {
+        if (nettyBackendChannel == null) {
+            logger.info("错误的链接");
+        }
         Channel channel = nettyBackendChannel.getChannel();
         return null;
     }
