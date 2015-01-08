@@ -68,7 +68,6 @@ public class BackendAuthHandler implements NettyHandler {
                     nettyBackendChannel.setAuthenticated(true);
                     //设置处理handler类
                     nettyBackendChannel.setNettyHandler(new BackendCommandHandler(nettyBackendChannel));
-                    mysqlPacket = CommandPacketFactory.createSqlModeCommand();
                     byteBuf.skipBytes(length + 1 + 3);
                     break;
                 default:

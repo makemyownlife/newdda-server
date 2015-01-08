@@ -34,7 +34,6 @@ public class NettyBackendDecoder extends ByteToMessageDecoder {
         }
         //读取mysqlPacket
         MysqlPacket mysqlPacket = backendChannel.getNettyHandler().handle(byteBuf);
-        logger.info("后端连接接收包信息：" + mysqlPacket);
         if (mysqlPacket != null) {
             out.add(mysqlPacket);
         }
