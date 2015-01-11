@@ -28,9 +28,23 @@ public class ByteTest {
     }
 
     @Test
+    //整形字节想过户转换
     public void testIntToBytes() {
         byte[] bytes = intToBytes(-2);
         System.out.println(bytesToInt(bytes));
+    }
+
+    //测试符号位移动 有符号位 无符号位
+    @Test
+    public void testSign() {
+        int negative = 0xff000000;
+        //在右移时不保留符号的出来
+        int temp = negative >> 8;
+        int temp2 = negative >>> 8 ;
+        //小于 0
+        System.out.println(temp);
+        //大于 0
+        System.out.println(temp2);
     }
 
 }
