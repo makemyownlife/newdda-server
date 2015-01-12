@@ -19,13 +19,13 @@ public class JdbcTest {
         String url = "jdbc:mysql://localhost:8066/dbtest?user=test&password=test";
         Class.forName("com.mysql.jdbc.Driver");
         Connection connection = DriverManager.getConnection(url);
-        if (connection != null) {
-            Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery("select * from posts where id = 1");
-            while (rs.next()) {
-                System.out.println(rs.getString("text"));
-            }
-        }
+//        if (connection != null) {
+//            Statement statement = connection.createStatement();
+//            ResultSet rs = statement.executeQuery("select * from posts where id = 1");
+//            while (rs.next()) {
+//                System.out.println(rs.getString("text"));
+//            }
+//        }
     }
 
 }

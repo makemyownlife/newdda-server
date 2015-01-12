@@ -24,7 +24,7 @@ public class QueryHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(QueryHandler.class);
 
-    public static Packet handle(MysqlPacket mysqlPacket) throws IOException{
+    public static Packet handle(MysqlPacket mysqlPacket) throws IOException {
         BinaryPacket binaryPacket = (BinaryPacket) mysqlPacket;
         ByteBuffer byteBuffer = binaryPacket.getByteBuffer();
 
@@ -47,12 +47,12 @@ public class QueryHandler {
         Packet packet = null;
         switch (rs & 0xff) {
             case ServerParse.SHOW:
-                int parseResult =  ServerParseShow.parse(sql, rs >>> 8);
-                logger.info("进行show相关的操作..操作类型:{}" ,parseResult);
-                packet = NettySessionExecutor.execute(sql,SystemConfig.DEFAULT_EXECUTE_TIME_OUT);
+                int parseResult = ServerParseShow.parse(sql, rs >>> 8);
+                logger.info("进行show相关的操作..操作类型:{}", parseResult);
+                packet = NettySessionExecutor.execute(sql, ServerParse.SHOW, SystemConfig.DEFAULT_EXECUTE_TIME_OUT);
                 break;
         }
-        return null;
+        return packet;
     }
 
 }

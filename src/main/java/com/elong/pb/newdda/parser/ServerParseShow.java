@@ -15,6 +15,8 @@
  */
 package com.elong.pb.newdda.parser;
 
+import org.slf4j.Logger;
+
 /**
  * @author xianmao.hexm 2011-5-7 下午01:23:06
  */

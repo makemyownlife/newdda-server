@@ -23,6 +23,7 @@ public class NettyFrontHandler extends SimpleChannelInboundHandler {
 
     @Override
     protected void channelRead0(final ChannelHandlerContext ctx, Object msg) throws Exception {
+        logger.info("NettyFrontHandler handler处理开始");
         String remoteAddress = RemotingHelper.parseChannelRemoteAddr(ctx.channel());
         final NettyFrontChannel nettyFrontChannel = NettyFrontConnetManageHandler.getFrontChannelTables(remoteAddress);
         //解析数据 第一步 判断有无认证
