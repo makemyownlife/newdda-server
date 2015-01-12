@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -21,7 +22,7 @@ public class NettySessionExecutor {
 
     private final static Logger logger = LoggerFactory.getLogger(NettySessionExecutor.class);
 
-    private final AtomicReference<Session> currentSession = new AtomicReference<Session>();
+    private static final AtomicReference<Session> currentSession = new AtomicReference<Session>();
 
     public static Packet execute(String sql, int type, final long timeoutMillis) throws IOException {
         ConcurrentHashMap<String, NettyBackendChannel>
@@ -38,8 +39,16 @@ public class NettySessionExecutor {
         packet.arg = sql.getBytes(SystemConfig.DEFAULT_CHARSET);
         //发送命令，然后处理
         currentBackendChannel.getChannel().writeAndFlush(packet);
-
-        
+        Session session = currentSession.get();
+        if (session == null) {
+            session = new Session(packet);
+            currentSession.set(session);
+        }
+        try {
+            session.getLatch().await(timeoutMillis , TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 

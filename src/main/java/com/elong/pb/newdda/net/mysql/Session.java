@@ -10,12 +10,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class Session {
 
+    public static enum ParseStatus {
+        HEADER,FIELD,ROWDATA,EOF
+    }
+
     private CountDownLatch latch;
 
     private String uuid;
 
+    private volatile ParseStatus parseStatus = null;
+
     //整个回话过程结束
     private final AtomicBoolean IS_FINISHED = new AtomicBoolean(false);
+
+    private Packet result;
 
     private volatile CommandPacket commandPacket;
 
@@ -47,6 +55,14 @@ public class Session {
         this.uuid = uuid;
     }
 
+    public Packet getResult() {
+        return result;
+    }
+
+    public void setResult(Packet result) {
+        this.result = result;
+    }
+
     public CommandPacket getCommandPacket() {
         return commandPacket;
     }
@@ -54,5 +70,13 @@ public class Session {
     public void setCommandPacket(CommandPacket commandPacket) {
         this.commandPacket = commandPacket;
     }
-    
+
+    public ParseStatus getParseStatus() {
+        return parseStatus;
+    }
+
+    public void setParseStatus(ParseStatus parseStatus) {
+        this.parseStatus = parseStatus;
+    }
+
 }
