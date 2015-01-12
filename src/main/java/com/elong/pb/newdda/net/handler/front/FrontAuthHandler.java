@@ -9,6 +9,7 @@ import io.netty.buffer.ByteBuf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
@@ -28,7 +29,7 @@ public class FrontAuthHandler implements NettyHandler {
     }
 
     @Override
-    public MysqlPacket handle(ByteBuf byteBuf) {
+    public MysqlPacket handle(ByteBuf byteBuf) throws IOException {
         if (byteBuf == null || byteBuf.readableBytes() == 0) {
             return null;
         }
@@ -65,7 +66,7 @@ public class FrontAuthHandler implements NettyHandler {
     }
 
     @Override
-    public Packet handle(MysqlPacket mysqlPacket) {
+    public Packet handle(MysqlPacket mysqlPacket) throws IOException{
         AuthPacket authPacket = (AuthPacket) mysqlPacket;
         //检测用户
         boolean checkUserFlag = checkUser(authPacket.user);

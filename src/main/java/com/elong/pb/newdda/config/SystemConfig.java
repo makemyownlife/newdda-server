@@ -32,6 +32,6 @@ public final class SystemConfig {
     public static final long DEFAULT_PROCESSOR_CHECK_PERIOD = 15 * 1000L;
 
     //默认最常的执行时间 若超过此时间则 超时返回错误
-    public static final long DEFAULT_EXECUTE_TIME_OUT = 60 * 1000L;
+    public static final long DEFAULT_EXECUTE_TIME_OUT = 15 * 1000L;
 
 }

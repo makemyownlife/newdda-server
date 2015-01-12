@@ -9,6 +9,7 @@ import io.netty.buffer.ByteBuf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
@@ -26,7 +27,7 @@ public class FrontCommandHandler implements NettyHandler {
     }
 
     @Override
-    public MysqlPacket handle(ByteBuf byteBuf) {
+    public MysqlPacket handle(ByteBuf byteBuf) throws IOException {
         if (byteBuf != null && byteBuf.readableBytes() == 0) {
             return null;
         }
@@ -64,7 +65,7 @@ public class FrontCommandHandler implements NettyHandler {
 
     @Override
     //handler处理
-    public Packet handle(MysqlPacket mysqlPacket) {
+    public Packet handle(MysqlPacket mysqlPacket) throws IOException{
         BinaryPacket binaryPacket = (BinaryPacket) mysqlPacket;
         ByteBuffer byteBuffer = binaryPacket.getByteBuffer();
 

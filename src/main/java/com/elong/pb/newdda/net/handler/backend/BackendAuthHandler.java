@@ -11,6 +11,7 @@ import io.netty.buffer.ByteBuf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
@@ -28,7 +29,7 @@ public class BackendAuthHandler implements NettyHandler {
     }
 
     @Override
-    public MysqlPacket handle(ByteBuf byteBuf) {
+    public MysqlPacket handle(ByteBuf byteBuf) throws IOException {
         if (byteBuf == null || byteBuf.readableBytes() == 0) {
             return null;
         }
@@ -79,7 +80,7 @@ public class BackendAuthHandler implements NettyHandler {
 
     @Override
     //将握手包转成 （411验证包）
-    public Packet handle(MysqlPacket mysqlPacket) {
+    public Packet handle(MysqlPacket mysqlPacket) throws IOException{
         HandshakePacket handshakePacket = (HandshakePacket) mysqlPacket;
         nettyBackendChannel.setThreadId(handshakePacket.threadId);
         //设置字符集

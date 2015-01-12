@@ -33,9 +33,13 @@ public class NettyFrontHandler extends SimpleChannelInboundHandler {
         netteyFrontExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                Packet packet = nettyFrontChannel.getNettyHandler().handle(mysqlPacket);
-                if (packet != null) {
-                    ctx.writeAndFlush(packet);
+                try {
+                    Packet packet = nettyFrontChannel.getNettyHandler().handle(mysqlPacket);
+                    if (packet != null) {
+                        ctx.writeAndFlush(packet);
+                    }
+                } catch (Exception e) {
+                    logger.error("NettyFrontHandler handle error:" + e.getMessage());
                 }
             }
         });

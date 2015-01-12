@@ -4,15 +4,17 @@ import com.elong.pb.newdda.net.mysql.MysqlPacket;
 import com.elong.pb.newdda.net.mysql.Packet;
 import io.netty.buffer.ByteBuf;
 
+import java.io.IOException;
+
 /**
  * Created by zhangyong on 14/11/28.
  */
 public interface NettyHandler {
 
     //decode 成 MysqlPacket
-    public MysqlPacket handle(ByteBuf byteBuf);
+    public MysqlPacket handle(ByteBuf byteBuf) throws IOException;
 
     // MysqlPacket 转 packet
-    public Packet handle(MysqlPacket mysqlPacket);
+    public Packet handle(MysqlPacket mysqlPacket) throws IOException;
 
 }
