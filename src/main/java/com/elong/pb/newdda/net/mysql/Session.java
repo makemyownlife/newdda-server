@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Session {
 
     public static enum ParseStatus {
-        HEADER,FIELD,ROWDATA,EOF
+        NULL,HEADER, FIELD, FIELD_EOF, ROWDATA, LAST_EOF
     }
 
     private CountDownLatch latch;
@@ -25,11 +25,7 @@ public class Session {
 
     private Packet result;
 
-    private volatile CommandPacket commandPacket;
-
-    public Session(CommandPacket commandPacket) {
-        this.latch = new CountDownLatch(1);
-        this.commandPacket = commandPacket;
+    public Session() {
         this.uuid = UUID.randomUUID().toString();
     }
 
@@ -63,14 +59,6 @@ public class Session {
         this.result = result;
     }
 
-    public CommandPacket getCommandPacket() {
-        return commandPacket;
-    }
-
-    public void setCommandPacket(CommandPacket commandPacket) {
-        this.commandPacket = commandPacket;
-    }
-
     public ParseStatus getParseStatus() {
         return parseStatus;
     }
@@ -78,5 +66,7 @@ public class Session {
     public void setParseStatus(ParseStatus parseStatus) {
         this.parseStatus = parseStatus;
     }
+
+
 
 }

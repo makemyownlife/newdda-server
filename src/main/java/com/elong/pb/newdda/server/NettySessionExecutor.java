@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -22,7 +23,7 @@ public class NettySessionExecutor {
 
     private final static Logger logger = LoggerFactory.getLogger(NettySessionExecutor.class);
 
-    private static final AtomicReference<Session> currentSession = new AtomicReference<Session>();
+    public static final AtomicReference<Session> SESSION_REFERENCE = new AtomicReference<Session>();
 
     public static Packet execute(String sql, int type, final long timeoutMillis) throws IOException {
         ConcurrentHashMap<String, NettyBackendChannel>
@@ -38,18 +39,21 @@ public class NettySessionExecutor {
         packet.command = MysqlPacket.COM_QUERY;
         packet.arg = sql.getBytes(SystemConfig.DEFAULT_CHARSET);
         //发送命令，然后处理
-        currentBackendChannel.getChannel().writeAndFlush(packet);
-        Session session = currentSession.get();
+        Session session = SESSION_REFERENCE.get();
+        CountDownLatch latch = new CountDownLatch(1);
         if (session == null) {
-            session = new Session(packet);
-            currentSession.set(session);
+            session = new Session();
+            SESSION_REFERENCE.set(session);
         }
+        session.setLatch(latch);
+        currentBackendChannel.getChannel().writeAndFlush(packet);
         try {
-            session.getLatch().await(timeoutMillis , TimeUnit.MILLISECONDS);
+            session.getLatch().await(timeoutMillis, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return null;
+        logger.info("session返回的包是:{}", session.getResult());
+        return session.getResult();
     }
 
 }

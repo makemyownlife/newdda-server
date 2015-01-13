@@ -1,11 +1,9 @@
 package com.elong.pb.newdda.net.handler.backend;
 
 import com.elong.pb.newdda.net.handler.NettyHandler;
-import com.elong.pb.newdda.net.mysql.CommandPacket;
-import com.elong.pb.newdda.net.mysql.MysqlPacket;
-import com.elong.pb.newdda.net.mysql.OkPacket;
-import com.elong.pb.newdda.net.mysql.Packet;
+import com.elong.pb.newdda.net.mysql.*;
 import com.elong.pb.newdda.server.NettyBackendChannel;
+import com.elong.pb.newdda.server.NettySessionExecutor;
 import io.netty.buffer.ByteBuf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,30 +54,34 @@ public class BackendCommandHandler implements NettyHandler {
         ByteBuf data = byteBuf.slice(byteBuf.readerIndex(), length + 1 + 3);
         ByteBuffer byteBuffer = data.nioBuffer();
 
-        MysqlPacket commandPacket = new CommandPacket();
-        commandPacket.decode(byteBuffer);
-
+        BinaryPacket binaryPacket = new BinaryPacket(byteBuffer);
         byteBuf.skipBytes(length + 1 + 3);
-        return commandPacket;
+        return binaryPacket;
     }
 
     @Override
     public Packet handle(MysqlPacket mysqlPacket) {
         logger.info("BackendCommandHandler 处理handle的信息");
-        CommandPacket commandPacket = (CommandPacket) mysqlPacket;
-        //分析
-        switch (commandPacket.command) {
-            case OkPacket.COM_QUERY:
-                String sql = null;
-                try {
-                    sql = new String(commandPacket.arg, "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                logger.info("sql==" + sql);
-                break;
+        if ((mysqlPacket instanceof CommandPacket)) {
+            CommandPacket commandPacket = (CommandPacket) mysqlPacket;
+            //分析
+            switch (commandPacket.command) {
+                case OkPacket.COM_QUERY:
+                    String sql = null;
+                    try {
+                        sql = new String(commandPacket.arg, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    logger.info("sql==" + sql);
+                    break;
+            }
+            return commandPacket;
+        } else {
+            Session session = NettySessionExecutor.SESSION_REFERENCE.get();
+
         }
-        return commandPacket;
+        return null;
     }
 
 }
