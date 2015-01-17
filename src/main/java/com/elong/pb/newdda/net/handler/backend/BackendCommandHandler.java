@@ -27,7 +27,6 @@ public class BackendCommandHandler implements NettyHandler {
 
     @Override
     public MysqlPacket handle(ByteBuf byteBuf) {
-        logger.info("BackendCommandHandler decode[处理相关的包开始]...");
         if (byteBuf == null || byteBuf.readableBytes() == 0) {
             return null;
         }
@@ -61,7 +60,6 @@ public class BackendCommandHandler implements NettyHandler {
 
     @Override
     public Packet handle(MysqlPacket mysqlPacket) {
-        logger.info("BackendCommandHandler 处理handle的信息");
         if ((mysqlPacket instanceof CommandPacket)) {
             CommandPacket commandPacket = (CommandPacket) mysqlPacket;
             //分析
@@ -79,7 +77,7 @@ public class BackendCommandHandler implements NettyHandler {
             return commandPacket;
         } else {
             Session session = NettySessionExecutor.SESSION_REFERENCE.get();
-
+            session.decode(mysqlPacket);
         }
         return null;
     }

@@ -13,6 +13,8 @@ public class BinaryPacket extends MysqlPacket implements Packet {
 
     private ByteBuffer byteBuffer;
 
+    private volatile boolean isReturn = false;
+
     public BinaryPacket(ByteBuffer byteBuffer) {
         this.byteBuffer = byteBuffer;
     }
@@ -41,5 +43,12 @@ public class BinaryPacket extends MysqlPacket implements Packet {
         return this.byteBuffer;
     }
 
+    public boolean isReturn() {
+        return isReturn;
+    }
+
+    public void setReturn(boolean isReturn) {
+        this.isReturn = isReturn;
+    }
 
 }

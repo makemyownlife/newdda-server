@@ -60,14 +60,20 @@ public class FrontCommandHandler implements NettyHandler {
         if (logger.isDebugEnabled()) {
             logger.debug("binaryPacket==" + binaryPacket);
         }
+        byteBuf.skipBytes(length + 1 + 3);
         return binaryPacket;
     }
 
     @Override
     //handler处理
     public Packet handle(MysqlPacket mysqlPacket) throws IOException{
+        logger.info("FrontCommandHandler handler 处理");
         BinaryPacket binaryPacket = (BinaryPacket) mysqlPacket;
         ByteBuffer byteBuffer = binaryPacket.getByteBuffer();
+
+        if(binaryPacket.isReturn()) {
+            return binaryPacket;
+        }
 
         Packet packet = null;
         switch (byteBuffer.get(4)) {

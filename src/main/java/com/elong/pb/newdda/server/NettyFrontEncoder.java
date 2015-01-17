@@ -22,6 +22,9 @@ public class NettyFrontEncoder extends MessageToByteEncoder {
     @Override
     protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws Exception {
         try {
+            if(msg == null) {
+                return;
+            }
             Packet packet = (Packet) msg;
             logger.info("发送的包:" + packet);
             ByteBuffer byteBuffer = packet.encode();

@@ -16,6 +16,7 @@ import io.netty.handler.timeout.IdleStateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -121,6 +122,15 @@ public class NettyFrontConnetManageHandler extends ChannelDuplexHandler {
     //=======================================get set method ===================================================
     public static NettyFrontChannel getFrontChannelTables(String remoteAddress) {
         return frontChannelTables.get(remoteAddress);
+    }
+
+    public static NettyFrontChannel getNettyFrontChannel() {
+        NettyFrontChannel nettyFrontChannel = null;
+        for (Map.Entry<String, NettyFrontChannel> e : frontChannelTables.entrySet()) {
+            nettyFrontChannel = e.getValue();
+            break;
+        }
+        return nettyFrontChannel;
     }
 
 }
