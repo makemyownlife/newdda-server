@@ -5,6 +5,7 @@ import com.elong.pb.newdda.net.mysql.*;
 import com.elong.pb.newdda.server.NettyBackendChannel;
 import com.elong.pb.newdda.server.NettySessionExecutor;
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +27,7 @@ public class BackendCommandHandler implements NettyHandler {
     }
 
     @Override
-    public MysqlPacket handle(ByteBuf byteBuf) {
+    public MysqlPacket handle(ChannelHandlerContext ctx, ByteBuf byteBuf) {
         if (byteBuf == null || byteBuf.readableBytes() == 0) {
             return null;
         }
@@ -50,8 +51,9 @@ public class BackendCommandHandler implements NettyHandler {
         }
         byteBuf.resetReaderIndex();
 
-        ByteBuf data = byteBuf.slice(byteBuf.readerIndex(), length + 1 + 3);
-        ByteBuffer byteBuffer = data.nioBuffer();
+        ByteBuf frame = ctx.alloc().buffer(length + 1 + 3);
+        frame.writeBytes(byteBuf, byteBuf.readerIndex(), length);
+        ByteBuffer byteBuffer = frame.nioBuffer();
 
         BinaryPacket binaryPacket = new BinaryPacket(byteBuffer);
         byteBuf.skipBytes(length + 1 + 3);

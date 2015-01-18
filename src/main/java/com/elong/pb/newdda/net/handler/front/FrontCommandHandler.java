@@ -6,6 +6,7 @@ import com.elong.pb.newdda.net.mysql.MysqlPacket;
 import com.elong.pb.newdda.net.mysql.Packet;
 import com.elong.pb.newdda.server.NettyFrontChannel;
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +28,7 @@ public class FrontCommandHandler implements NettyHandler {
     }
 
     @Override
-    public MysqlPacket handle(ByteBuf byteBuf) throws IOException {
+    public MysqlPacket handle(ChannelHandlerContext ctx ,ByteBuf byteBuf) throws IOException {
         if (byteBuf != null && byteBuf.readableBytes() == 0) {
             return null;
         }
@@ -52,8 +53,10 @@ public class FrontCommandHandler implements NettyHandler {
         byteBuf.resetReaderIndex();
 
         //完整的数据包
-        ByteBuf data = byteBuf.slice(byteBuf.readerIndex(), length + 1 + 3);
-        ByteBuffer byteBuffer = data.nioBuffer();
+        int totalLength = length + 1 + 3;
+        ByteBuf frame = ctx.alloc().buffer(length + 1 + 3);
+        frame.writeBytes(byteBuf, byteBuf.readerIndex(), totalLength);
+        ByteBuffer byteBuffer = frame.nioBuffer();
 
         //直接发送二进制数据
         BinaryPacket binaryPacket = new BinaryPacket(byteBuffer);

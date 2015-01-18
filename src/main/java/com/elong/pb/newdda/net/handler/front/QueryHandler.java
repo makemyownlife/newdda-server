@@ -26,9 +26,10 @@ public class QueryHandler {
 
     public static Packet handle(MysqlPacket mysqlPacket) throws IOException {
         BinaryPacket binaryPacket = (BinaryPacket) mysqlPacket;
-        ByteBuffer byteBuffer = binaryPacket.getByteBuffer();
 
+        ByteBuffer byteBuffer = binaryPacket.getByteBuffer();
         BufferUtil.stepBuffer(byteBuffer, 5);
+
         byte[] data = new byte[byteBuffer.remaining()];
         byteBuffer.get(data);
         String sql = null;

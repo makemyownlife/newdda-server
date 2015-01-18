@@ -34,7 +34,7 @@ public class NettyFrontDecoder extends ByteToMessageDecoder {
         }
         //读取mysqlPacket
         NettyHandler nettyHandler = nettyFrontChannel.getNettyHandler();
-        MysqlPacket mysqlPacket = nettyHandler.handle(byteBuf);
+        MysqlPacket mysqlPacket = nettyHandler.handle(ctx, byteBuf);
         logger.info("前端连接接收包信息：" + mysqlPacket);
         if (mysqlPacket != null) {
             out.add(mysqlPacket);

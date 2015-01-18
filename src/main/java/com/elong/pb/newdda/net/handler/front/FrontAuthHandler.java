@@ -6,6 +6,7 @@ import com.elong.pb.newdda.net.handler.NettyHandler;
 import com.elong.pb.newdda.net.mysql.*;
 import com.elong.pb.newdda.server.NettyFrontChannel;
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +30,7 @@ public class FrontAuthHandler implements NettyHandler {
     }
 
     @Override
-    public MysqlPacket handle(ByteBuf byteBuf) throws IOException {
+    public MysqlPacket handle(ChannelHandlerContext ctx ,ByteBuf byteBuf) throws IOException {
         if (byteBuf == null || byteBuf.readableBytes() == 0) {
             return null;
         }
@@ -53,8 +54,10 @@ public class FrontAuthHandler implements NettyHandler {
         }
         byteBuf.resetReaderIndex();
 
-        ByteBuf data = byteBuf.slice(byteBuf.readerIndex(), length + 1 + 3);
-        ByteBuffer byteBuffer = data.nioBuffer();
+        int totalLength = length + 1 + 3;
+        ByteBuf frame = ctx.alloc().buffer(length + 1 + 3);
+        frame.writeBytes(byteBuf, byteBuf.readerIndex(), totalLength);
+        ByteBuffer byteBuffer = frame.nioBuffer();
 
         AuthPacket authPacket = new AuthPacket();
         //添加验证成功

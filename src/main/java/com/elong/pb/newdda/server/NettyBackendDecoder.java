@@ -1,7 +1,6 @@
 package com.elong.pb.newdda.server;
 
 import com.elong.pb.newdda.common.RemotingHelper;
-import com.elong.pb.newdda.net.handler.NettyHandler;
 import com.elong.pb.newdda.net.mysql.MysqlPacket;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -29,11 +28,11 @@ public class NettyBackendDecoder extends ByteToMessageDecoder {
             logger.error("error 地址:" + remoteAddress + "在后端连接池没有有注册");
             return;
         }
-        if(!backendChannel.isAuthenticated()){
+        if (!backendChannel.isAuthenticated()) {
             logger.info("后端链接:" + remoteAddress + " 正要注册。。");
         }
         //读取mysqlPacket
-        MysqlPacket mysqlPacket = backendChannel.getNettyHandler().handle(byteBuf);
+        MysqlPacket mysqlPacket = backendChannel.getNettyHandler().handle(ctx, byteBuf);
         if (mysqlPacket != null) {
             out.add(mysqlPacket);
         }
