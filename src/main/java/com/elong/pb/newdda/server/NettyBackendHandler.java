@@ -5,6 +5,7 @@ import com.elong.pb.newdda.common.NameableExecutor;
 import com.elong.pb.newdda.common.RemotingHelper;
 import com.elong.pb.newdda.config.SystemConfig;
 import com.elong.pb.newdda.net.handler.NettyHandler;
+import com.elong.pb.newdda.net.mysql.CommandPacket;
 import com.elong.pb.newdda.net.mysql.MysqlPacket;
 import com.elong.pb.newdda.net.mysql.Packet;
 import io.netty.channel.ChannelHandlerContext;
@@ -30,19 +31,27 @@ public class NettyBackendHandler extends SimpleChannelInboundHandler {
                         get(remoteAddress);
         final MysqlPacket mysqlPacket = (MysqlPacket) msg;
         final NettyHandler nettyHandler = nettyBackendChannel.getNettyHandler();
-        netteyBackendExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Packet packet = nettyHandler.handle(mysqlPacket);
-                    if (packet != null) {
-                        ctx.writeAndFlush(packet);
-                    }
-                } catch (Exception e) {
-                    logger.error("NettyBackendHandler handle error : ", e);
-                }
+        logger.info("NettyBackendHandler print something");
+        if(!(mysqlPacket instanceof CommandPacket)) {
+            Packet packet = nettyHandler.handle(mysqlPacket);
+            if (packet != null) {
+                ctx.writeAndFlush(packet);
             }
-        });
+        } else {
+            netteyBackendExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Packet packet = nettyHandler.handle(mysqlPacket);
+                        if (packet != null) {
+                            ctx.writeAndFlush(packet);
+                        }
+                    } catch (Exception e) {
+                        logger.error("NettyBackendHandler handle error : ", e);
+                    }
+                }
+            });
+        }
     }
 
     public static void main(String[] args) {

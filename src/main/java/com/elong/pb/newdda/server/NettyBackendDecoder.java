@@ -20,6 +20,7 @@ public class NettyBackendDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> out) throws Exception {
+        logger.info("后端 decode");
         String remoteAddress = RemotingHelper.parseChannelRemoteAddr(ctx.channel());
         NettyBackendChannel backendChannel = NettyBackendConnectManageHandler
                 .getBackendConnections()

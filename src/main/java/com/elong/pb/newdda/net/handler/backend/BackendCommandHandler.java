@@ -51,8 +51,9 @@ public class BackendCommandHandler implements NettyHandler {
         }
         byteBuf.resetReaderIndex();
 
+        int totalLength = length + 1 + 3;
         ByteBuf frame = ctx.alloc().buffer(length + 1 + 3);
-        frame.writeBytes(byteBuf, byteBuf.readerIndex(), length);
+        frame.writeBytes(byteBuf, byteBuf.readerIndex(), totalLength);
         ByteBuffer byteBuffer = frame.nioBuffer();
 
         BinaryPacket binaryPacket = new BinaryPacket(byteBuffer);

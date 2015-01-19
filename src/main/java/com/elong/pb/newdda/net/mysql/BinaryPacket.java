@@ -26,7 +26,7 @@ public class BinaryPacket extends MysqlPacket implements Packet {
 
     @Override
     public String getPacketInfo() {
-        return "MySQL Binary Packet";
+        return "MySQL Binary Packet return:" + isReturn();
     }
 
     public ByteBuffer getByteBuffer() {

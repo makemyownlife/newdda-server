@@ -16,15 +16,17 @@ public class Session {
 
     private final static Logger logger = LoggerFactory.getLogger(Session.class);
 
+    int maxPacket = 0;
+
     public static enum ParseStatus {
-        NULL, HEADER, FIELD, FIELD_EOF, ROWDATA, LAST_EOF
+         HEADER, FIELD, FIELD_EOF, ROWDATA, LAST_EOF
     }
 
     private CountDownLatch latch;
 
     private String uuid;
 
-    private volatile ParseStatus parseStatus = ParseStatus.NULL;
+    private volatile ParseStatus parseStatus = ParseStatus.HEADER;
 
     //整个回话过程结束
     private final AtomicBoolean IS_FINISHED = new AtomicBoolean(false);
@@ -75,24 +77,30 @@ public class Session {
 
     //收到
     public boolean decode(MysqlPacket mysqlPacket) {
+        logger.info("session处理的包");
+        //1 + 2 +1  + 18 + 1
         BinaryPacket temp = (BinaryPacket) mysqlPacket;
         temp.setReturn(true);
+        maxPacket ++ ;
+        if(maxPacket == 23) {
+            System.out.println("2312312");
+        }
         switch (this.parseStatus) {
-            //第一步是null
-            case NULL:
-                logger.info("解析resultset的头部");
-                this.parseStatus = ParseStatus.HEADER;
-                this.result = temp;
-                temp.setReturn(true);
-                countDownLatch();
-                return true;
             case HEADER:
+                logger.info("解析到header");
+                temp.setReturn(true);
+                this.result = null;
+                this.parseStatus = ParseStatus.FIELD;
+                NettyFrontConnetManageHandler.getNettyFrontChannel().getChannel()
+                        .writeAndFlush(temp);
+                return true;
+            case FIELD:
                 logger.info("解析field 第四个字节：" + temp.getByteBuffer().get(4));
+                temp.setReturn(true);
+                this.result = null;
                 if(temp.getByteBuffer().get(4) == EOFPacket.FIELD_COUNT) {
                     this.parseStatus = ParseStatus.FIELD_EOF;
                 }
-                temp.setReturn(true);
-                this.result = null;
                 NettyFrontConnetManageHandler.getNettyFrontChannel().getChannel()
                         .writeAndFlush(temp);
                 return true;
@@ -106,21 +114,16 @@ public class Session {
                 return true;
             case ROWDATA:
                 logger.info("从ROWDATA解析到LAST_EOF");
+                temp.setReturn(true);
+                this.result = null;
                 if(temp.getByteBuffer().get(4) == EOFPacket.FIELD_COUNT) {
                     this.parseStatus = ParseStatus.LAST_EOF;
                 }
-                temp.setReturn(true);
-                this.result = null;
                 NettyFrontConnetManageHandler.getNettyFrontChannel().getChannel()
                         .writeAndFlush(temp);
                 return true;
-            case LAST_EOF:
-                logger.info("从解析LAST_EOF");
-                temp.setReturn(true);
-                this.result = null;
-                NettyFrontConnetManageHandler.getNettyFrontChannel().getChannel()
-                        .writeAndFlush(temp);
-                return true;
+            default:
+                logger.info("走default了");
         }
         return false;
     }

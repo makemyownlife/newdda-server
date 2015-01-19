@@ -21,12 +21,13 @@ public class NettyFrontEncoder extends MessageToByteEncoder {
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws Exception {
+        logger.info("前端 encode");
         try {
             if(msg == null) {
                 return;
             }
             Packet packet = (Packet) msg;
-            logger.info("发送的包:" + packet);
+            logger.info("发送的包NettyBackendHandler:" + packet);
             ByteBuffer byteBuffer = packet.encode();
             out.writeBytes(byteBuffer);
         } catch (Exception e) {
