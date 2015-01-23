@@ -57,6 +57,11 @@ public class QueryHandler {
                 logger.info("进行select相关的操作");
                 packet = NettySessionExecutor.execute(sql, ServerParse.SELECT, SystemConfig.DEFAULT_EXECUTE_TIME_OUT);
                 break;
+
+            case ServerParse.SET:
+                logger.info("进行set相关的操作");
+                packet = NettySessionExecutor.execute(sql, ServerParse.SET, SystemConfig.DEFAULT_EXECUTE_TIME_OUT);
+                break;
         }
         return packet;
     }

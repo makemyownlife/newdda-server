@@ -26,6 +26,12 @@ public abstract class Session {
         this.latch = latch;
     }
 
+    public final void countDownLatch() {
+        if (latch != null) {
+            latch.countDown();
+        }
+    }
+
     public CountDownLatch getLatch() {
         return latch;
     }

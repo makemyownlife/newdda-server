@@ -1,10 +1,7 @@
 package com.elong.pb.newdda.server;
 
 import com.elong.pb.newdda.config.SystemConfig;
-import com.elong.pb.newdda.net.mysql.CommandPacket;
-import com.elong.pb.newdda.net.mysql.MysqlPacket;
-import com.elong.pb.newdda.net.mysql.Packet;
-import com.elong.pb.newdda.net.mysql.Session;
+import com.elong.pb.newdda.net.mysql.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +39,12 @@ public class NettySessionExecutor {
         Session session = SESSION_REFERENCE.get();
         CountDownLatch latch = new CountDownLatch(1);
         if (session == null) {
-            session = new Session();
+            if(type == 7 || type == 9) {
+                session = new SelectSession();
+            }
+            if(type == 8) {
+                session = new SetSession();
+            }
             SESSION_REFERENCE.set(session);
         }
         session.setLatch(latch);

@@ -38,12 +38,6 @@ public class SelectSession extends Session{
         this.uuid = UUID.randomUUID().toString();
     }
 
-    public final void countDownLatch() {
-        if (latch != null) {
-            latch.countDown();
-        }
-    }
-
     public CountDownLatch getLatch() {
         return latch;
     }
@@ -120,6 +114,7 @@ public class SelectSession extends Session{
                 if(temp.getByteBuffer().get(4) == EOFPacket.FIELD_COUNT) {
                     this.parseStatus = ParseStatus.LAST_EOF;
                     NettySessionExecutor.SESSION_REFERENCE.set(null);
+                    countDownLatch();
                 }
                 NettyFrontConnetManageHandler.getNettyFrontChannel().getChannel()
                         .writeAndFlush(temp);
