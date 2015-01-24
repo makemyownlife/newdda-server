@@ -20,13 +20,12 @@ public class JdbcTest {
         Class.forName("com.mysql.jdbc.Driver");
         Connection connection = DriverManager.getConnection(url);
 
-        System.out.println("connection==" + connection);
-
         if (connection != null) {
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery("select * from posts where id = 1");
             while (rs.next()) {
                 System.out.println(rs.getString("text"));
+
             }
         }
     }
