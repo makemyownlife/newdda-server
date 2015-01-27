@@ -8,5 +8,4 @@
         <property name="initConn">1</property>
         <property name="maxConn">60</property>
     </dataSource>
-
 </dda>
