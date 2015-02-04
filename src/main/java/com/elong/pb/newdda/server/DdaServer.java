@@ -23,6 +23,7 @@ public class DdaServer {
         logger.info("开始启动DDA前端服务");
 
         logger.info("开始启动DDA后端连mysql服务");
+        BackendServer.getInstance().start();
 
         logger.info("结束启动DDAserver...O(∩_∩)O");
     }

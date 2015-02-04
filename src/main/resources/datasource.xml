@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dda>
-    <!-- 数据源定义，数据源是一个具体的后端数据连接的表示。-->
-    <dataSource name="blog">
-        <property name="location">127.0.0.1:3306</property>
-        <property name="user">root</property>
-        <property name="password">ilxw</property>
-        <property name="initConn">1</property>
-        <property name="maxConn">60</property>
+    <!-- 账户中心系统 -->
+    <dataSource id="pb_account">
+        <property name="initconn">1</property>
+        <property name="maxconn">60</property>
+        <property name="idleTimeOut"></property>
+        <property name="location">
+            <location>127.0.0.1:3306/pb_account:test:inopass.2</location>
+            <location>127.0.0.1:3306/pb_account1:test:inopass.2</location>
+        </property>
+        <property name="keyname">card_no</property>
     </dataSource>
-
 
 </dda>
