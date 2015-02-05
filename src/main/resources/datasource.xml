@@ -4,7 +4,8 @@
     <dataSource id="pb_account">
         <property name="initconn">1</property>
         <property name="maxconn">60</property>
-        <property name="idleTimeOut"></property>
+        <!-- 超时时间 单位秒 -->
+        <property name="idletimeout">300</property>
         <property name="location">
             <location>127.0.0.1:3306/pb_account:test:inopass.2</location>
             <location>127.0.0.1:3306/pb_account1:test:inopass.2</location>
