@@ -1,0 +1,59 @@
+package com.elong.pb.newdda.config;
+
+/**
+ * Created by zhangyong on 15/2/6.
+ * 数据所在位置
+ */
+public class DataSourceLocation {
+
+    private String host;
+
+    private String databaseName;
+
+    private Integer port;
+
+    private String user;
+
+    private String password;
+
+    public String getDatabaseName() {
+        return databaseName;
+    }
+
+    public void setDatabaseName(String databaseName) {
+        this.databaseName = databaseName;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
+    }
+
+}
