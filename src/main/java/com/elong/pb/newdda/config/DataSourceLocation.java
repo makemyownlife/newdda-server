@@ -16,6 +16,8 @@ public class DataSourceLocation {
 
     private String password;
 
+    private String address;
+
     public String getDatabaseName() {
         return databaseName;
     }
@@ -56,4 +58,7 @@ public class DataSourceLocation {
         this.port = port;
     }
 
+    public String getAddress() {
+        return this.host + ":" + this.port;
+    }
 }
