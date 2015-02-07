@@ -1,20 +1,10 @@
 package com.elong.pb.newdda.server;
 
-import com.elong.pb.newdda.config.NettyClientConfig;
-import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.timeout.IdleStateHandler;
-import io.netty.util.concurrent.DefaultEventExecutorGroup;
+import com.elong.pb.newdda.config.DataSourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Map;
 
 /**
  * Created by zhangyong on 15/2/2.
@@ -30,6 +20,8 @@ public class BackendServer {
         return INSTANCE;
     }
 
+    private BackendClient backendClient;
+
     private DdaConfig ddaConfig;
 
     public DdaConfig getDdaConfig() {
@@ -38,14 +30,14 @@ public class BackendServer {
 
     public BackendServer() {
         this.ddaConfig = new DdaConfig();
+        this.backendClient = BackendClient.getInstance();
     }
 
     public void start() {
-
+        Map<String, DataSourceConfig> dataSources = this.ddaConfig.getDataSources();
     }
 
     public void stop() {
-
     }
 
 }
