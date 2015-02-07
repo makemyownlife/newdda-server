@@ -63,6 +63,10 @@ public class BackendServer {
         logger.info("结束创建mysql初始化链接");
     }
 
+    public void stop(){
+
+    }
+
     private void initNettyService() {
 
     }

@@ -21,4 +21,8 @@ public class FrontServer {
         
     }
 
+    public void stop(){
+
+    }
+
 }
