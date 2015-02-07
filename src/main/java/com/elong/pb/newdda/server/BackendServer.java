@@ -2,8 +2,13 @@ package com.elong.pb.newdda.server;
 
 import com.elong.pb.newdda.config.NettyClientConfig;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,47 +36,15 @@ public class BackendServer {
         return ddaConfig;
     }
 
-    private final Bootstrap bootstrap = new Bootstrap();
-
-    private final EventLoopGroup eventLoopGroupWorker;
-
-    private NettyClientConfig nettyClientConfig;
-
-    private DefaultEventExecutorGroup defaultEventExecutorGroup;
-
     public BackendServer() {
         this.ddaConfig = new DdaConfig();
-        this.nettyClientConfig = new NettyClientConfig();
-        this.eventLoopGroupWorker = new NioEventLoopGroup(1, new ThreadFactory() {
-            private AtomicInteger threadIndex = new AtomicInteger(0);
-
-            @Override
-            public Thread newThread(Runnable r) {
-                return new Thread(r, String.format("BackendClientSelector_%d",
-                        this.threadIndex.incrementAndGet()));
-            }
-        });
     }
 
     public void start() {
-        logger.info("开始启动netty链接mysql服务");
-        initNettyService();
-        logger.info("结束启动netty链接mysql服务");
-
-        logger.info("开始创建mysql初始化链接");
-        initMysqlService();
-        logger.info("结束创建mysql初始化链接");
-    }
-
-    public void stop(){
 
     }
 
-    private void initNettyService() {
-
-    }
-
-    private void initMysqlService() {
+    public void stop() {
 
     }
 
