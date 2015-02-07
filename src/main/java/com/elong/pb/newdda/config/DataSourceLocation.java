@@ -1,10 +1,16 @@
 package com.elong.pb.newdda.config;
 
+import java.util.UUID;
+
 /**
  * Created by zhangyong on 15/2/6.
  * 数据所在位置
  */
 public class DataSourceLocation {
+
+    public DataSourceLocation() {
+        this.locationId = UUID.randomUUID().toString();
+    }
 
     private String host;
 
@@ -15,6 +21,8 @@ public class DataSourceLocation {
     private String user;
 
     private String password;
+
+    private String locationId;
 
     private String address;
 
@@ -61,4 +69,17 @@ public class DataSourceLocation {
     public String getAddress() {
         return this.host + ":" + this.port;
     }
+
+    public String getLocationId() {
+        return locationId;
+    }
+
+    public void setLocationId(String locationId) {
+        this.locationId = locationId;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
 }
