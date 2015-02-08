@@ -10,6 +10,8 @@ public class BackendDdaChannel implements DdaChannel {
 
     private static ConnectIdGenerator CONNECT_ID_GENERATOR = new ConnectIdGenerator();
 
+    private BackendChannelPool backendChannelPool;
+
     //channel封装相关
     private ChannelWrapper channelWrapper;
 
@@ -26,11 +28,12 @@ public class BackendDdaChannel implements DdaChannel {
 
     private Long id;
 
-    public BackendDdaChannel(ChannelWrapper channelWrapper) {
+    public BackendDdaChannel(ChannelWrapper channelWrapper,BackendChannelPool backendChannelPool) {
         this.id = CONNECT_ID_GENERATOR.getId();
         this.autocommit = true;
         this.isAuthenticated = false;
         this.channelWrapper = channelWrapper;
+        this.backendChannelPool = backendChannelPool;
         this.isRunning = false;
         this.isClosed = new AtomicBoolean(false);
     }
@@ -49,6 +52,38 @@ public class BackendDdaChannel implements DdaChannel {
                 return ++connectId;
             }
         }
+    }
+
+    public boolean isClosedOrQuit() {
+        return isClosed.get();
+    }
+
+    public boolean isRunning() {
+        return isRunning;
+    }
+
+    public void setRunning(boolean isRunning) {
+        this.isRunning = isRunning;
+    }
+
+    public void setAuthenticated(boolean isAuthenticated) {
+        this.isAuthenticated = isAuthenticated;
+    }
+
+    public AtomicBoolean getIsClosed() {
+        return isClosed;
+    }
+
+    public ChannelWrapper getChannelWrapper() {
+        return channelWrapper;
+    }
+
+    public BackendChannelPool getBackendChannelPool() {
+        return backendChannelPool;
+    }
+
+    public void setBackendChannelPool(BackendChannelPool backendChannelPool) {
+        this.backendChannelPool = backendChannelPool;
     }
 
 }

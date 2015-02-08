@@ -1,6 +1,9 @@
 package com.elong.pb.newdda.server;
 
 import com.elong.pb.newdda.common.RemotingHelper;
+import com.elong.pb.newdda.net.BackendChannelPool;
+import com.elong.pb.newdda.net.BackendDdaChannel;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
@@ -32,16 +35,15 @@ public class BackendEventHandler extends ChannelDuplexHandler {
     public void disconnect(ChannelHandlerContext ctx, ChannelPromise promise) throws Exception {
         final String remoteAddress = RemotingHelper.parseChannelRemoteAddr(ctx.channel());
         logger.info("NETTY CLIENT PIPELINE: DISCONNECT {}", remoteAddress);
-        //closeChannel(ctx.channel());
+        closeChannelAnywhere(ctx.channel());
         super.disconnect(ctx, promise);
     }
-
 
     @Override
     public void close(ChannelHandlerContext ctx, ChannelPromise promise) throws Exception {
         final String remoteAddress = RemotingHelper.parseChannelRemoteAddr(ctx.channel());
         logger.info("NETTY CLIENT PIPELINE: CLOSE {}", remoteAddress);
-        //closeChannel(ctx.channel());
+        closeChannelAnywhere(ctx.channel());
         super.close(ctx, promise);
     }
 
@@ -50,7 +52,7 @@ public class BackendEventHandler extends ChannelDuplexHandler {
         final String remoteAddress = RemotingHelper.parseChannelRemoteAddr(ctx.channel());
         logger.warn("NETTY CLIENT PIPELINE: exceptionCaught {}", remoteAddress);
         logger.warn("NETTY CLIENT PIPELINE: exceptionCaught exception.", cause);
-        //closeChannel(ctx.channel());
+        closeChannelAnywhere(ctx.channel());
     }
 
     @Override
@@ -60,10 +62,25 @@ public class BackendEventHandler extends ChannelDuplexHandler {
             if (evnet.state().equals(IdleState.ALL_IDLE)) {
                 final String remoteAddress = RemotingHelper.parseChannelRemoteAddr(ctx.channel());
                 logger.warn("NETTY CLIENT PIPELINE: IDLE exception [{}]", remoteAddress);
-                //closeChannel(ctx.channel());
+                closeChannelAnywhere(ctx.channel());
             }
         }
         ctx.fireUserEventTriggered(evt);
+    }
+
+    //暂时直接调用 可能会阻塞IO线程（以后修复，暂时木有时间）
+    private void closeChannelAnywhere(Channel channel) {
+        if (channel == null) {
+            return;
+        }
+        BackendDdaChannel backendDdaChannel = BackendClient.getInstance().getMappingBackendChannel(channel);
+        if (backendDdaChannel == null) {
+            return;
+        }
+        BackendChannelPool pool = backendDdaChannel.getBackendChannelPool();
+        if (pool != null) {
+            pool.realCloseBackendChannel(backendDdaChannel, true);
+        }
     }
 
 }
