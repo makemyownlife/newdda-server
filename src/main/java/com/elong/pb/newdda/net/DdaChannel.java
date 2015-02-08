@@ -6,5 +6,6 @@ package com.elong.pb.newdda.net;
  */
 public interface DdaChannel {
 
-    
+
+
 }
