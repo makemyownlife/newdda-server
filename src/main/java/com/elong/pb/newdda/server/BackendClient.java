@@ -42,49 +42,47 @@ public class BackendClient {
     private DefaultEventExecutorGroup defaultEventExecutorGroup;
 
     public BackendClient() {
-        if (!INIT.get()) {
-            return;
+        if (INIT.compareAndSet(false, true)) {
+            this.nettyClientConfig = new NettyClientConfig();
+            this.eventLoopGroupWorker = new NioEventLoopGroup(1, new ThreadFactory() {
+                private AtomicInteger threadIndex = new AtomicInteger(0);
+
+                @Override
+                public Thread newThread(Runnable r) {
+                    return new Thread(r, String.format("BackendClientSelector_%d",
+                            this.threadIndex.incrementAndGet()));
+                }
+            });
+            this.defaultEventExecutorGroup = new DefaultEventExecutorGroup(
+                    nettyClientConfig.getClientWorkerThreads(),
+                    new ThreadFactory() {
+                        private AtomicInteger threadIndex = new AtomicInteger(0);
+
+                        @Override
+                        public Thread newThread(Runnable r) {
+                            return new Thread(r, "BackendClientWorkerThread_" + this.threadIndex.incrementAndGet());
+                        }
+                    });
+            Bootstrap handler = this.bootstrap.group(this.eventLoopGroupWorker).channel(NioSocketChannel.class)
+                    .option(ChannelOption.TCP_NODELAY, true)
+                    .option(ChannelOption.SO_KEEPALIVE, false)
+                    .option(ChannelOption.SO_SNDBUF, nettyClientConfig.getClientSocketSndBufSize())
+                    .option(ChannelOption.SO_RCVBUF, nettyClientConfig.getClientSocketRcvBufSize())
+                            //  添加超时时间
+                            // .option(ChannelOption.CONNECT_TIMEOUT_MILLIS,(int)nettyClientConfig.getConnectTimeoutMillis())
+                    .handler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        public void initChannel(SocketChannel ch) throws Exception {
+                            ch.pipeline().addLast(
+                                    defaultEventExecutorGroup,
+                                    new BackendDecoder(),
+                                    new BackendEncoder(),
+                                    new IdleStateHandler(0, 0, nettyClientConfig.getClientChannelMaxIdleTimeSeconds()),
+                                    new BackendEventHandler()
+                            );
+                        }
+                    });
         }
-        this.nettyClientConfig = new NettyClientConfig();
-        this.eventLoopGroupWorker = new NioEventLoopGroup(1, new ThreadFactory() {
-            private AtomicInteger threadIndex = new AtomicInteger(0);
-
-            @Override
-            public Thread newThread(Runnable r) {
-                return new Thread(r, String.format("BackendClientSelector_%d",
-                        this.threadIndex.incrementAndGet()));
-            }
-        });
-        this.defaultEventExecutorGroup = new DefaultEventExecutorGroup(
-                nettyClientConfig.getClientWorkerThreads(),
-                new ThreadFactory() {
-                    private AtomicInteger threadIndex = new AtomicInteger(0);
-
-                    @Override
-                    public Thread newThread(Runnable r) {
-                        return new Thread(r, "BackendClientWorkerThread_" + this.threadIndex.incrementAndGet());
-                    }
-                });
-        Bootstrap handler = this.bootstrap.group(this.eventLoopGroupWorker).channel(NioSocketChannel.class)
-                .option(ChannelOption.TCP_NODELAY, true)
-                .option(ChannelOption.SO_KEEPALIVE, false)
-                .option(ChannelOption.SO_SNDBUF, nettyClientConfig.getClientSocketSndBufSize())
-                .option(ChannelOption.SO_RCVBUF, nettyClientConfig.getClientSocketRcvBufSize())
-                        //  添加超时时间
-                        // .option(ChannelOption.CONNECT_TIMEOUT_MILLIS,(int)nettyClientConfig.getConnectTimeoutMillis())
-                .handler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    public void initChannel(SocketChannel ch) throws Exception {
-                        ch.pipeline().addLast(
-                                defaultEventExecutorGroup,
-                                new BackendDecoder(),
-                                new BackendEncoder(),
-                                new IdleStateHandler(0, 0, nettyClientConfig.getClientChannelMaxIdleTimeSeconds()),
-                                new BackendEventHandler()
-                        );
-                    }
-                });
-        INIT.set(true);
     }
 
     public static BackendClient getInstance() {

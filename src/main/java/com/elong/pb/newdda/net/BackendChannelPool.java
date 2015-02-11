@@ -40,6 +40,28 @@ public class BackendChannelPool {
         this.items = new BackendDdaChannel[size];
     }
 
+    public void initMinConn() {
+        final ReentrantLock lock = this.lock;
+        lock.lock();
+        try {
+            int minconn = this.dataSourceConfig.getInitconn();
+            for (int i = 0; i < minconn; i++) {
+                BackendDdaChannel backendDdaChannel = createBackendDdaChannel();
+                if (backendDdaChannel != null) {
+                    for (int j = 0; j < items.length; j++) {
+                        if (items[j] == null) {
+                            items[j] = backendDdaChannel;
+                            idleCount++;
+                            break;
+                        }
+                    }
+                }
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
     public BackendDdaChannel getBackendDdaChannel() {
         final ReentrantLock lock = this.lock;
         lock.lock();
