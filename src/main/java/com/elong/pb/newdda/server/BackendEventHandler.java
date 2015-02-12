@@ -40,6 +40,14 @@ public class BackendEventHandler extends ChannelDuplexHandler {
     }
 
     @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        final String remoteAddress = RemotingHelper.parseChannelRemoteAddr(ctx.channel());
+        logger.info("NETTY SERVER PIPELINE: channelInactive, the channel[{}]", remoteAddress);
+        super.channelInactive(ctx);
+        closeChannelAnywhere(ctx.channel());
+    }
+
+    @Override
     public void close(ChannelHandlerContext ctx, ChannelPromise promise) throws Exception {
         final String remoteAddress = RemotingHelper.parseChannelRemoteAddr(ctx.channel());
         logger.info("NETTY CLIENT PIPELINE: CLOSE {}", remoteAddress);
@@ -57,8 +65,6 @@ public class BackendEventHandler extends ChannelDuplexHandler {
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-        System.out.println("idle...");
-        logger.info("IdleStateEvent==" + evt);
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent evnet = (IdleStateEvent) evt;
             if (evnet.state().equals(IdleState.ALL_IDLE)) {

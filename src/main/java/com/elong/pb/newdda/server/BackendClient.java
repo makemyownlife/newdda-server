@@ -93,7 +93,7 @@ public class BackendClient {
     //========================================= 相关的基本方法=========================================================================
 
     //所有后端应用映射
-    private static ConcurrentHashMap<Channel, BackendDdaChannel> BACKEND_MAPPING = new ConcurrentHashMap<Channel, BackendDdaChannel>();
+    public static ConcurrentHashMap<Channel, BackendDdaChannel> BACKEND_MAPPING = new ConcurrentHashMap<Channel, BackendDdaChannel>();
 
     //所有后端应用链接 是否初始化后端链接
     private static ConcurrentHashMap<Channel, CountDownLatch> BACKEND_MAPPING_INIT = new ConcurrentHashMap<Channel, CountDownLatch>();

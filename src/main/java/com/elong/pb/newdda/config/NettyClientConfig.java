@@ -18,7 +18,8 @@ public class NettyClientConfig {
 
     private long channelNotActiveInterval = 1000 * 60;
 
-    private int clientChannelMaxIdleTimeSeconds = 120;
+    //4分钟
+    private int clientChannelMaxIdleTimeSeconds = 240;
 
     private int clientSocketSndBufSize = NettySystemConfig.SocketSndbufSize;
 
