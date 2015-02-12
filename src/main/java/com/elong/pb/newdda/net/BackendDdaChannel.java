@@ -1,6 +1,11 @@
 package com.elong.pb.newdda.net;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created by zhangyong on 15/2/8.
@@ -8,7 +13,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class BackendDdaChannel implements DdaChannel {
 
+    private final static Logger logger = LoggerFactory.getLogger(BackendDdaChannel.class);
+
     private static ConnectIdGenerator CONNECT_ID_GENERATOR = new ConnectIdGenerator();
+
+    private AtomicReference<FrontBackendSession> CURRENT_SESSION = new AtomicReference<FrontBackendSession>();
 
     private BackendChannelPool backendChannelPool;
 
@@ -28,7 +37,7 @@ public class BackendDdaChannel implements DdaChannel {
 
     private Long id;
 
-    public BackendDdaChannel(ChannelWrapper channelWrapper,BackendChannelPool backendChannelPool) {
+    public BackendDdaChannel(ChannelWrapper channelWrapper, BackendChannelPool backendChannelPool) {
         this.id = CONNECT_ID_GENERATOR.getId();
         this.autocommit = true;
         this.isAuthenticated = false;
@@ -70,6 +79,10 @@ public class BackendDdaChannel implements DdaChannel {
         this.isAuthenticated = isAuthenticated;
     }
 
+    public boolean isAuthenticated() {
+        return isAuthenticated;
+    }
+
     public AtomicBoolean getIsClosed() {
         return isClosed;
     }
@@ -84,6 +97,18 @@ public class BackendDdaChannel implements DdaChannel {
 
     public void setBackendChannelPool(BackendChannelPool backendChannelPool) {
         this.backendChannelPool = backendChannelPool;
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(" 后端链接编号:").append(this.id)
+                .append(" 对应mysql channel:").append(channelWrapper.getChannel());
+        return sb.toString();
+    }
+
+    //处理mysql的消息
+    public void handle(ByteBuffer byteBuffer) {
+
     }
 
 }

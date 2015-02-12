@@ -75,8 +75,9 @@ public class BackendClient {
                         public void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(
                                     defaultEventExecutorGroup,
-                                    new BackendDecoder(),
+                                    //encoder 在 decoder 之前
                                     new BackendEncoder(),
+                                    new BackendDecoder(),
                                     new IdleStateHandler(0, 0, nettyClientConfig.getClientChannelMaxIdleTimeSeconds()),
                                     new BackendEventHandler()
                             );
@@ -162,7 +163,12 @@ public class BackendClient {
 
     public void removeBackendChannel(Channel channel) {
         BACKEND_MAPPING.remove(channel);
-        RemotingUtil.closeChannel(channel);
+        if (channel != null && channel.isActive()) {
+            RemotingUtil.closeChannel(channel);
+        }
     }
+
+    //====================================================== 处理 decode 以及sql 相关 =====================================
+
 
 }

@@ -10,7 +10,6 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 /**
@@ -31,15 +30,13 @@ public class BackendDecoder extends LengthFieldBasedFrameDecoder {
     @Override
     public Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
         Channel channel = ctx.channel();
-        BackendDdaChannel backendDdaChannel = BackendClient.getInstance().getMappingBackendChannel(channel);
         ByteBuf frame = null;
         try {
             frame = (ByteBuf) super.decode(ctx, in);
             if (null == frame) {
                 return null;
             }
-            ByteBuffer byteBuffer = frame.nioBuffer();
-
+            BackendDdaChannel backendDdaChannel = BackendClient.getInstance().getMappingBackendChannel(channel);
         } catch (Exception e) {
             logger.error("decode exception, " + RemotingHelper.parseChannelRemoteAddr(ctx.channel()), e);
             // 这里关闭后， 会在pipeline中产生事件，通过具体的close事件来清理数据结构

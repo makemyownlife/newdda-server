@@ -1,5 +1,6 @@
 package com.elong.pb.newdda.net;
 
+import com.elong.pb.newdda.common.RemotingUtil;
 import com.elong.pb.newdda.config.DataSourceConfig;
 import com.elong.pb.newdda.config.DataSourceLocation;
 import com.elong.pb.newdda.server.BackendClient;
@@ -154,7 +155,7 @@ public class BackendChannelPool {
             }
             //关闭链接 ，并且去掉相关的映射
             Channel channel = backendDdaChannel.getChannelWrapper().getChannel();
-            backendDdaChannel.getIsClosed().set(true);
+            backendDdaChannel.getIsClosed().compareAndSet(false, true);
             BackendClient.getInstance().removeBackendChannel(channel);
             backendDdaChannel = null;
         } finally {
