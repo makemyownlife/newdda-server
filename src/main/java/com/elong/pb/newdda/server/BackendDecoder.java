@@ -36,6 +36,7 @@ public class BackendDecoder extends LengthFieldBasedFrameDecoder {
             if (null == frame) {
                 return null;
             }
+            logger.info("frame===" + frame);
             BackendDdaChannel backendDdaChannel = BackendClient.getInstance().getMappingBackendChannel(channel);
         } catch (Exception e) {
             logger.error("decode exception, " + RemotingHelper.parseChannelRemoteAddr(ctx.channel()), e);

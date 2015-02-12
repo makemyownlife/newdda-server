@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
  * Created by zhangyong on 14/11/21.
  * 张勇的新DDA的服务 用于关键字分库
  */
-public class Main {
+public class DdaMain {
 
-    private static Logger logger = LoggerFactory.getLogger(Main.class);
+    private static Logger logger = LoggerFactory.getLogger(DdaMain.class);
 
     public static void main(String[] args) {
         try {

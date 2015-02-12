@@ -13,7 +13,7 @@ import java.sql.Statement;
  */
 public class JdbcTest {
 
-    @Test
+//    @Test
     public void getBlog() throws Exception {
         System.out.println(123);
         String url = "jdbc:mysql://localhost:8066/dbtest?user=test&password=test";

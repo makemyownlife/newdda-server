@@ -57,6 +57,8 @@ public class BackendEventHandler extends ChannelDuplexHandler {
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        System.out.println("idle...");
+        logger.info("IdleStateEvent==" + evt);
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent evnet = (IdleStateEvent) evt;
             if (evnet.state().equals(IdleState.ALL_IDLE)) {
