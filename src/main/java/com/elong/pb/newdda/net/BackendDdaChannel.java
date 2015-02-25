@@ -1,5 +1,6 @@
 package com.elong.pb.newdda.net;
 
+import com.elong.pb.newdda.handler.BackendAuthHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +20,8 @@ public class BackendDdaChannel implements DdaChannel {
 
     private AtomicReference<FrontBackendSession> CURRENT_SESSION = new AtomicReference<FrontBackendSession>();
 
+    private BackendAuthHandler backendAuthHandler;
+
     private BackendChannelPool backendChannelPool;
 
     //channel封装相关
@@ -37,12 +40,15 @@ public class BackendDdaChannel implements DdaChannel {
 
     private Long id;
 
+    private String charset;
+
     public BackendDdaChannel(ChannelWrapper channelWrapper, BackendChannelPool backendChannelPool) {
         this.id = CONNECT_ID_GENERATOR.getId();
         this.autocommit = true;
         this.isAuthenticated = false;
         this.channelWrapper = channelWrapper;
         this.backendChannelPool = backendChannelPool;
+        this.backendAuthHandler = new BackendAuthHandler(this);
         this.isRunning = false;
         this.isClosed = new AtomicBoolean(false);
     }
@@ -99,16 +105,37 @@ public class BackendDdaChannel implements DdaChannel {
         this.backendChannelPool = backendChannelPool;
     }
 
+    public BackendAuthHandler getBackendAuthHandler() {
+        return backendAuthHandler;
+    }
+
+    public String getCharset() {
+        return charset;
+    }
+
+    public void setCharset(String charset) {
+        this.charset = charset;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(" 后端链接编号:").append(this.id)
-                .append(" 对应mysql channel:").append(channelWrapper.getChannel());
+        sb.append("后端链接编号:").append(this.id);
         return sb.toString();
     }
 
+    //==================================================== 处理消息相关 ====================================================
     //处理mysql的消息
-    public void handle(ByteBuffer byteBuffer) {
+    public void handle(ByteBuffer byteBuffer) throws Exception {
+        //没有验证，则需要发送auth 相关的命令
+        if (!isAuthenticated) {
+            backendAuthHandler.handle(byteBuffer);
+            return;
+        }
+    }
 
+    //发送mysql包
+    public void write(Object msg) {
+        this.getChannelWrapper().getChannel().writeAndFlush(msg);
     }
 
 }

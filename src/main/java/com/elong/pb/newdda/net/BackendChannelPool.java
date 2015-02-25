@@ -1,6 +1,5 @@
 package com.elong.pb.newdda.net;
 
-import com.elong.pb.newdda.common.RemotingUtil;
 import com.elong.pb.newdda.config.DataSourceConfig;
 import com.elong.pb.newdda.config.DataSourceLocation;
 import com.elong.pb.newdda.server.BackendClient;
@@ -8,6 +7,7 @@ import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -17,6 +17,8 @@ import java.util.concurrent.locks.ReentrantLock;
 public class BackendChannelPool {
 
     private final static Logger logger = LoggerFactory.getLogger(BackendChannelPool.class);
+
+    private final static Long AUTH_TIME_OUT = 20 * 1000L;
 
     private final ReentrantLock lock = new ReentrantLock();
 
@@ -47,7 +49,7 @@ public class BackendChannelPool {
         try {
             int minconn = this.dataSourceConfig.getInitconn();
             for (int i = 0; i < minconn; i++) {
-                BackendDdaChannel backendDdaChannel = createBackendDdaChannel();
+                BackendDdaChannel backendDdaChannel = createAuthBackendDdaChannel();
                 if (backendDdaChannel != null) {
                     for (int j = 0; j < items.length; j++) {
                         if (items[j] == null) {
@@ -63,7 +65,7 @@ public class BackendChannelPool {
         }
     }
 
-    public BackendDdaChannel getBackendDdaChannel() {
+    public BackendDdaChannel getBackendDdaChannelFromPool() {
         final ReentrantLock lock = this.lock;
         lock.lock();
         try {
@@ -90,9 +92,8 @@ public class BackendChannelPool {
                     return backendDdaChannel;
                 }
             }
-
             //若找到不到链接 则直接创建链接
-            BackendDdaChannel newBackendDdaChannel = createBackendDdaChannel();
+            BackendDdaChannel newBackendDdaChannel = createAuthBackendDdaChannel();
             if (newBackendDdaChannel != null) {
                 activeCount++;
             }
@@ -103,7 +104,7 @@ public class BackendChannelPool {
     }
 
     //释放链接，并且放入到数组中，以供下次使用
-    public void releaseBackendChannel(BackendDdaChannel backendDdaChannel) {
+    public void releaseBackendChannelIntoPool(BackendDdaChannel backendDdaChannel) {
         if (backendDdaChannel == null || backendDdaChannel.isClosedOrQuit()) {
             return;
         }
@@ -124,6 +125,7 @@ public class BackendChannelPool {
             lock.unlock();
         }
         //close excess connection 暂时先不加 ，我们以后看是否需要添加
+        realCloseBackendChannel(backendDdaChannel, true);
     }
 
     public void realCloseBackendChannel(BackendDdaChannel backendDdaChannel, boolean isForce) {
@@ -149,7 +151,7 @@ public class BackendChannelPool {
                     break;
                 }
             }
-            //正在活跃，则需要直接减去相关的值
+            //正在活跃，则需要直接减去backendDdaChannel相关的值
             if (isActive) {
                 --activeCount;
             }
@@ -163,6 +165,7 @@ public class BackendChannelPool {
         }
     }
 
+    //创建未握手验证的mysql 链接
     public BackendDdaChannel createBackendDdaChannel() {
         String remoteAddress = this.dataSourceLocation.getAddress();
         ChannelWrapper channelWrapper = null;
@@ -177,6 +180,24 @@ public class BackendChannelPool {
             return backendDdaChannel;
         }
         return null;
+    }
+
+    public BackendDdaChannel createAuthBackendDdaChannel() {
+        BackendDdaChannel backendDdaChannel = createBackendDdaChannel();
+        if (backendDdaChannel == null) {
+            return null;
+        }
+        boolean ready = false;
+        try {
+            ready = backendDdaChannel.getBackendAuthHandler().getCountDownLatch().await(AUTH_TIME_OUT, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            return null;
+        }
+        if (!ready) {
+            logger.error("fail to auth backendchannel:{} reason: time out", backendDdaChannel);
+            return null;
+        }
+        return backendDdaChannel;
     }
 
     public DataSourceConfig getDataSourceConfig() {

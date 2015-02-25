@@ -2,7 +2,8 @@ package com.elong.pb.newdda.server;
 
 import com.elong.pb.newdda.common.RemotingHelper;
 import com.elong.pb.newdda.common.RemotingUtil;
-import com.elong.pb.newdda.net.BackendDdaChannel;
+import com.elong.pb.newdda.net.FrontDdaChannel;
+import com.elong.pb.newdda.packet.BinaryPacket;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -13,17 +14,16 @@ import org.slf4j.LoggerFactory;
 import java.nio.ByteOrder;
 
 /**
- * Created by zhangyong on 15/2/7.
- * 解析数据返回
+ * Created by zhangyong on 15/2/13.
  */
-public class BackendDecoder extends LengthFieldBasedFrameDecoder {
+public class FrontDecoder extends LengthFieldBasedFrameDecoder {
 
-    private final static Logger logger = LoggerFactory.getLogger(BackendDecoder.class);
+    private final static Logger logger = LoggerFactory.getLogger(FrontDecoder.class);
 
     //最大的是16M
     private static final Integer MAX_PACKET_SIZE = 1024 * 1024 * 16;
 
-    public BackendDecoder() {
+    public FrontDecoder() {
         super(ByteOrder.LITTLE_ENDIAN, MAX_PACKET_SIZE, 0, 3, 1, 0, true);
     }
 
@@ -36,8 +36,10 @@ public class BackendDecoder extends LengthFieldBasedFrameDecoder {
             if (null == frame) {
                 return null;
             }
-            BackendDdaChannel backendDdaChannel = BackendClient.getInstance().getMappingBackendChannel(channel);
-            backendDdaChannel.handle(frame.nioBuffer());
+            //若是 ,验证,则直接返回空，若是查询，则传递到 FrontServerHandler
+            FrontDdaChannel frontDdaChannel = FrontClient.getInstance().getFrontDdaChannel(channel);
+            BinaryPacket binaryPacket = frontDdaChannel.handle(frame.nioBuffer());
+            return binaryPacket;
         } catch (Exception e) {
             logger.error("decode exception, " + RemotingHelper.parseChannelRemoteAddr(ctx.channel()), e);
             // 这里关闭后， 会在pipeline中产生事件，通过具体的close事件来清理数据结构

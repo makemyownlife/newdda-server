@@ -17,11 +17,14 @@ public class FrontServer {
         return INSTANCE;
     }
 
-    public void start(){
-        
+    private FrontClient frontClient;
+
+    public void start() {
+        this.frontClient = FrontClient.getInstance();
+        frontClient.start();
     }
 
-    public void stop(){
+    public void stop() {
 
     }
 

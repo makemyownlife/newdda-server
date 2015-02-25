@@ -19,7 +19,7 @@ public class DdaServer {
 
     public void start() {
         logger.info("开始启动DDAserver...(⊙o⊙)");
-
+        FrontServer.getInstance().start();
         logger.info("开始启动DDA前端服务");
 
         logger.info("开始启动DDA后端连mysql服务");
