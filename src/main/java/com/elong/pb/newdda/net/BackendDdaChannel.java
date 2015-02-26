@@ -131,6 +131,11 @@ public class BackendDdaChannel implements DdaChannel {
             backendAuthHandler.handle(byteBuffer);
             return;
         }
+        FrontBackendSession currentSession = CURRENT_SESSION.get();
+        //是否存在前端session,若是前端
+        if (currentSession != null) {
+
+        }
     }
 
     //发送mysql包
