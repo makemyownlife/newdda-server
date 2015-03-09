@@ -5,7 +5,7 @@
     <!-- 控制台 -->
     <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyy-MM-dd HH:mm:ss,GMT+8} %p %t %logger{36}:%L - %msg%n</pattern>
+            <pattern>%d{yyy-MM-dd HH:mm:ss.SSS} %p %t %logger{36}:%L - %msg%n</pattern>
             <charset class="java.nio.charset.Charset">UTF-8</charset>
         </encoder>
     </appender>
