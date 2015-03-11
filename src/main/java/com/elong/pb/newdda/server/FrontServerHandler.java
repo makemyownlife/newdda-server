@@ -2,10 +2,13 @@ package com.elong.pb.newdda.server;
 
 import com.elong.pb.newdda.common.ExecutorUtil;
 import com.elong.pb.newdda.common.NameableExecutor;
+import com.elong.pb.newdda.config.ErrorCode;
 import com.elong.pb.newdda.config.SystemConfig;
 import com.elong.pb.newdda.net.FrontDdaChannel;
 import com.elong.pb.newdda.packet.BinaryPacket;
+import com.elong.pb.newdda.packet.ErrorPacket;
 import com.elong.pb.newdda.packet.MysqlPacket;
+import com.elong.pb.newdda.packet.factory.ErrorPacketFactory;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
@@ -38,7 +41,10 @@ public class FrontServerHandler extends SimpleChannelInboundHandler {
                                 frontDdaChannel.getFrontQueryHandler().handle(byteBuffer);
                                 break;
                             default:
-                                logger.info("unkown packet");
+                                ErrorPacket errorPacket = ErrorPacketFactory.errorMessage(
+                                        ErrorCode.ER_UNKNOWN_COM_ERROR,
+                                        "Unknown command");
+                                frontDdaChannel.write(errorPacket);
                         }
                     } catch (Exception e) {
                         logger.error(" ", e);
