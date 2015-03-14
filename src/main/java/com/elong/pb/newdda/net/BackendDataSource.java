@@ -37,6 +37,8 @@ public class BackendDataSource {
                     dataSourceLocation,
                     dataSourceConfig.getMaxconn());
             backendChannelPool.initMinConn();
+            //添加DataSourceLocation 与 后端连接池的对应关系
+            DdaRoute.addLocationPoolMapping(dataSourceLocation, backendChannelPool);
         }
     }
 
