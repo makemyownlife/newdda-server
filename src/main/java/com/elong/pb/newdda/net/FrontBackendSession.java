@@ -19,6 +19,8 @@ public class FrontBackendSession {
         this.frontDdaChannel = frontDdaChannel;
     }
 
+    public void execute(String sql) {
 
+    }
 
 }

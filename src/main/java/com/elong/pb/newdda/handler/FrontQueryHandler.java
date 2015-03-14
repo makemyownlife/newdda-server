@@ -43,7 +43,12 @@ public class FrontQueryHandler implements Handler {
             logger.info("sql==" + sql + " rs==" + (rs & 0xff));
         }
         //创建一次 前后端的一次会话
-        FrontBackendSession session = new FrontBackendSession(frontDdaChannel);
+        FrontBackendSession session = frontDdaChannel.getCurrentFrontBackendSession();
+        if (session == null) {
+            session = new FrontBackendSession(frontDdaChannel);
+            frontDdaChannel.setCurrentFrontBackendSession(session);
+        }
+        session.execute(sql);
     }
 
 }

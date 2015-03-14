@@ -6,6 +6,7 @@ import com.elong.pb.newdda.packet.BinaryPacket;
 import io.netty.channel.Channel;
 
 import java.nio.ByteBuffer;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created by zhangyong on 15/2/13.
@@ -13,6 +14,8 @@ import java.nio.ByteBuffer;
 public class FrontDdaChannel implements DdaChannel {
 
     private static AcceptIdGenerator acceptIdGenerator = new AcceptIdGenerator();
+
+    private AtomicReference<FrontBackendSession> FRONT_BACKEND_SESSION_REF = new AtomicReference<FrontBackendSession>();
 
     private Channel channel;
 
@@ -69,6 +72,14 @@ public class FrontDdaChannel implements DdaChannel {
 
     public FrontQueryHandler getFrontQueryHandler() {
         return frontQueryHandler;
+    }
+
+    public FrontBackendSession getCurrentFrontBackendSession() {
+        return FRONT_BACKEND_SESSION_REF.get();
+    }
+
+    public void setCurrentFrontBackendSession(FrontBackendSession session){
+        FRONT_BACKEND_SESSION_REF.set(session);
     }
 
     /**
