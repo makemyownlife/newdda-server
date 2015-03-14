@@ -1,8 +1,12 @@
 package com.elong.pb.newdda.net;
 
 import com.elong.pb.newdda.route.DdaRoute;
+import com.elong.pb.newdda.route.RouteResultSet;
+import com.elong.pb.newdda.route.RouteResultSetNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Created by zhangyong on 15/2/11.
@@ -13,6 +17,8 @@ public class FrontBackendSession {
 
     private static Logger logger = LoggerFactory.getLogger(FrontBackendSession.class);
 
+    private final static Long MAX_EXECUTE_TIME = 30 * 1000L;
+
     //前端链接
     private FrontDdaChannel frontDdaChannel;
 
@@ -21,7 +27,8 @@ public class FrontBackendSession {
     }
 
     public void execute(String sql) {
-        DdaRoute.route(sql, frontDdaChannel.getDataSource());
+        RouteResultSet routeResultSet = DdaRoute.route(sql, frontDdaChannel.getDataSource());
+        RouteResultSetNode[] nodes = routeResultSet.getNodes();
     }
 
 }

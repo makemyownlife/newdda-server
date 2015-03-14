@@ -18,7 +18,7 @@ public class RouteResultSet {
 
     private final String statement;
 
-    public RouteResultSetNode[] nodes;
+    private RouteResultSetNode[] nodes;
 
     public RouteResultSet(String stmt) {
         this.statement = stmt;
