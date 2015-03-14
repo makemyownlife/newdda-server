@@ -11,6 +11,9 @@ public class DdaRoute {
 
     private static final Logger logger = LoggerFactory.getLogger(DdaRoute.class);
 
+    public static RouteResultSet route(String sql , String dataSource) {
 
+        return null;
+    }
 
 }

@@ -23,6 +23,8 @@ public class FrontDdaChannel implements DdaChannel {
 
     private byte[] seed;
 
+    private String dataSource;
+
     private FrontAuthHandler frontAuthHandler;
 
     private FrontQueryHandler frontQueryHandler;
@@ -80,6 +82,14 @@ public class FrontDdaChannel implements DdaChannel {
 
     public void setCurrentFrontBackendSession(FrontBackendSession session){
         FRONT_BACKEND_SESSION_REF.set(session);
+    }
+
+    public String getDataSource() {
+        return dataSource;
+    }
+
+    public void setDataSource(String dataSource) {
+        this.dataSource = dataSource;
     }
 
     /**

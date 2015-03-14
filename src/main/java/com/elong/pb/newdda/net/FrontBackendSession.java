@@ -1,5 +1,6 @@
 package com.elong.pb.newdda.net;
 
+import com.elong.pb.newdda.route.DdaRoute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +21,7 @@ public class FrontBackendSession {
     }
 
     public void execute(String sql) {
-
+        DdaRoute.route(sql, frontDdaChannel.getDataSource());
     }
 
 }

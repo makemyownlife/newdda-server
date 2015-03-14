@@ -66,6 +66,8 @@ public class FrontAuthHandler implements Handler {
             logger.info(s.toString());
             //设置标志位
             this.frontDdaChannel.setAuthenticated(true);
+            //设置当前的虚拟数据库(虚拟的节点)
+            this.frontDdaChannel.setDataSource(database);
             ByteBuffer authOkByteBuffer = ByteBuffer.allocate(AUTH_OK.length);
             authOkByteBuffer.put(AUTH_OK);
             authOkByteBuffer.flip();
