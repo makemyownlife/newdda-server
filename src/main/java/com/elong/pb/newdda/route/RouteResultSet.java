@@ -1,5 +1,7 @@
 package com.elong.pb.newdda.route;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /**
  * 路由的结果
  * User: zhangyong
@@ -9,6 +11,6 @@ package com.elong.pb.newdda.route;
  */
 public class RouteResultSet {
 
-
+    private final static Logger logger = LoggerFactory.getLogger(RouteResultSet.class);
 
 }
