@@ -15,7 +15,7 @@ public class FrontDdaChannel implements DdaChannel {
 
     private static AcceptIdGenerator acceptIdGenerator = new AcceptIdGenerator();
 
-    private AtomicReference<FrontBackendSession> FRONT_BACKEND_SESSION_REF = new AtomicReference<FrontBackendSession>();
+    private FrontBackendSession frontBackendSession;
 
     private Channel channel;
 
@@ -42,6 +42,7 @@ public class FrontDdaChannel implements DdaChannel {
         this.frontQueryHandler = new FrontQueryHandler(this);
         this.isAuthenticated = false;
         this.autocommit = true;
+        this.frontBackendSession = new FrontBackendSession(this);
     }
 
     public Channel getChannel() {
@@ -77,11 +78,7 @@ public class FrontDdaChannel implements DdaChannel {
     }
 
     public FrontBackendSession getCurrentFrontBackendSession() {
-        return FRONT_BACKEND_SESSION_REF.get();
-    }
-
-    public void setCurrentFrontBackendSession(FrontBackendSession session){
-        FRONT_BACKEND_SESSION_REF.set(session);
+        return this.frontBackendSession;
     }
 
     public String getDataSource() {
