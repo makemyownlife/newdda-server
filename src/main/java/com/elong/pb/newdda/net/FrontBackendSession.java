@@ -3,6 +3,7 @@ package com.elong.pb.newdda.net;
 import com.elong.pb.newdda.route.DdaRoute;
 import com.elong.pb.newdda.route.RouteResultSet;
 import com.elong.pb.newdda.route.RouteResultSetNode;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +30,10 @@ public class FrontBackendSession {
     public void execute(String sql) {
         RouteResultSet routeResultSet = DdaRoute.route(sql, frontDdaChannel.getDataSource());
         RouteResultSetNode[] nodes = routeResultSet.getNodes();
+        if (nodes == null) {
+            logger.error("sql:{}无法找到后端连接");
+            return;
+        }
     }
 
 }
