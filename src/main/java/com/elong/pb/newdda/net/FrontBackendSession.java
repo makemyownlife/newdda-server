@@ -3,11 +3,8 @@ package com.elong.pb.newdda.net;
 import com.elong.pb.newdda.route.DdaRoute;
 import com.elong.pb.newdda.route.RouteResultSet;
 import com.elong.pb.newdda.route.RouteResultSetNode;
-import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.CountDownLatch;
 
 /**
  * Created by zhangyong on 15/2/11.
@@ -23,8 +20,14 @@ public class FrontBackendSession {
     //前端链接
     private FrontDdaChannel frontDdaChannel;
 
+    private final SingleNodeExecutor singleNodeExecutor;
+
+    private final MultiNodeExecutor multiNodeExecutor;
+
     public FrontBackendSession(FrontDdaChannel frontDdaChannel) {
         this.frontDdaChannel = frontDdaChannel;
+        this.singleNodeExecutor = new SingleNodeExecutor();
+        this.multiNodeExecutor = new MultiNodeExecutor();
     }
 
     public void execute(String sql) {
@@ -33,6 +36,8 @@ public class FrontBackendSession {
         if (nodes == null) {
             logger.error("sql:{}无法找到后端连接");
             return;
+        }
+        if(nodes.length > 1) {
         }
     }
 
