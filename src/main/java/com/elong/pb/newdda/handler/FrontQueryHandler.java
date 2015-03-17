@@ -44,10 +44,6 @@ public class FrontQueryHandler implements Handler {
         }
         //创建一次 前后端的一次会话
         FrontBackendSession session = frontDdaChannel.getCurrentFrontBackendSession();
-        if (session == null) {
-            session = new FrontBackendSession(frontDdaChannel);
-            frontDdaChannel.setCurrentFrontBackendSession(session);
-        }
         session.execute(sql);
     }
 
