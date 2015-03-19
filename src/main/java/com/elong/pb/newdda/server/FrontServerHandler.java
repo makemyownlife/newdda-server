@@ -35,7 +35,6 @@ public class FrontServerHandler extends SimpleChannelInboundHandler {
                 public void run() {
                     try {
                         ByteBuffer byteBuffer = binaryPacket.getByteBuffer();
-                        System.out.println("byteBuffer.get(4)=" + byteBuffer.get(4));
                         switch (byteBuffer.get(4)) {
                             case MysqlPacket.COM_QUERY:
                                 frontDdaChannel.getFrontQueryHandler().handle(byteBuffer);
