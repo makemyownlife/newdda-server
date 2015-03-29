@@ -19,6 +19,7 @@ public class RouteResultSetNode {
         this.backendChannelPool = backendChannelPool;
         this.statement = statement;
     }
+
     public String getStatement() {
         return statement;
     }

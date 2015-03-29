@@ -15,14 +15,25 @@
  */
 package com.elong.pb.newdda.net;
 
+import com.elong.pb.newdda.route.RouteResultSetNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * 单节点数据执行器
  */
 public final class SingleNodeExecutor extends NodeExecutor {
 
+    private final static Logger logger = LoggerFactory.getLogger(SingleNodeExecutor.class);
+
+    public void execute(RouteResultSetNode node, FrontBackendSession session, String sql) {
+
+    }
+
     @Override
     public void terminate() throws InterruptedException {
 
     }
+
 
 }

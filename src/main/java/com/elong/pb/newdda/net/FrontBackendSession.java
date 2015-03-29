@@ -6,6 +6,8 @@ import com.elong.pb.newdda.route.RouteResultSetNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * Created by zhangyong on 15/2/11.
  * 前后端一次会话
@@ -15,8 +17,6 @@ public class FrontBackendSession {
 
     private static Logger logger = LoggerFactory.getLogger(FrontBackendSession.class);
 
-    private final static Long MAX_EXECUTE_TIME = 30 * 1000L;
-
     //前端链接
     private FrontDdaChannel frontDdaChannel;
 
@@ -24,10 +24,18 @@ public class FrontBackendSession {
 
     private final MultiNodeExecutor multiNodeExecutor;
 
+    private ConcurrentHashMap<RouteResultSetNode, BackendDdaChannel> target;
+
     public FrontBackendSession(FrontDdaChannel frontDdaChannel) {
         this.frontDdaChannel = frontDdaChannel;
         this.singleNodeExecutor = new SingleNodeExecutor();
         this.multiNodeExecutor = new MultiNodeExecutor();
+        this.target = new ConcurrentHashMap<RouteResultSetNode, BackendDdaChannel>();
+    }
+
+    //当前需要执行sql对应的后端链接
+    public ConcurrentHashMap<RouteResultSetNode, BackendDdaChannel> getTarget() {
+        return target;
     }
 
     public void execute(String sql) {
@@ -37,8 +45,12 @@ public class FrontBackendSession {
             logger.error("sql:{}无法找到后端连接");
             return;
         }
-        if(nodes.length > 1) {
-
+        if (nodes.length == 1) {
+            singleNodeExecutor.execute(nodes[0], this, sql);
+        }
+        //多节点执行命令
+        else {
+            multiNodeExecutor.execute(nodes, this, sql);
         }
     }
 

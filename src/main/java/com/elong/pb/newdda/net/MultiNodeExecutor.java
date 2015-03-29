@@ -1,8 +1,10 @@
 package com.elong.pb.newdda.net;
 
+import com.elong.pb.newdda.route.RouteResultSetNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -35,6 +37,25 @@ public final class MultiNodeExecutor extends NodeExecutor {
     private final ReentrantLock lock = new ReentrantLock();
 
     private final Condition taskFinished = lock.newCondition();
+
+    public void execute(RouteResultSetNode[] nodes, FrontBackendSession session, String sql) {
+        //初始化(相关的参数)
+        final ReentrantLock lock = this.lock;
+        lock.lock();
+        try {
+            this.isFail.set(false);
+            this.unfinishedNodeCount = nodes.length;
+            this.errno = 0;
+            this.errMessage = null;
+            this.fieldEOF = false;
+            this.packetId = 0;
+            this.affectedRows = 0L;
+            this.insertId = 0L;
+        } finally {
+            lock.unlock();
+        }
+
+    }
 
     @Override
     public void terminate() throws InterruptedException {
