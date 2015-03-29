@@ -125,7 +125,12 @@ public class BackendDdaChannel implements DdaChannel {
 
     //得到当前的前端后端的一次会话
     public FrontBackendSession getCurrentSession() {
-        return CURRENT_SESSION.get();
+        return this.CURRENT_SESSION.get();
+    }
+
+    //设置新的前端后端的一次会话
+    public void setCurrentSession(FrontBackendSession session) {
+        this.CURRENT_SESSION.set(session);
     }
 
     //==================================================== 处理消息相关 ====================================================
