@@ -123,6 +123,11 @@ public class BackendDdaChannel implements DdaChannel {
         return sb.toString();
     }
 
+    //得到当前的前端后端的一次会话
+    public FrontBackendSession getCurrentSession() {
+        return CURRENT_SESSION.get();
+    }
+
     //==================================================== 处理消息相关 ====================================================
     //处理mysql的消息
     public void handle(ByteBuffer byteBuffer) throws Exception {
@@ -131,9 +136,10 @@ public class BackendDdaChannel implements DdaChannel {
             backendAuthHandler.handle(byteBuffer);
             return;
         }
-        FrontBackendSession currentSession = CURRENT_SESSION.get();
+        FrontBackendSession currentSession = getCurrentSession();
         //是否存在前端session
         if (currentSession != null) {
+
         }
     }
 

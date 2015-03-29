@@ -55,6 +55,15 @@ public final class MultiNodeExecutor extends NodeExecutor {
             lock.unlock();
         }
 
+        //分析所有的链接 并且将所有的链接设置为
+        ConcurrentHashMap<RouteResultSetNode, BackendDdaChannel> target = session.getTarget();
+        for (RouteResultSetNode rrn : nodes) {
+            BackendDdaChannel backendDdaChannel = target.get(rrn);
+            if (backendDdaChannel != null) {
+                backendDdaChannel.setRunning(true);
+            }
+        }
+
     }
 
     @Override

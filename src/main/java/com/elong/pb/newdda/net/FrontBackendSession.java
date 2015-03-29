@@ -45,6 +45,20 @@ public class FrontBackendSession {
             logger.error("sql:{}无法找到后端连接");
             return;
         }
+
+        //组装后端的链接
+        target.clear();
+        for (int i = 0; i < nodes.length; i++) {
+            RouteResultSetNode node = nodes[i];
+            BackendDdaChannel backendDdaChannel = node.getBackendChannelPool().getBackendDdaChannelFromPool();
+            if (backendDdaChannel == null) {
+                logger.error("找不到node:{} 对应的后端mysql链接", node);
+                return;
+            }
+            target.put(node, backendDdaChannel);
+        }
+
+        //分别不同的执行器
         if (nodes.length == 1) {
             singleNodeExecutor.execute(nodes[0], this, sql);
         }
