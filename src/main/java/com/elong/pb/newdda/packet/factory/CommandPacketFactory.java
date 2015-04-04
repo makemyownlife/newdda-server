@@ -3,6 +3,8 @@ package com.elong.pb.newdda.packet.factory;
 import com.elong.pb.newdda.packet.CommandPacket;
 import com.elong.pb.newdda.packet.MysqlPacket;
 
+import java.io.UnsupportedEncodingException;
+
 /**
  * Created by zhangyong on 14/12/29.
  * 命令包的创建
@@ -19,6 +21,14 @@ public class CommandPacketFactory {
         cmd.command = MysqlPacket.COM_QUERY;
         cmd.arg = s.toString().getBytes();
         return cmd;
+    }
+
+    public static CommandPacket createQueryCommand(String statement ,String charset) throws UnsupportedEncodingException {
+        CommandPacket command = new CommandPacket();
+        command.packetId = 0 ;
+        command.command = MysqlPacket.COM_QUERY;
+        command.arg = statement.getBytes(charset);
+        return command;
     }
 
 }

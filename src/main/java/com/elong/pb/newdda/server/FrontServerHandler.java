@@ -23,7 +23,7 @@ public class FrontServerHandler extends SimpleChannelInboundHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(FrontServerHandler.class);
 
-    private static NameableExecutor NETTEY_FRONT_EXECUTOR = ExecutorUtil.create("NetteyFrontExecutor", SystemConfig.DEFAULT_PROCESSORS * 2);
+    private static NameableExecutor NETTEY_FRONT_EXECUTOR = ExecutorUtil.create("NetteyFrontExecutor", SystemConfig.DEFAULT_PROCESSORS);
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {

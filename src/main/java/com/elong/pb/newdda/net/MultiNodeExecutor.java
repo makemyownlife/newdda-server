@@ -1,9 +1,15 @@
 package com.elong.pb.newdda.net;
 
+import com.elong.pb.newdda.common.ExecutorUtil;
+import com.elong.pb.newdda.common.NameableExecutor;
+import com.elong.pb.newdda.config.SystemConfig;
+import com.elong.pb.newdda.packet.CommandPacket;
+import com.elong.pb.newdda.packet.factory.CommandPacketFactory;
 import com.elong.pb.newdda.route.RouteResultSetNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
@@ -15,6 +21,8 @@ import java.util.concurrent.locks.ReentrantLock;
 public final class MultiNodeExecutor extends NodeExecutor {
 
     private static final Logger logger = LoggerFactory.getLogger(MultiNodeExecutor.class);
+
+    private static NameableExecutor MULTI_NODE_THREAD_POOL = ExecutorUtil.create("multiNodeThreadPool", SystemConfig.DEFAULT_PROCESSORS);
 
     private static final int RECEIVE_CHUNK_SIZE = 16 * 1024;
 
@@ -65,7 +73,25 @@ public final class MultiNodeExecutor extends NodeExecutor {
             }
         }
 
+        //命令包
+        CommandPacket commandPacket = null;
+        try {
+            commandPacket = CommandPacketFactory.createQueryCommand(sql, SystemConfig.DEFAULT_CHARSET);
+        } catch (UnsupportedEncodingException e) {
+            logger.error("can't encoding sql :{}", sql);
+        }
 
+        //发送不同的命令到相关的数据
+        for (RouteResultSetNode rrn : nodes) {
+            final BackendDdaChannel backendDdaChannel = target.get(rrn);
+            final CommandPacket temp = commandPacket;
+            MULTI_NODE_THREAD_POOL.execute(new Runnable() {
+                @Override
+                public void run() {
+                    backendDdaChannel.write(temp);
+                }
+            });
+        }
 
     }
 
