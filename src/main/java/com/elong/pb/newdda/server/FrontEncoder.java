@@ -2,6 +2,7 @@ package com.elong.pb.newdda.server;
 
 import com.elong.pb.newdda.common.RemotingHelper;
 import com.elong.pb.newdda.common.RemotingUtil;
+import com.elong.pb.newdda.packet.OkPacket;
 import com.elong.pb.newdda.packet.Packet;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -24,9 +25,11 @@ public class FrontEncoder extends MessageToByteEncoder {
             if (msg == null) {
                 return;
             }
-            logger.info("frontencoder:" + msg);
             Packet packet = (Packet) msg;
             ByteBuffer byteBuffer = packet.encode();
+            if(packet instanceof OkPacket) {
+                System.out.println(byteBuffer);
+            }
             out.writeBytes(byteBuffer);
         } catch (Exception e) {
             logger.error("encode exception, " + RemotingHelper.parseChannelRemoteAddr(ctx.channel()), e);

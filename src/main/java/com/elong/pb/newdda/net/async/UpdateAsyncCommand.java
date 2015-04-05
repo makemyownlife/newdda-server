@@ -39,32 +39,34 @@ public class UpdateAsyncCommand implements AsyncCommand {
     @Override
     public void asyncMysqlPacket(BackendDdaChannel backendDdaChannel, MysqlPacket mysqlPacket) {
         BinaryPacket binaryPacket = (BinaryPacket) mysqlPacket;
-//        try {
-//            lock.lock();
-//            OkPacket temp = new OkPacket();
-//            temp.decode(binaryPacket.getByteBuffer());
-//            //初始化
-//            if (okPacket == null) {
-//                okPacket = temp;
-//                if (temp.insertId > 0) {
-//                    this.insertId = okPacket.insertId;
-//                }
-//                this.affectedRows = okPacket.affectedRows;
-//            } else {
-//                this.affectedRows += temp.affectedRows;
-//                this.insertId = Math.min(this.insertId, temp.insertId);
-//            }
-//            executor.countDown();
-//        } finally {
-//            lock.unlock();
-//        }
-        this.binaryPacket =  binaryPacket;
+        try {
+            lock.lock();
+            OkPacket temp = new OkPacket();
+            temp.decode(binaryPacket.getByteBuffer());
+            //初始化
+            if (okPacket == null) {
+                okPacket = temp;
+                if (temp.insertId > 0) {
+                    this.insertId = okPacket.insertId;
+                }
+                this.affectedRows = okPacket.affectedRows;
+            } else {
+                this.affectedRows += temp.affectedRows;
+                if(temp.insertId > 0) {
+                    this.insertId = Math.min(this.insertId, temp.insertId);
+                    okPacket.insertId = this.insertId;
+                }
+                okPacket.affectedRows = this.affectedRows;
+            }
+        } finally {
+            lock.unlock();
+        }
         executor.countDown();
     }
 
     @Override
     public void encodeForFront(FrontDdaChannel frontDdaChannel) {
-        frontDdaChannel.write(binaryPacket);
+        frontDdaChannel.write(okPacket);
     }
 
 }

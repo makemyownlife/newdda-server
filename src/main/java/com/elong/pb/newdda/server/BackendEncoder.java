@@ -23,7 +23,6 @@ public class BackendEncoder extends MessageToByteEncoder {
     protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws Exception {
         try {
             Packet packet = (Packet) msg;
-            logger.info("msg==" + msg);
             ByteBuffer byteBuffer = packet.encode();
             out.writeBytes(byteBuffer);
         } catch (Exception e) {

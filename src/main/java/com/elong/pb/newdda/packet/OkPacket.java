@@ -31,11 +31,11 @@ public class OkPacket extends MysqlPacket implements Packet {
 
     @Override
     public ByteBuffer encode() {
-        ByteBuffer buffer = ByteBuffer.allocate(
-                3 + 1 + calcPacketSize()
-        );
+        int length = 3 + 1 + calcPacketSize();
+        ByteBuffer buffer = ByteBuffer.allocate(length);
         BufferUtil.writeUB3(buffer, calcPacketSize());
         buffer.put(packetId);
+        buffer.put(fieldCount);
         BufferUtil.writeLength(buffer, affectedRows);
         BufferUtil.writeLength(buffer, insertId);
         BufferUtil.writeUB2(buffer, serverStatus);
