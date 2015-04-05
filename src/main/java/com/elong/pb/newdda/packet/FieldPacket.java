@@ -137,6 +137,7 @@ public class FieldPacket extends MysqlPacket implements Packet {
         BufferUtil.writeUB3(buffer, calcPacketSize());
         buffer.put(packetId);
         writeBody(buffer);
+        buffer.flip();
         return buffer;
     }
 
