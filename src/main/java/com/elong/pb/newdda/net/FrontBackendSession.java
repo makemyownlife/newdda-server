@@ -1,11 +1,16 @@
 package com.elong.pb.newdda.net;
 
+import com.elong.pb.newdda.packet.BinaryPacket;
+import com.elong.pb.newdda.packet.factory.BinaryPacketFactory;
 import com.elong.pb.newdda.route.DdaRoute;
 import com.elong.pb.newdda.route.RouteResultSet;
 import com.elong.pb.newdda.route.RouteResultSetNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.ByteBuffer;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -20,9 +25,14 @@ public class FrontBackendSession {
     //前端链接
     private FrontDdaChannel frontDdaChannel;
 
+    //单节点执行器
     private final SingleNodeExecutor singleNodeExecutor;
 
+    //多节点执行器
     private final MultiNodeExecutor multiNodeExecutor;
+
+    //是否多节点
+    private volatile boolean isMultiNode = false;
 
     private ConcurrentHashMap<RouteResultSetNode, BackendDdaChannel> target;
 
@@ -38,6 +48,10 @@ public class FrontBackendSession {
         return target;
     }
 
+    public FrontDdaChannel getFrontDdaChannel() {
+        return frontDdaChannel;
+    }
+
     public void execute(String sql) {
         RouteResultSet routeResultSet = DdaRoute.route(sql, frontDdaChannel.getDataSource());
         RouteResultSetNode[] nodes = routeResultSet.getNodes();
@@ -46,8 +60,8 @@ public class FrontBackendSession {
             return;
         }
 
+        this.isMultiNode = false;
         //组装后端的链接
-        target.clear();
         for (int i = 0; i < nodes.length; i++) {
             RouteResultSetNode node = nodes[i];
             BackendDdaChannel backendDdaChannel = node.getBackendChannelPool().getBackendDdaChannelFromPool();
@@ -61,10 +75,31 @@ public class FrontBackendSession {
         //分别不同的执行器
         if (nodes.length == 1) {
             singleNodeExecutor.execute(nodes[0], this, sql);
+            multiNodeExecutor.execute(nodes, this, sql);
         }
         //多节点执行命令
         else {
+            isMultiNode = true;
             multiNodeExecutor.execute(nodes, this, sql);
+        }
+    }
+
+    public void dispatch(BackendDdaChannel backendDdaChannel, ByteBuffer byteBuffer) {
+        BinaryPacket binaryPacket = BinaryPacketFactory.createBinaryHeapByteBuffer(byteBuffer);
+        if (isMultiNode) {
+            multiNodeExecutor.asyncMysqlPacket(backendDdaChannel, binaryPacket);
+        }
+    }
+
+    public void release() {
+        //释放链接,并且设置相关的参数
+        Iterator iterator = target.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<RouteResultSetNode, BackendDdaChannel> entry = (Map.Entry) iterator.next();
+            BackendDdaChannel backendDdaChannel = entry.getValue();
+            backendDdaChannel.setCurrentSession(null);
+            backendDdaChannel.setRunning(false);
+            backendDdaChannel.getBackendChannelPool().releaseBackendChannelIntoPool(backendDdaChannel);
         }
     }
 

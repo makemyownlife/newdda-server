@@ -11,6 +11,7 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 /**
@@ -38,12 +39,17 @@ public class FrontDecoder extends LengthFieldBasedFrameDecoder {
             }
             //若是 ,验证,则直接返回空，若是查询，则传递到 FrontServerHandler
             FrontDdaChannel frontDdaChannel = FrontClient.getInstance().getFrontDdaChannel(channel);
-            BinaryPacket binaryPacket = frontDdaChannel.handle(frame.nioBuffer());
+            ByteBuffer byteBuffer = frame.nioBuffer();
+            BinaryPacket binaryPacket = frontDdaChannel.handle(byteBuffer);
             return binaryPacket;
         } catch (Exception e) {
             logger.error("decode exception, " + RemotingHelper.parseChannelRemoteAddr(ctx.channel()), e);
             // 这里关闭后， 会在pipeline中产生事件，通过具体的close事件来清理数据结构
             RemotingUtil.closeChannel(ctx.channel());
+        }finally {
+            if (null != frame) {
+                frame.release();
+            }
         }
         return null;
     }

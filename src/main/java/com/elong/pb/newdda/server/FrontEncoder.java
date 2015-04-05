@@ -24,6 +24,7 @@ public class FrontEncoder extends MessageToByteEncoder {
             if (msg == null) {
                 return;
             }
+            logger.info("frontencoder:" + msg);
             Packet packet = (Packet) msg;
             ByteBuffer byteBuffer = packet.encode();
             out.writeBytes(byteBuffer);

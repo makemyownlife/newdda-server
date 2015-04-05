@@ -18,6 +18,8 @@
  */
 package com.elong.pb.newdda.net;
 
+import com.elong.pb.newdda.packet.MysqlPacket;
+
 /**
  * @author <a href="mailto:shuo.qius@alibaba-inc.com">QIU Shuo</a>
  */
@@ -26,5 +28,9 @@ public abstract class NodeExecutor {
      * @return block until all tasks are finished
      */
     public abstract void terminate() throws InterruptedException;
+
+    public abstract void asyncMysqlPacket(BackendDdaChannel backendDdaChannel, MysqlPacket mysqlPacket);
+
+    public abstract void countDown();
 
 }

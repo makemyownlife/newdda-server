@@ -144,7 +144,7 @@ public class BackendDdaChannel implements DdaChannel {
         FrontBackendSession currentSession = getCurrentSession();
         //是否存在前端session
         if (currentSession != null) {
-
+            currentSession.dispatch(this,byteBuffer);
         }
     }
 

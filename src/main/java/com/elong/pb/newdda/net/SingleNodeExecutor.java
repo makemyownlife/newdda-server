@@ -15,6 +15,7 @@
  */
 package com.elong.pb.newdda.net;
 
+import com.elong.pb.newdda.packet.MysqlPacket;
 import com.elong.pb.newdda.route.RouteResultSetNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,5 +36,12 @@ public final class SingleNodeExecutor extends NodeExecutor {
 
     }
 
+    public void countDown() {
+
+    }
+
+    public void asyncMysqlPacket(BackendDdaChannel backendDdaChannel, MysqlPacket mysqlPacket) {
+
+    }
 
 }

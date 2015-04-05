@@ -3,10 +3,10 @@ package com.elong.pb.newdda.net;
 import com.elong.pb.newdda.handler.FrontAuthHandler;
 import com.elong.pb.newdda.handler.FrontQueryHandler;
 import com.elong.pb.newdda.packet.BinaryPacket;
+import com.elong.pb.newdda.packet.factory.BinaryPacketFactory;
 import io.netty.channel.Channel;
 
 import java.nio.ByteBuffer;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created by zhangyong on 15/2/13.
@@ -118,8 +118,9 @@ public class FrontDdaChannel implements DdaChannel {
             this.frontAuthHandler.handle(byteBuffer);
             return null;
         }
+
         //验证通过 则通过handler来处理
-        BinaryPacket binaryPacket = new BinaryPacket(byteBuffer);
+        BinaryPacket binaryPacket = BinaryPacketFactory.createBinaryHeapByteBuffer(byteBuffer);
         return binaryPacket;
     }
 
