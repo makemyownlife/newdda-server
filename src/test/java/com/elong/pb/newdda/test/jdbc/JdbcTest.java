@@ -12,22 +12,22 @@ public class JdbcTest {
 
     @Test
     public void getBlog() throws Exception {
-        System.out.println(123);
     //    String url = "jdbc:mysql://localhost:8066/pb_account?user=test&password=test";
         String url = "jdbc:mysql://localhost:8066/pb_account?user=test&password=test";
+//        String url = "jdbc:mysql://localhost:3306/pb_account?user=root&password=ilxw";
         Class.forName("com.mysql.jdbc.Driver");
         Connection connection = DriverManager.getConnection(url);
   //    connection.setAutoCommit(false);
         if (connection != null) {
-            for (int i = 0; i < 1; i++) {
+            for (int i = 0; i < 1000; i++) {
+                long start = System.currentTimeMillis();
                 PreparedStatement statement = connection.prepareStatement("select * from user where id= ?");
                 statement.setString(1,"1");
                 ResultSet rs = statement.executeQuery();
                 while (rs.next()) {
-                    System.out.println(rs.getString("user_name"));
+                    System.out.println(rs.getString("name"));
                 }
-                connection.commit();
-                Thread.sleep(5000);
+                System.out.println("cost:" + (System.currentTimeMillis() - start));
             }
         }
     }
