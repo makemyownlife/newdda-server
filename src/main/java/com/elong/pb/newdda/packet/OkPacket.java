@@ -1,6 +1,8 @@
 package com.elong.pb.newdda.packet;
 
 
+import com.elong.pb.newdda.common.BufferUtil;
+
 import java.nio.ByteBuffer;
 
 /**
@@ -13,21 +15,63 @@ public class OkPacket extends MysqlPacket implements Packet {
 
     public static final byte FIELD_COUNT = 0x00;
 
-    public static final byte[] OK = new byte[] { 7, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0 };
+    public static final byte[] OK = new byte[]{7, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0};
+
+    public byte fieldCount = FIELD_COUNT;
+
+    public long affectedRows;
+
+    public long insertId;
+
+    public int serverStatus;
+
+    public int warningCount;
+
+    public byte[] message;
 
     @Override
     public ByteBuffer encode() {
-        return null;
+        ByteBuffer buffer = ByteBuffer.allocate(
+                3 + 1 + calcPacketSize()
+        );
+        BufferUtil.writeUB3(buffer, calcPacketSize());
+        buffer.put(packetId);
+        BufferUtil.writeLength(buffer, affectedRows);
+        BufferUtil.writeLength(buffer, insertId);
+        BufferUtil.writeUB2(buffer, serverStatus);
+        BufferUtil.writeUB2(buffer, warningCount);
+        if (message != null) {
+            BufferUtil.writeWithLength(buffer, message);
+        }
+        buffer.flip();
+        return buffer;
     }
 
     @Override
     public boolean decode(ByteBuffer byteBuffer) {
+        packetLength = BufferUtil.readUB3(byteBuffer);
+        packetId = byteBuffer.get();
+        fieldCount = byteBuffer.get();
+        affectedRows = BufferUtil.readLength(byteBuffer);
+        insertId = BufferUtil.readLength(byteBuffer);
+        serverStatus = BufferUtil.readUB2(byteBuffer);
+        warningCount = BufferUtil.readUB2(byteBuffer);
+        if (byteBuffer.hasRemaining()) {
+            this.message = BufferUtil.readBytesWithLength(byteBuffer);
+        }
         return true;
     }
 
     @Override
     public int calcPacketSize() {
-        return 0;
+        int i = 1;
+        i += BufferUtil.getLength(affectedRows);
+        i += BufferUtil.getLength(insertId);
+        i += 4;
+        if (message != null) {
+            i += BufferUtil.getLength(message);
+        }
+        return i;
     }
 
     @Override

@@ -41,26 +41,5 @@ public class BinaryPacket extends MysqlPacket implements Packet {
         return this.byteBuffer;
     }
 
-    public boolean equals(Object binary) {
-        if (!(binary instanceof BinaryPacket)) {
-            return false;
-        }
-        BinaryPacket temp = (BinaryPacket) binary;
-        byte[] origin = new byte[byteBuffer.remaining()];
-        byte[] desti = new byte[temp.byteBuffer.remaining()];
-        if (byteBuffer.remaining() != temp.byteBuffer.remaining()) {
-            return false;
-        }
-        byteBuffer.get(origin);
-        temp.byteBuffer.get(desti);
-        for (int i = 0; i < origin.length; i++) {
-            if (origin[i] != desti[i]) {
-                return false;
-            }
-        }
-        byteBuffer.flip();
-        temp.byteBuffer.flip();
-        return true;
-    }
 
 }

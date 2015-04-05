@@ -1,5 +1,6 @@
 package com.elong.pb.newdda.server;
 
+import com.elong.pb.newdda.common.BufferUtil;
 import com.elong.pb.newdda.common.RemotingHelper;
 import com.elong.pb.newdda.common.RemotingUtil;
 import com.elong.pb.newdda.net.BackendDdaChannel;
@@ -10,6 +11,7 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 /**
@@ -37,7 +39,8 @@ public class BackendDecoder extends LengthFieldBasedFrameDecoder {
                 return null;
             }
             BackendDdaChannel backendDdaChannel = BackendClient.getInstance().getMappingBackendChannel(channel);
-            backendDdaChannel.handle(frame.nioBuffer());
+            ByteBuffer byteBuffer = BufferUtil.transformToHeapByteBuffer(frame.nioBuffer());
+            backendDdaChannel.handle(byteBuffer);
         } catch (Exception e) {
             logger.error("decode exception, " + RemotingHelper.parseChannelRemoteAddr(ctx.channel()), e);
             // 这里关闭后， 会在pipeline中产生事件，通过具体的close事件来清理数据结构

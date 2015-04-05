@@ -16,7 +16,7 @@ public class AsyncCommandFactory {
         }
         //写操作
         if (rs == 8) {
-            return new UpdateAsyncCommand();
+            return new UpdateAsyncCommand(executor);
         }
         return null;
     }

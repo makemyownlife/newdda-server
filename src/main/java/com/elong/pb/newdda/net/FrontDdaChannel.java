@@ -120,7 +120,7 @@ public class FrontDdaChannel implements DdaChannel {
         }
 
         //验证通过 则通过handler来处理
-        BinaryPacket binaryPacket = BinaryPacketFactory.createBinaryHeapByteBuffer(byteBuffer);
+        BinaryPacket binaryPacket = new BinaryPacket(byteBuffer);
         return binaryPacket;
     }
 

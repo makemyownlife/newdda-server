@@ -85,7 +85,7 @@ public class FrontBackendSession {
     }
 
     public void dispatch(BackendDdaChannel backendDdaChannel, ByteBuffer byteBuffer) {
-        BinaryPacket binaryPacket = BinaryPacketFactory.createBinaryHeapByteBuffer(byteBuffer);
+        BinaryPacket binaryPacket = new BinaryPacket(byteBuffer);
         if (isMultiNode) {
             multiNodeExecutor.asyncMysqlPacket(backendDdaChannel, binaryPacket);
         }

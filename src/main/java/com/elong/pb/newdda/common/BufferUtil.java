@@ -263,5 +263,13 @@ public class BufferUtil {
         return ab;
     }
 
+    //================================================== ==========================================
+    public static ByteBuffer transformToHeapByteBuffer(ByteBuffer byteBuffer) {
+        int ramaining = byteBuffer.remaining();
+        ByteBuffer heapByteBuffer = ByteBuffer.allocate(ramaining);
+        heapByteBuffer.put(byteBuffer);
+        heapByteBuffer.flip();
+        return heapByteBuffer;
+    }
 
 }

@@ -1,5 +1,6 @@
 package com.elong.pb.newdda.server;
 
+import com.elong.pb.newdda.common.BufferUtil;
 import com.elong.pb.newdda.common.RemotingHelper;
 import com.elong.pb.newdda.common.RemotingUtil;
 import com.elong.pb.newdda.net.FrontDdaChannel;
@@ -39,7 +40,7 @@ public class FrontDecoder extends LengthFieldBasedFrameDecoder {
             }
             //若是 ,验证,则直接返回空，若是查询，则传递到 FrontServerHandler
             FrontDdaChannel frontDdaChannel = FrontClient.getInstance().getFrontDdaChannel(channel);
-            ByteBuffer byteBuffer = frame.nioBuffer();
+            ByteBuffer byteBuffer = BufferUtil.transformToHeapByteBuffer(frame.nioBuffer());
             BinaryPacket binaryPacket = frontDdaChannel.handle(byteBuffer);
             return binaryPacket;
         } catch (Exception e) {

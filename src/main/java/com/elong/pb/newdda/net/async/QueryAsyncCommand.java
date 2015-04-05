@@ -109,11 +109,11 @@ public class QueryAsyncCommand implements AsyncCommand {
                         break;
                     }
                     //需要解析成FieldPacket
-//                    FieldPacket fieldPacket = new FieldPacket();
-//                    fieldPacket.decode(byteBuffer);
+                    FieldPacket fieldPacket = new FieldPacket();
+                    fieldPacket.decode(byteBuffer);
                     //不在field列表中 则直接添加
-                    if(!fieldPackets.contains(binaryPacket)) {
-                        fieldPackets.add(binaryPacket);
+                    if(!fieldPackets.contains(fieldPacket)) {
+                        fieldPackets.add(fieldPacket);
                     }
                     break;
                 case ROWDATA:
