@@ -8,12 +8,6 @@ import java.nio.ByteBuffer;
  */
 public abstract class MysqlPacket {
 
-    private int seq = 0;
-
-    public void setSeq(int seq) {
-        this.seq = seq;
-    }
-
     /**
         * none, this is an internal thread state
         */
@@ -185,8 +179,8 @@ public abstract class MysqlPacket {
         return new StringBuilder().append(getPacketInfo())
                 .append("{length=")
                 .append(packetLength)
-                .append(",seqid=")
-                .append(seq)
+                .append(",id=")
+                .append(packetId)
                 .append('}')
                 .toString();
     }

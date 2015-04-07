@@ -2,7 +2,6 @@ package com.elong.pb.newdda.net.async;
 
 import com.elong.pb.newdda.net.BackendDdaChannel;
 import com.elong.pb.newdda.net.FrontDdaChannel;
-import com.elong.pb.newdda.net.MultiNodeExecutor;
 import com.elong.pb.newdda.net.NodeExecutor;
 import com.elong.pb.newdda.packet.*;
 import org.slf4j.Logger;
@@ -28,7 +27,7 @@ public class QueryAsyncCommand implements AsyncCommand {
 
     //HEADER|FIELDS|FIELD_EOF|ROWS|LAST_EOF
     public enum QueryParseStatus {
-        HEADER, FIELD, ROWDATA,END
+        HEADER, FIELD, ROWDATA, END
     }
 
     //头部
@@ -80,9 +79,9 @@ public class QueryAsyncCommand implements AsyncCommand {
                         logger.error("解析resulet set header 出错");
                         break;
                     }
-                    if(overallQueryParseStatus == QueryParseStatus.FIELD) {
+                    if (overallQueryParseStatus == QueryParseStatus.FIELD) {
                         //已经解析了头部 直接将该状态设置已经解析了头部
-                        queryParseStatusMapping.put(backendDdaChannel,QueryParseStatus.FIELD);
+                        queryParseStatusMapping.put(backendDdaChannel, QueryParseStatus.FIELD);
                         break;
                     }
                     ResultSetHeaderPacket header = new ResultSetHeaderPacket();
@@ -91,7 +90,7 @@ public class QueryAsyncCommand implements AsyncCommand {
                     this.headerPacket = header;
                     this.fieldPackets = new ArrayList<MysqlPacket>(filedCount);
                     this.rowDataPackets = new ArrayList<MysqlPacket>();
-                    queryParseStatusMapping.put(backendDdaChannel,QueryParseStatus.FIELD);
+                    queryParseStatusMapping.put(backendDdaChannel, QueryParseStatus.FIELD);
                     this.overallQueryParseStatus = QueryParseStatus.FIELD;
                     break;
                 //解析完了header需要看Field 要不是没有过，要么是下一个
@@ -100,10 +99,10 @@ public class QueryAsyncCommand implements AsyncCommand {
                         logger.error("解析resuletset field 出错");
                         break;
                     }
-                    if(b == EOFPacket.FIELD_COUNT) {
+                    if (b == EOFPacket.FIELD_COUNT) {
                         this.filedEofPacket = binaryPacket;
-                        queryParseStatusMapping.put(backendDdaChannel,QueryParseStatus.ROWDATA);
-                        if(overallQueryParseStatus != QueryParseStatus.ROWDATA) {
+                        queryParseStatusMapping.put(backendDdaChannel, QueryParseStatus.ROWDATA);
+                        if (overallQueryParseStatus != QueryParseStatus.ROWDATA) {
                             this.overallQueryParseStatus = QueryParseStatus.ROWDATA;
                         }
                         break;
@@ -112,18 +111,18 @@ public class QueryAsyncCommand implements AsyncCommand {
                     FieldPacket fieldPacket = new FieldPacket();
                     fieldPacket.decode(byteBuffer);
                     //不在field列表中 则直接添加
-                    if(!fieldPackets.contains(fieldPacket)) {
+                    if (!fieldPackets.contains(fieldPacket)) {
                         fieldPackets.add(fieldPacket);
                     }
                     break;
                 case ROWDATA:
-                    if(b == ErrorPacket.FIELD_COUNT) {
+                    if (b == ErrorPacket.FIELD_COUNT) {
                         logger.error("继续解析FIELD出错");
                         break;
                     }
-                    if(b == EOFPacket.FIELD_COUNT) {
+                    if (b == EOFPacket.FIELD_COUNT) {
                         this.rowdataEndPacket = binaryPacket;
-                        queryParseStatusMapping.put(backendDdaChannel,QueryParseStatus.END);
+                        queryParseStatusMapping.put(backendDdaChannel, QueryParseStatus.END);
                         this.nodeExecutor.countDown();
                         break;
                     }
@@ -137,23 +136,13 @@ public class QueryAsyncCommand implements AsyncCommand {
         }
     }
 
-    public void encodeForFront(FrontDdaChannel frontDdaChannel){
-        int i = 0;
-        headerPacket.setSeq(i);
+    public void encodeForFront(FrontDdaChannel frontDdaChannel) {
         frontDdaChannel.write(headerPacket);
-        i++;
-        for(MysqlPacket fieldPacket : fieldPackets) {
-            fieldPacket.setSeq(i);
+        for (MysqlPacket fieldPacket : fieldPackets) {
             frontDdaChannel.write(fieldPacket);
-            i++;
         }
-        filedEofPacket.setSeq(i);
         frontDdaChannel.write(filedEofPacket);
-        i++;
-
-        for(MysqlPacket rowDataPacket : rowDataPackets) {
-            rowDataPacket.setSeq(i);
-            i++;
+        for (MysqlPacket rowDataPacket : rowDataPackets) {
             frontDdaChannel.write(rowDataPacket);
         }
         frontDdaChannel.write(rowdataEndPacket);
