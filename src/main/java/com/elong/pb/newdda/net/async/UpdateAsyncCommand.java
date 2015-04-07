@@ -27,8 +27,6 @@ public class UpdateAsyncCommand implements AsyncCommand {
 
     private OkPacket okPacket;
 
-    private BinaryPacket binaryPacket;
-
     private NodeExecutor executor;
 
     public UpdateAsyncCommand(NodeExecutor executor) {
