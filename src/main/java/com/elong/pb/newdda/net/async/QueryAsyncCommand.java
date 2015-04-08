@@ -60,6 +60,7 @@ public class QueryAsyncCommand implements AsyncCommand {
         this.nodeExecutor = executor;
         this.overallQueryParseStatus = QueryParseStatus.HEADER;
         this.queryParseStatusMapping = new ConcurrentHashMap<BackendDdaChannel, QueryParseStatus>();
+        this.rowDataPackets = new ArrayList<MysqlPacket>();
     }
 
     @Override
@@ -89,7 +90,6 @@ public class QueryAsyncCommand implements AsyncCommand {
                     this.filedCount = header.fieldCount;
                     this.headerPacket = header;
                     this.fieldPackets = new ArrayList<MysqlPacket>(filedCount);
-                    this.rowDataPackets = new ArrayList<MysqlPacket>();
                     queryParseStatusMapping.put(backendDdaChannel, QueryParseStatus.FIELD);
                     this.overallQueryParseStatus = QueryParseStatus.FIELD;
                     break;
