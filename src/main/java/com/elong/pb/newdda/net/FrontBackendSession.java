@@ -97,8 +97,6 @@ public class FrontBackendSession {
         while (iterator.hasNext()) {
             Map.Entry<RouteResultSetNode, BackendDdaChannel> entry = (Map.Entry) iterator.next();
             BackendDdaChannel backendDdaChannel = entry.getValue();
-            backendDdaChannel.setCurrentSession(null);
-            backendDdaChannel.setRunning(false);
             backendDdaChannel.getBackendChannelPool().releaseBackendChannelIntoPool(backendDdaChannel);
         }
     }

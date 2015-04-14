@@ -89,6 +89,7 @@ public class BackendChannelPool {
                     if (backendDdaChannel.isClosedOrQuit()) {
                         continue;
                     }
+                    activeCount++;
                     return backendDdaChannel;
                 }
             }
@@ -118,6 +119,8 @@ public class BackendChannelPool {
                     ++idleCount;
                     --activeCount;
                     items[i] = backendDdaChannel;
+                    backendDdaChannel.setRunning(false);
+                    backendDdaChannel.setCurrentSession(null);
                     return;
                 }
             }

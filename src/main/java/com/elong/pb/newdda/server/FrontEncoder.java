@@ -27,9 +27,6 @@ public class FrontEncoder extends MessageToByteEncoder {
             }
             Packet packet = (Packet) msg;
             ByteBuffer byteBuffer = packet.encode();
-            if(packet instanceof OkPacket) {
-                System.out.println(byteBuffer);
-            }
             out.writeBytes(byteBuffer);
         } catch (Exception e) {
             logger.error("encode exception, " + RemotingHelper.parseChannelRemoteAddr(ctx.channel()), e);
