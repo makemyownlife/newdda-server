@@ -79,7 +79,11 @@ public final class MultiNodeExecutor extends NodeExecutor {
             MULTI_NODE_THREAD_POOL.execute(new Runnable() {
                 @Override
                 public void run() {
-                    backendDdaChannel.write(temp);
+                    try {
+                        backendDdaChannel.write(temp);
+                    } catch (Throwable e) {
+                        logger.error("multi niod run error :", e);
+                    }
                 }
             });
         }
@@ -89,7 +93,7 @@ public final class MultiNodeExecutor extends NodeExecutor {
             if (!executed) {
                 logger.error("sorry executed sql :{} time out ,please check out why ", sql);
                 //过期则发送超时错误命令
-            }else {
+            } else {
                 //得到结果 并且返回给前端
                 FrontDdaChannel frontDdaChannel = session.getFrontDdaChannel();
                 this.asyncCommand.encodeForFront(frontDdaChannel);

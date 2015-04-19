@@ -161,6 +161,8 @@ public class BackendChannelPool {
             //关闭链接 ，并且去掉相关的映射
             Channel channel = backendDdaChannel.getChannelWrapper().getChannel();
             backendDdaChannel.getIsClosed().compareAndSet(false, true);
+            backendDdaChannel.setRunning(false);
+            backendDdaChannel.setCurrentSession(null);
             BackendClient.getInstance().removeBackendChannel(channel);
             backendDdaChannel = null;
         } finally {
