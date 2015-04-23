@@ -109,10 +109,15 @@ public class BackendChannelPool {
         if (backendDdaChannel == null || backendDdaChannel.isClosedOrQuit()) {
             return;
         }
+        //若已经停止了，并且已经没有当前session了直接返回这个是必须的
+        if (!backendDdaChannel.isRunning() && backendDdaChannel.getCurrentSession() == null) {
+            return;
+        }
         // release connection
         final ReentrantLock lock = this.lock;
         lock.lock();
         try {
+
             final BackendDdaChannel[] items = this.items;
             for (int i = 0; i < items.length; i++) {
                 if (items[i] == null) {
