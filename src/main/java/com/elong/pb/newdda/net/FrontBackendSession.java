@@ -1,7 +1,6 @@
 package com.elong.pb.newdda.net;
 
 import com.elong.pb.newdda.packet.BinaryPacket;
-import com.elong.pb.newdda.packet.factory.BinaryPacketFactory;
 import com.elong.pb.newdda.route.DdaRoute;
 import com.elong.pb.newdda.route.RouteResultSet;
 import com.elong.pb.newdda.route.RouteResultSetNode;
@@ -54,6 +53,10 @@ public class FrontBackendSession {
 
     public void execute(String sql) {
         RouteResultSet routeResultSet = DdaRoute.route(sql, frontDdaChannel.getDataSource());
+        if (routeResultSet == null) {
+            logger.error("sql:{}路由异常");
+            return;
+        }
         RouteResultSetNode[] nodes = routeResultSet.getNodes();
         if (nodes == null) {
             logger.error("sql:{}无法找到后端连接");
@@ -72,23 +75,13 @@ public class FrontBackendSession {
             target.put(node, backendDdaChannel);
         }
 
-        //分别不同的执行器
-        if (nodes.length == 1) {
-            singleNodeExecutor.execute(nodes[0], this, sql);
-            multiNodeExecutor.execute(nodes, this, sql);
-        }
-        //多节点执行命令
-        else {
-            isMultiNode = true;
-            multiNodeExecutor.execute(nodes, this, sql);
-        }
+        multiNodeExecutor.execute(nodes, this, sql);
+
     }
 
     public void dispatch(BackendDdaChannel backendDdaChannel, ByteBuffer byteBuffer) {
         BinaryPacket binaryPacket = new BinaryPacket(byteBuffer);
-        if (isMultiNode) {
-            multiNodeExecutor.asyncMysqlPacket(backendDdaChannel, binaryPacket);
-        }
+        multiNodeExecutor.asyncMysqlPacket(backendDdaChannel, binaryPacket);
     }
 
     public void release() {

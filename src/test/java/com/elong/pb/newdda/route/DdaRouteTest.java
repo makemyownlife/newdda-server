@@ -29,11 +29,20 @@ public class DdaRouteTest {
 
         //判断列的值
         Map<String, Map<String, List<Object>>> astExt = visitor.getColumnValue();
+        Map<String, List<Object>> currentCol2Val = null;
         for (Map.Entry<String, Map<String, List<Object>>> e : astExt.entrySet()) {
             Map<String, List<Object>> col2Val = e.getValue();
-            System.out.println(col2Val);
+            if (col2Val == null || col2Val.isEmpty()) {
+                continue;
+            }
+            currentCol2Val = col2Val;
         }
 
+        //匹配规则
+        boolean matchRule = false;
+        if (currentCol2Val != null) {
+            List<Object> list = currentCol2Val.get(config.getKeyname().toUpperCase());
+        }
     }
 
 }
