@@ -74,8 +74,8 @@ public class DdaRoute {
                     int[] count = new int[]{1, 1};
                     int[] length = new int[]{512, 512};
                     PartitionUtil pu = new PartitionUtil(count, length);
-                    int index = pu.partition(objects.get(0).hashCode());
-                    logger.info("sql:{} index:{}", sql, index);
+                    int index = pu.partition(objects.get(0).toString(), 0, 20);
+                    logger.info("sql:{} index:{} hashcode:{}", sql, index ,objects.get(0).hashCode());
                     nodes = new RouteResultSetNode[1];
                     RouteResultSetNode node = new RouteResultSetNode(sql, LOCATION_POOL_MAPPING.get(locationList.get(index)));
                     nodes[0] = node;
