@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dda>
-    <!-- 账户中心系统 192.168.62.18:6391 -->
 
     <!-- id 是 值针对 jdbc 驱动的 虚数据库名称  -->
     <dataSource id="pb_account">
