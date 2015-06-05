@@ -14,8 +14,8 @@ public class AsyncCommandFactory {
         if (rs == 7 || rs == 9) {
             return new QueryAsyncCommand(executor);
         }
-        //写操作
-        if (rs == 8) {
+        //写操作  4 是insert
+        if (rs == 8 || rs == 4) {
             return new UpdateAsyncCommand(executor);
         }
         return null;
