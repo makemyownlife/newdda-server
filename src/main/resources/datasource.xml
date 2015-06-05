@@ -15,7 +15,7 @@
             <location>127.0.0.1:3306:pb_account1:root:ilxw</location>
         </property>
         <!-- 分区关键字 -->
-        <property name="keyname">id</property>
+        <property name="keyname">name</property>
     </dataSource>
 
 </dda>
