@@ -6,5 +6,3 @@ newdda-server
 模仿cobar 做一个Mysql的中间件来使用
 
 客户端调用相关 怎么通过中间层 调用后端 这个还么有想到好的思路？
-
-![陈潇](http://makemylife.qiniudn.com/2015_03_15_10_33_1120140924093054394.jpg)
