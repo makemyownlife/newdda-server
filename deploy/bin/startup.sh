@@ -66,7 +66,7 @@ RUN_CMD="\"$JAVA_HOME/bin/java\""
 RUN_CMD="$RUN_CMD -Ddda.home=\"$DDA_HOME\""
 RUN_CMD="$RUN_CMD -classpath \"$DDA_CLASSPATH\""
 RUN_CMD="$RUN_CMD $JAVA_OPTS"
-RUN_CMD="$RUN_CMD com.elong.pb.newdda.DdaMain $@"
+RUN_CMD="$RUN_CMD com.elong.pb.newdda.main.DdaMain $@"
 RUN_CMD="$RUN_CMD >> \"$DDA_HOME/logs/console.log\" 2>&1 &"
 echo $RUN_CMD
 eval $RUN_CMD
