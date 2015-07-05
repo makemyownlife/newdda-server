@@ -13,8 +13,14 @@ public class DdaMain {
 
     public static void main(String[] args) {
         long start = System.currentTimeMillis();
-        logger.info("开始启动分布式数据库中间件dda ");
-        logger.info("结束启动分布式数据库中间件dda 总耗时:{}毫秒", System.currentTimeMillis() - start);
+        try {
+            logger.info("开始启动分布式数据库中间件dda ");
+
+            logger.info("结束启动分布式数据库中间件dda 总耗时:{}毫秒", System.currentTimeMillis() - start);
+        } catch (Throwable e) {
+            logger.error("main start error: ", e);
+            System.exit(-1);
+        }
     }
 
 }
