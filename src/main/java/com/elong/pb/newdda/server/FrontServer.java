@@ -27,7 +27,7 @@ public class FrontServer {
 
     //启动
     public void start(){
-
+        FrontClient.getInstance().start();
     }
 
     //关闭

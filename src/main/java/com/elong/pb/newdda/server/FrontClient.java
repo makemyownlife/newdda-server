@@ -6,6 +6,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -34,7 +35,12 @@ public class FrontClient {
 
     private DefaultEventExecutorGroup defaultEventExecutorGroup;
 
-    public FrontClient(){
+    public FrontClient() {
+
+    }
+
+    //启动客户端 链接
+    public void start() {
 
     }
 
