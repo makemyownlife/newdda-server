@@ -20,29 +20,28 @@ public class FrontEventHandler extends ChannelDuplexHandler {
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
         final String remoteAddress = RemotingHelper.parseChannelRemoteAddr(ctx.channel());
-        logger.info("NETTY SERVER PIPELINE: channelRegistered {}", remoteAddress);
+        logger.info("netty server pipeline: channelRegistered {}", remoteAddress);
         super.channelRegistered(ctx);
     }
 
     @Override
     public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
         final String remoteAddress = RemotingHelper.parseChannelRemoteAddr(ctx.channel());
-        logger.info("NETTY SERVER PIPELINE: channelUnregistered, the channel[{}]", remoteAddress);
+        logger.info("netty server pipeline: channelUnregistered, the channel[{}]", remoteAddress);
         super.channelUnregistered(ctx);
-
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         final String remoteAddress = RemotingHelper.parseChannelRemoteAddr(ctx.channel());
-        logger.info("NETTY SERVER PIPELINE: channelActive, the channel[{}]", remoteAddress);
+        logger.info("netty server pipeline: channelActive, the channel[{}]", remoteAddress);
         super.channelActive(ctx);
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         final String remoteAddress = RemotingHelper.parseChannelRemoteAddr(ctx.channel());
-        logger.info("NETTY SERVER PIPELINE: channelInactive, the channel[{}]", remoteAddress);
+        logger.info("netty server pipeline: channelInactive, the channel[{}]", remoteAddress);
         super.channelInactive(ctx);
     }
 
@@ -52,7 +51,7 @@ public class FrontEventHandler extends ChannelDuplexHandler {
             IdleStateEvent evnet = (IdleStateEvent) evt;
             if (evnet.state().equals(IdleState.ALL_IDLE)) {
                 final String remoteAddress = RemotingHelper.parseChannelRemoteAddr(ctx.channel());
-                logger.warn("NETTY SERVER PIPELINE: IDLE exception [{}]", remoteAddress);
+                logger.warn("netty server pipeline: IDLE exception [{}]", remoteAddress);
                 RemotingUtil.closeChannel(ctx.channel());
             }
         }
@@ -62,8 +61,8 @@ public class FrontEventHandler extends ChannelDuplexHandler {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         final String remoteAddress = RemotingHelper.parseChannelRemoteAddr(ctx.channel());
-        logger.warn("NETTY SERVER PIPELINE: exceptionCaught {}", remoteAddress);
-        logger.warn("NETTY SERVER PIPELINE: exceptionCaught exception.", cause);
+        logger.warn("netty server pipeline: exceptionCaught {}", remoteAddress);
+        logger.warn("netty server pipeline: exceptionCaught exception.", cause);
 
         RemotingUtil.closeChannel(ctx.channel());
     }

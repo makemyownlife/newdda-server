@@ -15,7 +15,7 @@ public class DdaMain {
     public static void main(String[] args) {
         long start = System.currentTimeMillis();
         try {
-            logger.info("开始启动分布式数据库中间件dda ");
+            logger.info("开始启动分布式数据库中间件dda");
             DdaServer.getInstance().start();
             logger.info("结束启动分布式数据库中间件dda 总耗时:{}毫秒", System.currentTimeMillis() - start);
         } catch (Throwable e) {

@@ -2,9 +2,7 @@ package com.elong.pb.newdda.server;
 
 import com.elong.pb.newdda.config.NettyServerConfig;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -14,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -95,13 +94,26 @@ public class FrontClient {
                                         defaultEventExecutorGroup,
                                         new FrontDecoder(),
                                         new FrontEncoder(),
-                                        new IdleStateHandler(0, 0, nettyServerConfig
-                                        .getServerChannelMaxIdleTimeSeconds()),
+                                        new IdleStateHandler(
+                                                0,
+                                                0,
+                                                nettyServerConfig.getServerChannelMaxIdleTimeSeconds()),
                                         new FrontEventHandler(),
                                         new FrontDataHandler()
                                 );
                             }
                         });
+        //启动前端服务
+        try {
+            ChannelFuture sync = this.serverBootstrap.bind().sync();
+            InetSocketAddress addr = (InetSocketAddress) sync.channel().localAddress();
+            logger.info("本地服务服务端开启{}", addr);
+        } catch (InterruptedException e1) {
+            throw new RuntimeException("this.serverBootstrap.bind().sync() InterruptedException", e1);
+        }
     }
+
+    //========================================= 前端链接管理 ===========================================================
+
 
 }
