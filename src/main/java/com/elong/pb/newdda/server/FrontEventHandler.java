@@ -2,6 +2,8 @@ package com.elong.pb.newdda.server;
 
 import com.elong.pb.newdda.common.RemotingHelper;
 import com.elong.pb.newdda.common.RemotingUtil;
+import com.elong.pb.newdda.common.netty.NettyEvent;
+import com.elong.pb.newdda.common.netty.NettyEventType;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
@@ -22,6 +24,10 @@ public class FrontEventHandler extends ChannelDuplexHandler {
         final String remoteAddress = RemotingHelper.parseChannelRemoteAddr(ctx.channel());
         logger.info("netty server pipeline: channelRegistered {}", remoteAddress);
         super.channelRegistered(ctx);
+
+        //单独处理发送握手包
+        NettyEvent connectNettyEvent = new NettyEvent(NettyEventType.CONNECT,remoteAddress,ctx.channel());
+        FrontClient.getInstance().addEvent(connectNettyEvent);
     }
 
     @Override

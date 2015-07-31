@@ -4,6 +4,7 @@ import com.elong.pb.newdda.common.ServiceThread;
 import com.elong.pb.newdda.common.netty.ChannelEventListener;
 import com.elong.pb.newdda.common.netty.NettyEvent;
 import com.elong.pb.newdda.config.NettyServerConfig;
+import com.elong.pb.newdda.net.FrontDdaChannel;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -49,6 +50,7 @@ public class FrontClient {
 
     public FrontClient() {
         this.nettyServerConfig = new NettyServerConfig();
+        this.frontEventExecuter = new FrontEventExecuter(new FrontEventListener());
         this.serverBootstrap = new ServerBootstrap();
         //boss线程 用来处理链接的接收(1个单线程用来处理即可)
         this.eventLoopGroupBoss = new NioEventLoopGroup(1, new ThreadFactory() {
@@ -119,8 +121,7 @@ public class FrontClient {
             throw new RuntimeException("this.serverBootstrap.bind().sync() InterruptedException", e1);
         }
 
-        //添加前端事件处理线程启动
-        this.frontEventExecuter = new FrontEventExecuter(new FrontEventListener());
+        //添加前端事件处理线程启动 （当前仅仅支持链接事件,以后可以添加）
         frontEventExecuter.start();
     }
 
@@ -174,8 +175,26 @@ public class FrontClient {
             return "FrontEventExecuter";
         }
     }
-    //========================================= 前端链接管理 ===========================================================
+    //========================================= 前端链接管理 ========================================================================
+    private static ConcurrentHashMap<Channel, FrontDdaChannel> FRONT_CHANNELS = new ConcurrentHashMap<Channel, FrontDdaChannel>(); //前端链接存储
 
+    //添加相关的事件(前端事件管理器来用)
+    public void addEvent(NettyEvent nettyEvent) {
+        this.frontEventExecuter.putNettyEvent(nettyEvent);
+    }
 
+    //添加前端链接
+    public void addFrontDdaChannel(FrontDdaChannel frontDdaChannel) {
+        if (frontDdaChannel != null) {
+            if (!FRONT_CHANNELS.containsKey(frontDdaChannel.getChannel())) {
+                Channel channel = frontDdaChannel.getChannel();
+                FRONT_CHANNELS.put(channel, frontDdaChannel);
+            }
+        }
+    }
+
+    public FrontDdaChannel getFrontDdaChannel(Channel channel) {
+        return FRONT_CHANNELS.get(channel);
+    }
 
 }

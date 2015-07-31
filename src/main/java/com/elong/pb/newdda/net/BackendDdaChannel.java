@@ -6,5 +6,9 @@ package com.elong.pb.newdda.net;
  */
 public class BackendDdaChannel extends DdaChannel {
 
+    @Override
+    public void write(Object message) {
+
+    }
 
 }
