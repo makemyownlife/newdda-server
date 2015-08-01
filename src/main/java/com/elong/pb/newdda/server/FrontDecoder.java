@@ -1,7 +1,10 @@
 package com.elong.pb.newdda.server;
 
+import com.elong.pb.newdda.common.BufferUtil;
 import com.elong.pb.newdda.common.RemotingHelper;
 import com.elong.pb.newdda.common.RemotingUtil;
+import com.elong.pb.newdda.handler.FrontAuthHandler;
+import com.elong.pb.newdda.net.FrontDdaChannel;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -35,6 +38,15 @@ public class FrontDecoder extends LengthFieldBasedFrameDecoder {
             if (null == frame) {
                 return null;
             }
+            FrontDdaChannel frontDdaChannel = FrontClient.getInstance().getFrontDdaChannel(channel);
+            ByteBuffer byteBuffer = BufferUtil.transformToHeapByteBuffer(frame.nioBuffer());
+            if (!frontDdaChannel.isAuthenticated()) {
+                FrontAuthHandler frontAuthHandler = frontDdaChannel.getFrontAuthHandler();
+                frontAuthHandler.handle(byteBuffer);
+                return null;
+            }
+            //已经验证成功了 直接发送到 前端数据处理 类中处理
+
         } catch (Exception e) {
             logger.error("decode exception, " + RemotingHelper.parseChannelRemoteAddr(ctx.channel()), e);
             // 这里关闭后， 会在pipeline中产生事件，通过具体的close事件来清理数据结构

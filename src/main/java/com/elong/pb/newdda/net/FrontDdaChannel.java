@@ -1,5 +1,6 @@
 package com.elong.pb.newdda.net;
 
+import com.elong.pb.newdda.handler.FrontAuthHandler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -14,26 +15,27 @@ public class FrontDdaChannel extends DdaChannel {
 
     private Channel channel;
 
+    private String dataSource;
+
     //前端编号
     private Long id;
 
     private byte[] seed;
 
-    private volatile boolean isAuthenticated;
+    private volatile boolean authenticated;
+
+    private FrontAuthHandler frontAuthHandler;
 
     public FrontDdaChannel(Channel channel){
         this.channel = channel;
         this.id = acceptIdGenerator.getId();
-        this.isAuthenticated = false;
+        this.authenticated = false;
+        this.frontAuthHandler = new FrontAuthHandler(this);
     }
 
     @Override
     public void write(Object message) {
-        this.channel.writeAndFlush(message).addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture future) throws Exception {
-            }
-        });
+        this.channel.writeAndFlush(message);
     }
 
     /**
@@ -78,11 +80,25 @@ public class FrontDdaChannel extends DdaChannel {
     public void setId(Long id) {
         this.id = id;
     }
+
     public boolean isAuthenticated() {
-        return isAuthenticated;
+        return authenticated;
     }
-    public void setAuthenticated(boolean isAuthenticated) {
-        this.isAuthenticated = isAuthenticated;
+
+    public void setAuthenticated(boolean authenticated) {
+        this.authenticated = authenticated;
+    }
+
+    public FrontAuthHandler getFrontAuthHandler() {
+        return frontAuthHandler;
+    }
+
+    public String getDataSource() {
+        return dataSource;
+    }
+
+    public void setDataSource(String dataSource) {
+        this.dataSource = dataSource;
     }
 
 }
