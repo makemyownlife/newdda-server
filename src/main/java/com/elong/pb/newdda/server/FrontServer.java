@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
  * 前端服务
  * Created by zhangyong on 15/7/9.
  */
-public class FrontServer {
+public class FrontServer implements BaseServer{
 
     private final static Logger logger = LoggerFactory.getLogger(FrontServer.class);
 

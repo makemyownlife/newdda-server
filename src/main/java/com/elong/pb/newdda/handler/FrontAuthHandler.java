@@ -29,7 +29,10 @@ public class FrontAuthHandler implements Handler {
         authPacket.decode(byteBuffer);
 
         //开始验证用户名 密码是否正确
+        String database = authPacket.getDatabase();
+        if(database == null || "".equals(database)){
 
+        }
     }
 
 }
