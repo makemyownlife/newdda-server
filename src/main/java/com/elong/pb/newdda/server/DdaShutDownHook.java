@@ -11,5 +11,15 @@ public class DdaShutDownHook {
 
     private final static Logger logger = LoggerFactory.getLogger(DdaShutDownHook.class);
 
+    private static final DdaShutDownHook INSTANCE = new DdaShutDownHook();
+
+    public static DdaShutDownHook getInstance() {
+        return INSTANCE;
+    }
+
+    //添加关闭信号量时候，进行相关的操作
+    public void addShutDownHook() {
+        
+    }
 
 }

@@ -40,6 +40,7 @@ public class DdaServer {
         logger.info("结束启动DDA后端服务");
 
         logger.info("开始添加shutdownhook");
+        DdaShutDownHook.getInstance().addShutDownHook();
         logger.info("结束添加shutdownhook");
 
     }

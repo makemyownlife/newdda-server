@@ -54,6 +54,12 @@
             <version>10.10.2.0</version>
             <scope>test</scope>
         </dependency>
+        <!-- 添加 xml解析相关的内容 -->
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.6.1</version>
+        </dependency>
     </dependencies>
 
     <build>

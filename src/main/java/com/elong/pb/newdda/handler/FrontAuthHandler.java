@@ -2,6 +2,7 @@ package com.elong.pb.newdda.handler;
 
 import com.elong.pb.newdda.net.FrontDdaChannel;
 import com.elong.pb.newdda.net.packet.AuthPacket;
+import com.elong.pb.newdda.server.DdaConfigLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +32,7 @@ public class FrontAuthHandler implements Handler {
         //开始验证用户名 密码是否正确
         String database = authPacket.getDatabase();
         if(database == null || "".equals(database)){
-
+            
         }
     }
 
