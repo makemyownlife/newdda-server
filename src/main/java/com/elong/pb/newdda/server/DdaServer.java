@@ -1,5 +1,6 @@
 package com.elong.pb.newdda.server;
 
+import com.elong.pb.newdda.config.DdaConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

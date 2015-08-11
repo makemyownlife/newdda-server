@@ -14,8 +14,30 @@ public class DdaConfig {
 
     private final static Logger logger = LoggerFactory.getLogger(DdaConfig.class);
 
+    private static Object mutex = new Object();
+
+    private static DdaConfig INSTANCE = null;
+
+    public static DdaConfig getInstance() {
+        if (INSTANCE != null) {
+            return INSTANCE;
+        }
+        synchronized (mutex) {
+            INSTANCE = new DdaConfig();
+            return INSTANCE;
+        }
+    }
+
     //数据源
-    private volatile Map<String, DataSourceConfig> dataSources;
+    private Map<String, DataSourceConfig> dataSources = new HashMap<String, DataSourceConfig>();
+
+    public Map<String, DataSourceConfig> getDataSources() {
+        return this.dataSources;
+    }
+
+    //定义数据源以及schema
+
+    //规则相关的类
 
 
 }

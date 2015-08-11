@@ -5,6 +5,7 @@ import com.elong.pb.newdda.common.RemotingHelper;
 import com.elong.pb.newdda.common.RemotingUtil;
 import com.elong.pb.newdda.handler.FrontAuthHandler;
 import com.elong.pb.newdda.net.FrontDdaChannel;
+import com.elong.pb.newdda.net.packet.BinaryMySqlPacket;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -45,8 +46,9 @@ public class FrontDecoder extends LengthFieldBasedFrameDecoder {
                 frontAuthHandler.handle(byteBuffer);
                 return null;
             }
-            //已经验证成功了 直接发送到 前端数据处理 类中处理
-
+            //已经验证成功了 直接发送到 mysql 二进制的包
+            BinaryMySqlPacket binaryMySqlPacket = new BinaryMySqlPacket(byteBuffer, false);
+            return binaryMySqlPacket;
         } catch (Exception e) {
             logger.error("decode exception, " + RemotingHelper.parseChannelRemoteAddr(ctx.channel()), e);
             // 这里关闭后， 会在pipeline中产生事件，通过具体的close事件来清理数据结构
