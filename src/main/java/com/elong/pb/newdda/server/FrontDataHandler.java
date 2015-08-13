@@ -6,6 +6,9 @@ import com.elong.pb.newdda.config.ErrorCode;
 import com.elong.pb.newdda.config.SystemConfig;
 import com.elong.pb.newdda.net.FrontDdaChannel;
 import com.elong.pb.newdda.net.packet.BinaryMySqlPacket;
+import com.elong.pb.newdda.net.packet.ErrorPacket;
+import com.elong.pb.newdda.net.packet.ErrorPacketFactory;
+import com.elong.pb.newdda.net.packet.MysqlPacket;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
@@ -28,7 +31,26 @@ public class FrontDataHandler extends SimpleChannelInboundHandler {
         final FrontDdaChannel frontDdaChannel = FrontClient.getInstance().getFrontDdaChannel(ctx.channel());
         final BinaryMySqlPacket binaryMySqlPacket = (BinaryMySqlPacket) msg;
         if (binaryMySqlPacket != null) {
-
+            NETTEY_FRONT_EXECUTOR.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        ByteBuffer byteBuffer = binaryMySqlPacket.getByteBuffer();
+                        switch (byteBuffer.get(4)) {
+                            case MysqlPacket.COM_QUERY:
+                                frontDdaChannel.getFrontQueryHandler().handle(byteBuffer);
+                                break;
+                            default:
+                                ErrorPacket errorPacket = ErrorPacketFactory.errorMessage(
+                                        ErrorCode.ER_UNKNOWN_COM_ERROR,
+                                        "Unknown command");
+                                frontDdaChannel.write(errorPacket);
+                        }
+                    } catch (Exception e) {
+                        logger.error(" ", e);
+                    }
+                }
+            });
         }
     }
 

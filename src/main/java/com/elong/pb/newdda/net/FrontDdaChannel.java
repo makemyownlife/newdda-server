@@ -1,15 +1,20 @@
 package com.elong.pb.newdda.net;
 
 import com.elong.pb.newdda.handler.FrontAuthHandler;
+import com.elong.pb.newdda.handler.FrontQueryHandler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 前端链接
  * Created by zhangyong on 15/7/23.
  */
 public class FrontDdaChannel extends DdaChannel {
+
+    private static final Logger logger  = LoggerFactory.getLogger(FrontDdaChannel.class);
 
     private final AcceptIdGenerator acceptIdGenerator = new AcceptIdGenerator();
 
@@ -26,16 +31,28 @@ public class FrontDdaChannel extends DdaChannel {
 
     private FrontAuthHandler frontAuthHandler;
 
+    private FrontQueryHandler frontQueryHandler;
+
     public FrontDdaChannel(Channel channel){
         this.channel = channel;
         this.id = acceptIdGenerator.getId();
         this.authenticated = false;
         this.frontAuthHandler = new FrontAuthHandler(this);
+        this.frontQueryHandler = new FrontQueryHandler(this);
     }
 
     @Override
     public void write(Object message) {
-        this.channel.writeAndFlush(message);
+        this.channel.writeAndFlush(message).addListener(new ChannelFutureListener() {
+            @Override
+            public void operationComplete(ChannelFuture future) throws Exception {
+                if (!future.isSuccess()) {
+                    logger.error(
+                            "frontChannel write error: " + channel.remoteAddress(),
+                            future.cause());
+                }
+            }
+        });;
     }
 
     /**
@@ -101,4 +118,11 @@ public class FrontDdaChannel extends DdaChannel {
         this.dataSource = dataSource;
     }
 
+    public FrontQueryHandler getFrontQueryHandler() {
+        return frontQueryHandler;
+    }
+
+    public void setFrontQueryHandler(FrontQueryHandler frontQueryHandler) {
+        this.frontQueryHandler = frontQueryHandler;
+    }
 }

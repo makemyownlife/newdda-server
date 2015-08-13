@@ -16,6 +16,12 @@
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
+        <!-- 对象拷贝 -->
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.9.2</version>
+        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
