@@ -46,12 +46,14 @@ public class FrontAuthHandler implements Handler {
                 databaseFlag = false;
             }
         }
-        if(!databaseFlag){
+        if (!databaseFlag) {
+            logger.error("cant find dateSource: {} ,please check dateSource config ", database);
             ErrorPacket errorPacket = new ErrorPacket();
             errorPacket.packetId = (byte) 2;
             errorPacket.setErrno(ErrorCode.ER_ACCESS_DENIED_ERROR);
             errorPacket.setMsg("Access denied for database '" + authPacket.getDatabase() + "'");
             this.frontDdaChannel.write(errorPacket);
+            return;
         }
 
         StringBuilder s = new StringBuilder();
@@ -68,7 +70,7 @@ public class FrontAuthHandler implements Handler {
         ByteBuffer authOkByteBuffer = ByteBuffer.allocate(AUTH_OK.length);
         authOkByteBuffer.put(AUTH_OK);
         authOkByteBuffer.flip();
-        BinaryMySqlPacket authOkPacket = new BinaryMySqlPacket(authOkByteBuffer , false);
+        BinaryMySqlPacket authOkPacket = new BinaryMySqlPacket(authOkByteBuffer, false);
         this.frontDdaChannel.write(authOkPacket);
     }
 
