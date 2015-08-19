@@ -50,7 +50,9 @@ public class FrontQueryHandler implements Handler {
             );
             return;
         }
-        logger.info("front transfer sql :{}", sql);
+        if(logger.isDebugEnabled()) {
+            logger.debug("front transfer sql :{}", sql);
+        }
     }
 
 }

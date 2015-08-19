@@ -10,6 +10,10 @@
         </encoder>
     </appender>
 
+    <logger name="com.elong.pb.newdda.handler.FrontQueryHandler" level="DEBUG" additivity="false">
+        <appender-ref ref="stdout" />
+    </logger>
+
     <root>
         <level value="INFO"/>
         <appender-ref ref="stdout"/>
