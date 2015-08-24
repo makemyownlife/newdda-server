@@ -3,6 +3,7 @@ package com.elong.pb.newdda.handler;
 import com.elong.pb.newdda.common.BufferUtil;
 import com.elong.pb.newdda.config.ErrorCode;
 import com.elong.pb.newdda.config.SystemConfig;
+import com.elong.pb.newdda.net.FrontBackendSession;
 import com.elong.pb.newdda.net.FrontDdaChannel;
 import com.elong.pb.newdda.net.packet.ErrorPacketFactory;
 import org.slf4j.Logger;
@@ -53,6 +54,8 @@ public class FrontQueryHandler implements Handler {
         if(logger.isDebugEnabled()) {
             logger.debug("front transfer sql :{}", sql);
         }
+        FrontBackendSession frontBackendSession = frontDdaChannel.getFrontBackendSession();
+        frontBackendSession.execute(sql);
     }
 
 }

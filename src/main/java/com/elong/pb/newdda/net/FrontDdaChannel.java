@@ -33,12 +33,15 @@ public class FrontDdaChannel extends DdaChannel {
 
     private FrontQueryHandler frontQueryHandler;
 
+    private FrontBackendSession frontBackendSession;
+
     public FrontDdaChannel(Channel channel){
         this.channel = channel;
         this.id = acceptIdGenerator.getId();
         this.authenticated = false;
         this.frontAuthHandler = new FrontAuthHandler(this);
         this.frontQueryHandler = new FrontQueryHandler(this);
+        this.frontBackendSession = new FrontBackendSession(this);
     }
 
     @Override
@@ -124,5 +127,9 @@ public class FrontDdaChannel extends DdaChannel {
 
     public void setFrontQueryHandler(FrontQueryHandler frontQueryHandler) {
         this.frontQueryHandler = frontQueryHandler;
+    }
+
+    public FrontBackendSession getFrontBackendSession() {
+        return frontBackendSession;
     }
 }
