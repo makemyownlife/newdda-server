@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dda:rule xmlns:dda="http://newdda.com/rule">
 
+    <!-- 路由规则定义，定义什么表，什么字段，采用什么路由算法 -->
+    <tableRule name="rule1">
+        <rule>
+            <columns>id</columns>
+            <algorithm><![CDATA[ func1(${id}) ]]></algorithm>
+        </rule>
+    </tableRule>
+
+    <!-- 路由函数定义 -->
+    <function name="func1" class="com.alibaba.cobar.route.function.PartitionByLong">
+        <property name="partitionCount">2</property>
+        <property name="partitionLength">512</property>
+    </function>
 
 </dda:rule>
