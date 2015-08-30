@@ -10,7 +10,7 @@
     </tableRule>
 
     <!-- 路由函数定义 -->
-    <function name="func1" class="com.alibaba.cobar.route.function.PartitionByLong">
+    <function name="func1" class="com.elong.pb.newdda.route.function.PartitionByLong">
         <property name="partitionCount">2</property>
         <property name="partitionLength">512</property>
     </function>
