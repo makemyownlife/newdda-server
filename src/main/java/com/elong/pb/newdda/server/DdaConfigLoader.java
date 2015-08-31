@@ -3,7 +3,6 @@ package com.elong.pb.newdda.server;
 import com.elong.pb.newdda.config.ConfigUtil;
 import com.elong.pb.newdda.config.DataSourceConfig;
 import com.elong.pb.newdda.config.DataSourceLocation;
-import com.elong.pb.newdda.config.DdaConfig;
 import com.elong.pb.newdda.exception.ConfigException;
 import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
@@ -38,10 +37,10 @@ public class DdaConfigLoader {
         if (this.inited.compareAndSet(false, true)) {
             //加载数据源配置
             loadDataSourceConfig();
-            //加载模块配置
-            loadSchemaConfig();
             //加载分库规则配置
             loadRuleConfig();
+            //加载模块配置
+            loadSchemaConfig();
         }
     }
 
@@ -83,8 +82,32 @@ public class DdaConfigLoader {
                         dataSourceConfig.setDataSourceLocationList(dataSourceLocationList);
                     }
                 }
-                DdaConfig.getInstance().getDataSources().put(id, dataSourceConfig);
+                DdaConfigSingleton.getInstance().getDataSources().put(id, dataSourceConfig);
             }
+        } catch (ConfigException e) {
+            throw e;
+        } catch (Throwable e) {
+            throw new ConfigException(e);
+        } finally {
+            if (xml != null) {
+                try {
+                    xml.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+    }
+
+    private void loadRuleConfig() {
+        InputStream xml = null;
+        try {
+            xml = DdaConfigLoader.class.getResourceAsStream("/rule.xml");
+            Document document = ConfigUtil.getDocument(xml);
+            Element root = document.getDocumentElement();
+            //先加载 function
+            NodeList functionNodeList = root.getElementsByTagName("function");
+            //后加载 tableRule
+            NodeList list = root.getElementsByTagName("tableRule");
         } catch (ConfigException e) {
             throw e;
         } catch (Throwable e) {
@@ -102,10 +125,5 @@ public class DdaConfigLoader {
     private void loadSchemaConfig() {
 
     }
-
-    private void loadRuleConfig() {
-
-    }
-
 
 }

@@ -1,5 +1,6 @@
-package com.elong.pb.newdda.config;
+package com.elong.pb.newdda.server;
 
+import com.elong.pb.newdda.config.DataSourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,20 +11,20 @@ import java.util.Map;
  * 整体的dda配置 包含数据源 规则配置
  * Created by zhangyong on 15/8/8.
  */
-public class DdaConfig {
+public class DdaConfigSingleton {
 
-    private final static Logger logger = LoggerFactory.getLogger(DdaConfig.class);
+    private final static Logger logger = LoggerFactory.getLogger(DdaConfigSingleton.class);
 
     private static Object mutex = new Object();
 
-    private static DdaConfig INSTANCE = null;
+    private static DdaConfigSingleton INSTANCE = null;
 
-    public static DdaConfig getInstance() {
+    public static DdaConfigSingleton getInstance() {
         if (INSTANCE != null) {
             return INSTANCE;
         }
         synchronized (mutex) {
-            INSTANCE = new DdaConfig();
+            INSTANCE = new DdaConfigSingleton();
             return INSTANCE;
         }
     }
@@ -38,6 +39,5 @@ public class DdaConfig {
     //定义数据源以及schema
 
     //规则相关的类
-
 
 }

@@ -2,11 +2,10 @@ package com.elong.pb.newdda.route;
 
 import com.elong.pb.newdda.config.DataSourceConfig;
 import com.elong.pb.newdda.config.DataSourceLocation;
-import com.elong.pb.newdda.config.DdaConfig;
+import com.elong.pb.newdda.server.DdaConfigSingleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.ResultSet;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +18,7 @@ public class DdaRoute {
     private static final Logger logger = LoggerFactory.getLogger(DdaRoute.class);
 
     public static RouteResultSet route(String sql, String dataSourceId) {
-        DdaConfig ddaConfig = DdaConfig.getInstance();
+        DdaConfigSingleton ddaConfig = DdaConfigSingleton.getInstance();
         Map<String, DataSourceConfig> dataSources = ddaConfig.getDataSources();
         //是否包含(数据源编号)
         if (!dataSources.containsKey(dataSourceId)) {

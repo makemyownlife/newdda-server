@@ -2,7 +2,7 @@ package com.elong.pb.newdda.handler;
 
 import com.elong.pb.newdda.common.RemotingHelper;
 import com.elong.pb.newdda.config.DataSourceConfig;
-import com.elong.pb.newdda.config.DdaConfig;
+import com.elong.pb.newdda.config.DdaConfigSingleton;
 import com.elong.pb.newdda.config.ErrorCode;
 import com.elong.pb.newdda.net.FrontDdaChannel;
 import com.elong.pb.newdda.net.packet.AuthPacket;
@@ -41,7 +41,7 @@ public class FrontAuthHandler implements Handler {
         if (database == null || "".equals(database)) {
             databaseFlag = false;
         } else {
-            Map<String, DataSourceConfig> dataSources = DdaConfig.getInstance().getDataSources();
+            Map<String, DataSourceConfig> dataSources = DdaConfigSingleton.getInstance().getDataSources();
             if (!dataSources.containsKey(database)) {
                 databaseFlag = false;
             }
