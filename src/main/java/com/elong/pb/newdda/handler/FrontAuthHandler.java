@@ -2,12 +2,12 @@ package com.elong.pb.newdda.handler;
 
 import com.elong.pb.newdda.common.RemotingHelper;
 import com.elong.pb.newdda.config.DataSourceConfig;
-import com.elong.pb.newdda.config.DdaConfigSingleton;
 import com.elong.pb.newdda.config.ErrorCode;
 import com.elong.pb.newdda.net.FrontDdaChannel;
 import com.elong.pb.newdda.net.packet.AuthPacket;
 import com.elong.pb.newdda.net.packet.BinaryMySqlPacket;
 import com.elong.pb.newdda.net.packet.ErrorPacket;
+import com.elong.pb.newdda.server.DdaConfigSingleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
