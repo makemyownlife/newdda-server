@@ -1,6 +1,7 @@
 package com.elong.pb.newdda.server;
 
 import com.elong.pb.newdda.config.DataSourceConfig;
+import com.elong.pb.newdda.config.rule.RuleAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,8 +37,13 @@ public class DdaConfigSingleton {
         return this.dataSources;
     }
 
-    //定义数据源以及schema
-
     //规则相关的类
+    private final Map<String, RuleAlgorithm> functions = new HashMap<String, RuleAlgorithm>();
+
+    public Map<String, RuleAlgorithm> getFunctions() {
+        return functions;
+    }
+
+    //定义数据源以及schema
 
 }

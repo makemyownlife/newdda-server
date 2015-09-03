@@ -1,6 +1,10 @@
 package com.elong.pb.newdda.config;
 
+import com.elong.pb.newdda.common.StringUtil;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.*;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -8,6 +12,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by zhangyong on 15/2/4.
@@ -53,5 +59,29 @@ public class ConfigUtil {
         DocumentBuilder builder = factory.newDocumentBuilder();
         return builder.parse(xml);
     }
+
+//    public static Map<String, Object> loadElements(Element parent) {
+//        Map<String, Object> map = new HashMap<String, Object>();
+//        NodeList children = parent.getChildNodes();
+//        for (int i = 0; i < children.getLength(); i++) {
+//            Node node = children.item(i);
+//            if (node instanceof Element) {
+//                Element e = (Element) node;
+//                String name = e.getNodeName();
+//                if ("property".equals(name)) {
+//                    String key = e.getAttribute("name");
+//                    NodeList nl = e.getElementsByTagName("bean");
+//                    if (nl.getLength() == 0) {
+//                        String value = e.getTextContent();
+//                        map.put(key, StringUtil.isEmpty(value) ? null : value.trim());
+//                    } else {
+//                        map.put(key, loadBean((Element) nl.item(0)));
+//                    }
+//                }
+//            }
+//        }
+//        return map;
+//    }
+
 
 }
