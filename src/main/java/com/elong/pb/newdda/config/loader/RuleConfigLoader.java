@@ -1,6 +1,7 @@
 package com.elong.pb.newdda.config.loader;
 
 import com.elong.pb.newdda.config.ConfigUtil;
+import com.elong.pb.newdda.config.ParameterMapping;
 import com.elong.pb.newdda.config.rule.RuleAlgorithm;
 import com.elong.pb.newdda.exception.ConfigException;
 import com.elong.pb.newdda.server.DdaConfigSingleton;
@@ -60,8 +61,10 @@ public class RuleConfigLoader {
                 }
                 String clazz = e.getAttribute("class");
                 //kfaka 关注日志相关 metaq长轮询的方式
-                RuleAlgorithm ruleAlgorithm = createFunction(name, clazz);
-
+                RuleAlgorithm function = createFunction(name, clazz);
+                //给function赋予值
+                ParameterMapping.mapping(function, ConfigUtil.loadElements(e));
+                functions.put(name, function);
             }
         }
     }
