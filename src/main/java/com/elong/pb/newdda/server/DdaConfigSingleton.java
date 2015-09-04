@@ -2,11 +2,15 @@ package com.elong.pb.newdda.server;
 
 import com.elong.pb.newdda.config.DataSourceConfig;
 import com.elong.pb.newdda.config.rule.RuleAlgorithm;
+import com.elong.pb.newdda.config.rule.RuleConfig;
+import com.elong.pb.newdda.config.rule.TableRuleConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 整体的dda配置 包含数据源 规则配置
@@ -44,6 +48,19 @@ public class DdaConfigSingleton {
         return functions;
     }
 
-    //定义数据源以及schema
+    private final Map<String, TableRuleConfig> tableRules = new HashMap<String, TableRuleConfig>();
+
+    public Map<String, TableRuleConfig> getTableRules() {
+        return tableRules;
+    }
+
+    private Set<RuleConfig> rules = new HashSet<RuleConfig>();
+
+    public Set<RuleConfig> getRules() {
+        return rules;
+    }
+
+    //schema
+    
 
 }

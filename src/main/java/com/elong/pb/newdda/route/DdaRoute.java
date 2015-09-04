@@ -25,6 +25,7 @@ public class DdaRoute {
             logger.error("cant find dataSourceId:{}", dataSourceId);
             return null;
         }
+
         //数据源配置
         DataSourceConfig dataSourceConfig = dataSources.get(dataSourceId);
         List<DataSourceLocation> locationList = dataSourceConfig.getDataSourceLocationList();
