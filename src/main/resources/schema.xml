@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dda:schema xmlns:dda="http://newdda.com/schema">
 
+    <!-- 数据节点定义 数据及诶单由数据源和其他的一些参数组织而成 -->
+    <dataNode name="pbAccountDataNode">
+        <property name="dataSource">
+            <dataSourceRef>pb_account[2]</dataSourceRef>
+        </property>
+    </dataNode>
+
+    <!-- 定义 schema -->
 
 
 </dda:schema>
