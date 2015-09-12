@@ -1,11 +1,13 @@
 package com.elong.pb.newdda.config.loader;
 
+import com.elong.pb.newdda.common.SplitUtil;
 import com.elong.pb.newdda.config.ConfigUtil;
 import com.elong.pb.newdda.exception.ConfigException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.io.IOException;
@@ -47,12 +49,41 @@ public class SchemaConfigLoader {
         for (int i = 0, n = list.getLength(); i < n; i++) {
             Element element = (Element) list.item(i);
             String dnNamePrefix = element.getAttribute("name");
-            System.out.println("dnNamePrefix==" + dnNamePrefix);
+            try {
+                Element dsElement = findPropertyByName(element, "dataSource");
+                if (dsElement == null) {
+                    throw new NullPointerException("dataNode xml Element with name of " + dnNamePrefix
+                            + " has no dataSource Element");
+                }
+                NodeList dataSourceList = dsElement.getElementsByTagName("dataSourceRef");
+                String dataSources[][] = new String[dataSourceList.getLength()][];
+                for (int j = 0, m = dataSourceList.getLength(); j < m; ++j) {
+                    Element ref = (Element) dataSourceList.item(j);
+                    String dsString = ref.getTextContent();
+                    dataSources[j] = SplitUtil.split(dsString, ',', '$', '-', '[', ']');
+                }
+            } catch (Exception e) {
+                throw new ConfigException("dataNode:" + dnNamePrefix);
+            }
         }
     }
 
     private void loadSchemaNode(Element root) {
 
+    }
+
+    private static Element findPropertyByName(Element bean, String name) {
+        NodeList propertyList = bean.getElementsByTagName("property");
+        for (int j = 0, m = propertyList.getLength(); j < m; ++j) {
+            Node node = propertyList.item(j);
+            if (node instanceof Element) {
+                Element p = (Element) node;
+                if (name.equals(p.getAttribute("name"))) {
+                    return p;
+                }
+            }
+        }
+        return null;
     }
 
 }
