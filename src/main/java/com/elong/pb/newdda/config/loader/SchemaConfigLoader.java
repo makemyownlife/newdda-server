@@ -52,8 +52,7 @@ public class SchemaConfigLoader {
             try {
                 Element dsElement = findPropertyByName(element, "dataSource");
                 if (dsElement == null) {
-                    throw new NullPointerException("dataNode xml Element with name of " + dnNamePrefix
-                            + " has no dataSource Element");
+                    throw new NullPointerException("dataNode xml Element with name of " + dnNamePrefix + " has no dataSource Element");
                 }
                 NodeList dataSourceList = dsElement.getElementsByTagName("dataSourceRef");
                 String dataSources[][] = new String[dataSourceList.getLength()][];
@@ -62,6 +61,15 @@ public class SchemaConfigLoader {
                     String dsString = ref.getTextContent();
                     dataSources[j] = SplitUtil.split(dsString, ',', '$', '-', '[', ']');
                 }
+                if (dataSources.length <= 0) {
+                    throw new ConfigException("no dataSourceRef defined!");
+                }
+                for (String[] dss : dataSources) {
+                    if (dss.length != dataSources[0].length) {
+                        throw new ConfigException("dataSource number not equals!");
+                    }
+                }
+
             } catch (Exception e) {
                 throw new ConfigException("dataNode:" + dnNamePrefix);
             }
