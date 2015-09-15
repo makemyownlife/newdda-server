@@ -1,5 +1,6 @@
 package com.elong.pb.newdda.server;
 
+import com.elong.pb.newdda.config.DataNodeConfig;
 import com.elong.pb.newdda.config.DataSourceConfig;
 import com.elong.pb.newdda.config.rule.RuleAlgorithm;
 import com.elong.pb.newdda.config.rule.RuleConfig;
@@ -60,7 +61,15 @@ public class DdaConfigSingleton {
         return rules;
     }
 
-    //schema
-    
+
+    //==========================================================================================
+
+    //schema dataNode
+    private Map<String , DataNodeConfig> dataNodes = new HashMap<String, DataNodeConfig>();
+
+    public Map<String, DataNodeConfig> getDataNodes() {
+        return dataNodes;
+    }
+
 
 }

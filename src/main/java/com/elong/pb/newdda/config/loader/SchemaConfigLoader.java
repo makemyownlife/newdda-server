@@ -69,7 +69,6 @@ public class SchemaConfigLoader {
                         throw new ConfigException("dataSource number not equals!");
                     }
                 }
-
             } catch (Exception e) {
                 throw new ConfigException("dataNode:" + dnNamePrefix);
             }
