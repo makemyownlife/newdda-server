@@ -2,7 +2,10 @@ package com.elong.pb.newdda.config.loader;
 
 import com.elong.pb.newdda.common.SplitUtil;
 import com.elong.pb.newdda.config.ConfigUtil;
+import com.elong.pb.newdda.config.DataNodeConfig;
+import com.elong.pb.newdda.config.ParameterMapping;
 import com.elong.pb.newdda.exception.ConfigException;
+import com.elong.pb.newdda.server.DdaConfigSingleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -12,6 +15,9 @@ import org.w3c.dom.NodeList;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Schema 相关的配置加载
@@ -49,6 +55,7 @@ public class SchemaConfigLoader {
         for (int i = 0, n = list.getLength(); i < n; i++) {
             Element element = (Element) list.item(i);
             String dnNamePrefix = element.getAttribute("name");
+            List<DataNodeConfig> confList = new ArrayList<DataNodeConfig>();
             try {
                 Element dsElement = findPropertyByName(element, "dataSource");
                 if (dsElement == null) {
@@ -69,9 +76,38 @@ public class SchemaConfigLoader {
                         throw new ConfigException("dataSource number not equals!");
                     }
                 }
+                for (int k = 0, limit = dataSources[0].length; k < limit; ++k) {
+                    StringBuilder dsString = new StringBuilder();
+                    for (int dsIndex = 0; dsIndex < dataSources.length; ++dsIndex) {
+                        if (dsIndex > 0) {
+                            dsString.append(',');
+                        }
+                        dsString.append(dataSources[dsIndex][k]);
+                    }
+                    DataNodeConfig conf = new DataNodeConfig();
+                    ParameterMapping.mapping(conf, ConfigUtil.loadElements(element));
+                    confList.add(conf);
+                    switch (k) {
+                        case 0:
+                            conf.setName((limit == 1) ? dnNamePrefix : dnNamePrefix + "[" + k + "]");
+                            break;
+                        default:
+                            conf.setName(dnNamePrefix + "[" + k + "]");
+                            break;
+                    }
+                    conf.setDataSource(dsString.toString());
+                }
             } catch (Exception e) {
                 throw new ConfigException("dataNode:" + dnNamePrefix);
             }
+            Map<String, DataNodeConfig> dataNodes = DdaConfigSingleton.getInstance().getDataNodes();
+            for (DataNodeConfig conf : confList) {
+                if (dataNodes.containsKey(conf.getName())) {
+                    throw new ConfigException("dataNode " + conf.getName() + " duplicated!");
+                }
+                dataNodes.put(conf.getName(), conf);
+            }
+            logger.info("dataNodes:{}", dataNodes);
         }
     }
 
