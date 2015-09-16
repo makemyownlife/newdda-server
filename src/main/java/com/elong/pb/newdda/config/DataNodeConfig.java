@@ -26,4 +26,12 @@ public class DataNodeConfig {
         this.dataSource = dataSource;
     }
 
+    public String toString(){
+        return new StringBuffer() .
+                append("name:").
+                append(name).
+                append(" dataSource:").
+                append(dataSource).toString() ;
+    }
+
 }
