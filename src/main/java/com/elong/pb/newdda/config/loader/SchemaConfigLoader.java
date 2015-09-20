@@ -112,7 +112,13 @@ public class SchemaConfigLoader {
     }
 
     private void loadSchemaNode(Element root) {
+        NodeList list = root.getElementsByTagName("schema");
+        for (int i = 0, n = list.getLength(); i < n; i++) {
+            Element schemaElement = (Element) list.item(i);
+            String name = schemaElement.getAttribute("name");
+            String dataNode = schemaElement.getAttribute("dataNode");
 
+        }
     }
 
     private static Element findPropertyByName(Element bean, String name) {

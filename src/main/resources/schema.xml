@@ -2,13 +2,28 @@
 <dda:schema xmlns:dda="http://newdda.com/schema">
 
     <!-- 数据节点定义 数据及诶单由数据源和其他的一些参数组织而成 -->
-    <dataNode name="pbAccountDataNode">
+    <dataNode name="pbAccountDataNode1">
+        <property name="dataSource">
+            <dataSourceRef>pb_account[0]</dataSourceRef>
+        </property>
+    </dataNode>
+
+    <dataNode name="pbAccountDataNode2">
+        <property name="dataSource">
+            <dataSourceRef>pb_account[1]</dataSourceRef>
+        </property>
+    </dataNode>
+
+    <dataNode name="pbAccountDataNode3">
         <property name="dataSource">
             <dataSourceRef>pb_account[2]</dataSourceRef>
         </property>
     </dataNode>
 
     <!-- 定义 schema -->
-
+    <!-- schema定义 -->
+    <schema name="pbAccount" dataNode="pbAccountDataNode1">
+        <table name="user" dataNode="pbAccountDataNode2,pbAccountDataNode3" rule="rule1" />
+    </schema>
 
 </dda:schema>
