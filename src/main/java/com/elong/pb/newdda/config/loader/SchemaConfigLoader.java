@@ -128,7 +128,15 @@ public class SchemaConfigLoader {
             if (schemaElement.hasAttribute("group")) {
                 group = schemaElement.getAttribute("group").trim();
             }
+            if (schemas.containsKey(name)) {
+                throw new ConfigException("schema " + name + " duplicated!");
+            }
+            boolean keepSqlSchema = false;
+            if (schemaElement.hasAttribute("keepSqlSchema")) {
+                keepSqlSchema = Boolean.parseBoolean(schemaElement.getAttribute("keepSqlSchema").trim());
+            }
             Map<String, TableConfig> tables = loadTables(schemaElement);
+            schemas.put(name, new SchemaConfig(name, dataNode, group, keepSqlSchema, tables));
         }
     }
 
