@@ -1,9 +1,8 @@
 package com.elong.pb.newdda.config.loader;
 
 import com.elong.pb.newdda.common.SplitUtil;
-import com.elong.pb.newdda.config.ConfigUtil;
-import com.elong.pb.newdda.config.DataNodeConfig;
-import com.elong.pb.newdda.config.ParameterMapping;
+import com.elong.pb.newdda.config.*;
+import com.elong.pb.newdda.config.rule.TableRuleConfig;
 import com.elong.pb.newdda.exception.ConfigException;
 import com.elong.pb.newdda.server.DdaConfigSingleton;
 import org.slf4j.Logger;
@@ -16,6 +15,7 @@ import org.w3c.dom.NodeList;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -113,12 +113,57 @@ public class SchemaConfigLoader {
 
     private void loadSchemaNode(Element root) {
         NodeList list = root.getElementsByTagName("schema");
+        Map<String, SchemaConfig> schemas = DdaConfigSingleton.getInstance().getSchemas();
         for (int i = 0, n = list.getLength(); i < n; i++) {
             Element schemaElement = (Element) list.item(i);
             String name = schemaElement.getAttribute("name");
             String dataNode = schemaElement.getAttribute("dataNode");
-
+            // 在非空的情况下检查dataNode是否存在
+            if (dataNode != null && dataNode.length() != 0) {
+                checkDataNodeExists(dataNode);
+            } else {
+                dataNode = "";// 确保非空
+            }
+            String group = "default";
+            if (schemaElement.hasAttribute("group")) {
+                group = schemaElement.getAttribute("group").trim();
+            }
+            Map<String, TableConfig> tables = loadTables(schemaElement);
         }
+    }
+
+    private Map<String, TableConfig> loadTables(Element node) {
+        Map<String, TableConfig> tables = new HashMap<String, TableConfig>();
+        NodeList nodeList = node.getElementsByTagName("table");
+        Map<String, TableRuleConfig> tableRules = DdaConfigSingleton.getInstance().getTableRules();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Element tableElement = (Element) nodeList.item(i);
+            String name = tableElement.getAttribute("name").toUpperCase();
+            String dataNode = tableElement.getAttribute("dataNode");
+            TableRuleConfig tableRule = null;
+            if (tableElement.hasAttribute("rule")) {
+                String ruleName = tableElement.getAttribute("rule");
+                tableRule = tableRules.get(ruleName);
+                if (tableRule == null) {
+                    throw new ConfigException("rule " + ruleName + " is not found!");
+                }
+            }
+            boolean ruleRequired = false;
+            if (tableElement.hasAttribute("ruleRequired")) {
+                ruleRequired = Boolean.parseBoolean(tableElement.getAttribute("ruleRequired"));
+            }
+
+            String[] tableNames = SplitUtil.split(name, ',', true);
+            for (String tableName : tableNames) {
+                TableConfig table = new TableConfig(tableName, dataNode, tableRule, ruleRequired);
+                checkDataNodeExists(table.getDataNodes());
+                if (tables.containsKey(table.getName())) {
+                    throw new ConfigException("table " + tableName + " duplicated!");
+                }
+                tables.put(table.getName(), table);
+            }
+        }
+        return tables;
     }
 
     private static Element findPropertyByName(Element bean, String name) {
@@ -133,6 +178,18 @@ public class SchemaConfigLoader {
             }
         }
         return null;
+    }
+
+    private void checkDataNodeExists(String... nodes) {
+        if (nodes == null || nodes.length < 1) {
+            return;
+        }
+        Map<String, DataNodeConfig> dataNodes = DdaConfigSingleton.getInstance().getDataNodes();
+        for (String node : nodes) {
+            if (!dataNodes.containsKey(node)) {
+                throw new ConfigException("dataNode '" + node + "' is not found!");
+            }
+        }
     }
 
 }

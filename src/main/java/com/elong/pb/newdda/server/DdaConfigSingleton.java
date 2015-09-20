@@ -2,6 +2,7 @@ package com.elong.pb.newdda.server;
 
 import com.elong.pb.newdda.config.DataNodeConfig;
 import com.elong.pb.newdda.config.DataSourceConfig;
+import com.elong.pb.newdda.config.SchemaConfig;
 import com.elong.pb.newdda.config.rule.RuleAlgorithm;
 import com.elong.pb.newdda.config.rule.RuleConfig;
 import com.elong.pb.newdda.config.rule.TableRuleConfig;
@@ -71,5 +72,11 @@ public class DdaConfigSingleton {
         return dataNodes;
     }
 
+    // schemas
+    private final Map<String, SchemaConfig> schemas = new HashMap<String, SchemaConfig>();
+
+    public Map<String, SchemaConfig> getSchemas() {
+        return schemas;
+    }
 
 }
