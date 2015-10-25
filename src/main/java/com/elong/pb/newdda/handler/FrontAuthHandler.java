@@ -3,6 +3,7 @@ package com.elong.pb.newdda.handler;
 import com.elong.pb.newdda.common.RemotingHelper;
 import com.elong.pb.newdda.config.DataSourceConfig;
 import com.elong.pb.newdda.config.ErrorCode;
+import com.elong.pb.newdda.config.SchemaConfig;
 import com.elong.pb.newdda.net.FrontDdaChannel;
 import com.elong.pb.newdda.net.packet.AuthPacket;
 import com.elong.pb.newdda.net.packet.BinaryMySqlPacket;
@@ -41,13 +42,13 @@ public class FrontAuthHandler implements Handler {
         if (database == null || "".equals(database)) {
             databaseFlag = false;
         } else {
-            Map<String, DataSourceConfig> dataSources = DdaConfigSingleton.getInstance().getDataSources();
-            if (!dataSources.containsKey(database)) {
+            Map<String, SchemaConfig> schemas = DdaConfigSingleton.getInstance().getSchemas();
+            if (!schemas.containsKey(database)) {
                 databaseFlag = false;
             }
         }
         if (!databaseFlag) {
-            logger.error("cant find dateSource: {} ,please check dateSource config ", database);
+            logger.error("cant find front dateSource: {} ,please check schema config ", database);
             ErrorPacket errorPacket = new ErrorPacket();
             errorPacket.packetId = (byte) 2;
             errorPacket.setErrno(ErrorCode.ER_ACCESS_DENIED_ERROR);
