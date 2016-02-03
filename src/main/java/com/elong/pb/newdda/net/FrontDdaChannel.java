@@ -20,6 +20,7 @@ public class FrontDdaChannel extends DdaChannel {
 
     private Channel channel;
 
+    //对于client来说 配置的数据源 也就是相当于后端的 schemaId 参见 schema.xml
     private String dataSource;
 
     //前端编号
