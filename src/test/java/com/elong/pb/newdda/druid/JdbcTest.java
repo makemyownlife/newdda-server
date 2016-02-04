@@ -4,9 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 
 /**
  * 测试jdbc
@@ -24,15 +22,34 @@ public class JdbcTest {
     }
 
     @Test
-    public void testJdbcConnect() {
-        String url = "jdbc:mysql://localhost:8888/pbAccount";
+    public void testJdbcConnect() throws SQLException {
+        String url = "jdbc:mysql://localhost:8066/pbAccount";
         String username = "root";
         String password = "ilxw";
+        Connection connection = DriverManager.getConnection(url, username, password);
+        PreparedStatement statement = null;
+        ResultSet rs = null;
         try {
-            Connection con = DriverManager.getConnection(url, username, password);
-        } catch (SQLException se) {
-            se.printStackTrace();
+            connection = DriverManager.getConnection(url, username, password);
+            statement = null;
+            rs = null;
+            statement = connection.prepareStatement("select * from user where id = 2");
+            rs = statement.executeQuery();
+            while (rs.next()) {
+                System.out.println(rs.getString("name"));
+            }
+        } finally {
+            if (statement != null) {
+                statement.close();
+            }
+            if (rs != null) {
+                rs.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
         }
+
     }
 
     @After
