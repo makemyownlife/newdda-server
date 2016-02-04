@@ -26,10 +26,8 @@ public class DdaRoute {
             logger.error("cant find schemaId:{} from schema.xml", schemaId);
             return null;
         }
-
         //计算结果集
         RouteResultSet routeResultSet = new RouteResultSet(sql);
-
         return null;
     }
 

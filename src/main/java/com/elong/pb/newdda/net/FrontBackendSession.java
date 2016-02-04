@@ -26,7 +26,7 @@ public class FrontBackendSession {
     public void execute(String sql) {
         RouteResultSet routeResultSet = null;
         try {
-            routeResultSet = DdaRoute.route(sql, frontDdaChannel.getDataSource());
+            routeResultSet = DdaRoute.route(sql, frontDdaChannel.getSchemaId());
         } catch (Exception e) {
             StringBuilder s = new StringBuilder();
             logger.warn(s.append(this).append(sql).toString(), e);

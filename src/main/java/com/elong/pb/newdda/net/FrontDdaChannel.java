@@ -21,7 +21,7 @@ public class FrontDdaChannel extends DdaChannel {
     private Channel channel;
 
     //对于client来说 配置的数据源 也就是相当于后端的 schemaId 参见 schema.xml
-    private String dataSource;
+    private String schemaId;
 
     //前端编号
     private Long id;
@@ -114,12 +114,12 @@ public class FrontDdaChannel extends DdaChannel {
         return frontAuthHandler;
     }
 
-    public String getDataSource() {
-        return dataSource;
+    public String getSchemaId() {
+        return schemaId;
     }
 
-    public void setDataSource(String dataSource) {
-        this.dataSource = dataSource;
+    public void setSchemaId(String schemaId) {
+        this.schemaId = schemaId;
     }
 
     public FrontQueryHandler getFrontQueryHandler() {

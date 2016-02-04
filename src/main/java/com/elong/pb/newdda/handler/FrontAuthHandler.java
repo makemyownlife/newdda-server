@@ -1,7 +1,6 @@
 package com.elong.pb.newdda.handler;
 
 import com.elong.pb.newdda.common.RemotingHelper;
-import com.elong.pb.newdda.config.DataSourceConfig;
 import com.elong.pb.newdda.config.ErrorCode;
 import com.elong.pb.newdda.config.SchemaConfig;
 import com.elong.pb.newdda.net.FrontDdaChannel;
@@ -67,7 +66,7 @@ public class FrontAuthHandler implements Handler {
         //设置标志位
         this.frontDdaChannel.setAuthenticated(true);
         //设置当前的虚拟数据库(虚拟的节点)
-        this.frontDdaChannel.setDataSource(database);
+        this.frontDdaChannel.setSchemaId(database);
         ByteBuffer authOkByteBuffer = ByteBuffer.allocate(AUTH_OK.length);
         authOkByteBuffer.put(AUTH_OK);
         authOkByteBuffer.flip();
