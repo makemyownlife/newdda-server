@@ -14,16 +14,10 @@
         </property>
     </dataNode>
 
-    <dataNode name="pbAccountDataNode3">
-        <property name="dataSource">
-            <dataSourceRef>pb_account[2]</dataSourceRef>
-        </property>
-    </dataNode>
-
     <!-- 定义 schema -->
     <!-- schema定义 -->
-    <schema name="pbAccount" dataNode="pbAccountDataNode1">
-        <table name="user" dataNode="pbAccountDataNode2,pbAccountDataNode3" rule="rule1" />
+    <schema name="pbAccount">
+        <table name="user" dataNode="pbAccountDataNode1,pbAccountDataNode2" rule="rule1" />
     </schema>
 
 </dda:schema>

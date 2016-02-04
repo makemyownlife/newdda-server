@@ -15,8 +15,11 @@
             <lineEnding>keep</lineEnding>
         </fileSet>
         <fileSet>
-            <directory>deploy/conf</directory>
-            <outputDirectory>conf</outputDirectory>
+            <directory>./src/main/resources</directory>
+            <outputDirectory>/conf</outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
         </fileSet>
         <fileSet>
             <directory>deploy/logs</directory>

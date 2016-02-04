@@ -25,7 +25,7 @@ public class JdbcTest {
 
     @Test
     public void testJdbcConnect() {
-        String url = "jdbc:mysql://10.100.19.144:3306/test";
+        String url = "jdbc:mysql://localhost:8888/pbAccount";
         String username = "root";
         String password = "ilxw";
         try {
