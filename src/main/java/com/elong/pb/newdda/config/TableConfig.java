@@ -84,4 +84,8 @@ public class TableConfig {
         return ruleRequired;
     }
 
+    public boolean existsColumn(String columnNameUp) {
+        return columnIndex.contains(columnNameUp);
+    }
+
 }
