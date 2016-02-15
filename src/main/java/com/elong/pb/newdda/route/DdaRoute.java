@@ -25,6 +25,7 @@ public class DdaRoute {
     private static final Logger logger = LoggerFactory.getLogger(DdaRoute.class);
 
     public static RouteResultSet route(String sql, String schemaId) throws SQLSyntaxErrorException {
+        //举例：sql = "select *  from user where id = 2 and name = 'zhangyong' " 若以id为分区关键字;
         DdaConfigSingleton ddaConfig = DdaConfigSingleton.getInstance();
         Map<String, SchemaConfig> schemas = ddaConfig.getSchemas();
         //是否包含(数据源编号)
