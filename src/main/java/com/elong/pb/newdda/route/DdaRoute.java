@@ -26,6 +26,9 @@ public class DdaRoute {
 
     public static RouteResultSet route(String sql, String schemaId) throws SQLSyntaxErrorException {
         //举例：sql = "select *  from user where id = 2 and name = 'zhangyong' " 若以id为分区关键字;
+
+        sql = "select *  from user where id = 2 and name = 'zhangyong' ";
+
         DdaConfigSingleton ddaConfig = DdaConfigSingleton.getInstance();
         Map<String, SchemaConfig> schemas = ddaConfig.getSchemas();
         //是否包含(数据源编号)
@@ -86,7 +89,6 @@ public class DdaRoute {
 
         //规则匹配处理，表级别和列级别。
         if (matchedTable == null) {
-
         }
         return null;
     }

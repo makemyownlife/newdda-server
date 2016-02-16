@@ -54,6 +54,11 @@ public class FrontQueryHandler implements Handler {
         if(logger.isInfoEnabled()) {
             logger.info("front transfer sql :{}", sql);
         }
+
+        //根据类型判断是走哪一种 1 showHandler 2  set handler
+
+
+
         FrontBackendSession frontBackendSession = frontDdaChannel.getFrontBackendSession();
         frontBackendSession.execute(sql);
     }
