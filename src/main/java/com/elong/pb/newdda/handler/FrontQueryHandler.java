@@ -56,9 +56,6 @@ public class FrontQueryHandler implements Handler {
         }
 
         //根据类型判断是走哪一种 1 showHandler 2  set handler
-
-
-
         FrontBackendSession frontBackendSession = frontDdaChannel.getFrontBackendSession();
         frontBackendSession.execute(sql);
     }
