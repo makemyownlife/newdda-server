@@ -26,23 +26,10 @@ public class DdaServer {
     }
 
     public void start() {
-
-        logger.info("开始加载配置文件");
         DdaConfigLoader.getInstance().init();
-        logger.info("结束加载配置文件");
-
-        logger.info("开始启动DDA前端服务");
         FrontServer.getInstance().start();
-        logger.info("结束启动DDA前端服务");
-
-        logger.info("开始启动DDA后端服务");
         BackendServer.getInstance().start();
-        logger.info("结束启动DDA后端服务");
-
-        logger.info("开始添加shutdownhook");
         DdaShutDownHook.getInstance().addShutDownHook();
-        logger.info("结束添加shutdownhook");
-
     }
 
 

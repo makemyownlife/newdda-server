@@ -2,6 +2,7 @@ package com.elong.pb.newdda.route;
 
 import com.elong.pb.newdda.config.SchemaConfig;
 import com.elong.pb.newdda.config.TableConfig;
+import com.elong.pb.newdda.config.rule.RuleAlgorithm;
 import com.elong.pb.newdda.config.rule.RuleConfig;
 import com.elong.pb.newdda.config.rule.TableRuleConfig;
 import com.elong.pb.newdda.parser.ast.ASTNode;
@@ -23,7 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.SQLFeatureNotSupportedException;
 import java.sql.SQLNonTransientException;
-import java.sql.SQLSyntaxErrorException;
 import java.util.*;
 
 /**
@@ -34,7 +34,7 @@ public class DdaRoute {
 
     private static final Logger logger = LoggerFactory.getLogger(DdaRoute.class);
 
-    public static RouteResultSet route(String stmt, String schemaId) throws SQLSyntaxErrorException {
+    public static RouteResultSet route(String stmt, String schemaId) throws SQLNonTransientException {
         //举例：stmt = "select *  from user where id = 2 and name = 'zhangyong' " 若以id为分区关键字;
 
         RouteResultSet rrs = new RouteResultSet(stmt);
@@ -148,11 +148,10 @@ public class DdaRoute {
             return rrs;
         }
 
-
-
+        validateAST(ast, matchedTable, rule, visitor);
+        Map<Integer, List<Object[]>> dnMap = ruleCalculate(matchedTable, rule, columnValues);
         return null;
     }
-
 
     private static void validateAST(SQLStatement ast, TableConfig tc, RuleConfig rule, PartitionKeyVisitor visitor) throws SQLNonTransientException {
         if (ast instanceof DMLUpdateStatement) {
@@ -181,6 +180,67 @@ public class DdaRoute {
                 }
             }
         }
+    }
+
+    private static Map<Integer, List<Object[]>> ruleCalculate(TableConfig matchedTable, RuleConfig rule, Map<String, List<Object>> columnValues) {
+        Map<Integer, List<Object[]>> map = new HashMap<Integer, List<Object[]>>(1, 1);
+        RuleAlgorithm algorithm = rule.getRuleAlgorithm();
+        List<String> cols = rule.getColumns();
+        Map<String, Object> parameter = new HashMap<String, Object>(cols.size(), 1);
+        ArrayList<Iterator<Object>> colsValIter = new ArrayList<Iterator<Object>>(columnValues.size());
+        for (String rc : cols) {
+            List<Object> list = columnValues.get(rc);
+            if (list == null) {
+                String msg = "route err: rule column " + rc + " dosn't exist in extract: " + columnValues;
+                throw new IllegalArgumentException(msg);
+            }
+            colsValIter.add(list.iterator());
+        }
+        try {
+            for (Iterator<Object> mainIter = colsValIter.get(0); mainIter.hasNext(); ) {
+                Object[] tuple = new Object[cols.size()];
+                for (int i = 0, len = cols.size(); i < len; ++i) {
+                    Object value = colsValIter.get(i).next();
+                    tuple[i] = value;
+                    parameter.put(cols.get(i), value);
+                }
+                Integer[] dataNodeIndexes = calcDataNodeIndexesByFunction(algorithm, parameter);
+                for (int i = 0; i < dataNodeIndexes.length; ++i) {
+                    Integer dataNodeIndex = dataNodeIndexes[i];
+                    List<Object[]> list = map.get(dataNodeIndex);
+                    if (list == null) {
+                        list = new LinkedList<Object[]>();
+                        map.put(dataNodeIndex, list);
+                    }
+                    list.add(tuple);
+                }
+            }
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            String msg = "route err: different rule columns should have same value number:  " + columnValues;
+            throw new IllegalArgumentException(msg, e);
+        }
+        return map;
+    }
+
+    private static Integer[] calcDataNodeIndexesByFunction(RuleAlgorithm algorithm, Map<String, Object> parameter) {
+        Integer[] dataNodeIndexes;
+        Object calRst = algorithm.calculate(parameter);
+        if (calRst instanceof Number) {
+            dataNodeIndexes = new Integer[1];
+            dataNodeIndexes[0] = ((Number) calRst).intValue();
+        } else if (calRst instanceof Integer[]) {
+            dataNodeIndexes = (Integer[]) calRst;
+        } else if (calRst instanceof int[]) {
+            int[] intArray = (int[]) calRst;
+            dataNodeIndexes = new Integer[intArray.length];
+            for (int i = 0; i < intArray.length; ++i) {
+                dataNodeIndexes[i] = intArray[i];
+            }
+        } else {
+            throw new IllegalArgumentException("route err: result of route function is wrong type or null: " + calRst);
+        }
+        return dataNodeIndexes;
     }
 
     private static class MetaRouter {

@@ -107,7 +107,6 @@ public class SchemaConfigLoader {
                 }
                 dataNodes.put(conf.getName(), conf);
             }
-            logger.info("dataNodes:{}", dataNodes);
         }
     }
 
