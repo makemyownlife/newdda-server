@@ -13,13 +13,12 @@ public class DdaServer {
 
     private static DdaServer INSTANCE = null;
 
-    private static Object mutex = new Object();
 
     public static DdaServer getInstance() {
         if (INSTANCE != null) {
             return INSTANCE;
         }
-        synchronized (mutex) {
+        synchronized (DdaServer.class) {
             INSTANCE = new DdaServer();
             return INSTANCE;
         }
