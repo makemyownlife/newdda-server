@@ -7,6 +7,14 @@ import com.elong.pb.newdda.config.rule.RuleAlgorithm;
 import com.elong.pb.newdda.config.rule.RuleConfig;
 import com.elong.pb.newdda.config.rule.TableRuleConfig;
 import com.elong.pb.newdda.exception.ConfigException;
+import com.elong.pb.newdda.parser.ast.expression.Expression;
+import com.elong.pb.newdda.parser.ast.expression.primary.function.FunctionExpression;
+import com.elong.pb.newdda.parser.recognizer.mysql.MySQLFunctionManager;
+import com.elong.pb.newdda.parser.recognizer.mysql.MySQLToken;
+import com.elong.pb.newdda.parser.recognizer.mysql.lexer.MySQLLexer;
+import com.elong.pb.newdda.parser.recognizer.mysql.syntax.MySQLExprParser;
+import com.elong.pb.newdda.parser.recognizer.mysql.syntax.MySQLParser;
+import com.elong.pb.newdda.route.function.ExpressionAdapter;
 import com.elong.pb.newdda.server.DdaConfigSingleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +28,7 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLSyntaxErrorException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 规则加载器
@@ -41,6 +46,7 @@ public class RuleConfigLoader {
             Element root = document.getDocumentElement();
             loadFunctions(root);
             loadTableRules(root);
+            wrapRuleFunction();
         } catch (ConfigException e) {
             throw e;
         } catch (Throwable e) {
@@ -79,8 +85,7 @@ public class RuleConfigLoader {
     private RuleAlgorithm createFunction(String name, String clazz) throws ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException {
         Class<?> clz = Class.forName(clazz);
         if (!RuleAlgorithm.class.isAssignableFrom(clz)) {
-            throw new IllegalArgumentException("rule function must implements " + RuleAlgorithm.class.getName()
-                    + ", name=" + name);
+            throw new IllegalArgumentException("rule function must implements " + RuleAlgorithm.class.getName() + ", name=" + name);
         }
         Constructor<?> constructor = null;
         for (Constructor<?> cons : clz.getConstructors()) {
@@ -94,16 +99,17 @@ public class RuleConfigLoader {
             }
         }
         if (constructor == null) {
-            throw new ConfigException("function " + name + " with class of " + clazz
-                    + " must have a constructor with one parameter: String funcName");
+            throw new ConfigException("function " + name + " with class of " + clazz + " must have a constructor with one parameter: String funcName");
         }
         return (RuleAlgorithm) constructor.newInstance(name);
     }
 
     private void loadTableRules(Element root) throws SQLSyntaxErrorException {
         Map<String, TableRuleConfig> tableRules = DdaConfigSingleton.getInstance().getTableRules();
+
         Set<RuleConfig> rules = DdaConfigSingleton.getInstance().getRules();
         NodeList list = root.getElementsByTagName("tableRule");
+
         for (int i = 0, n = list.getLength(); i < n; ++i) {
             Node node = list.item(i);
             if (node instanceof Element) {
@@ -133,7 +139,40 @@ public class RuleConfigLoader {
         }
         Element algorithmEle = ConfigUtil.loadElement(element, "algorithm");
         String algorithm = algorithmEle.getTextContent();
-        return new RuleConfig(columns, algorithm);
+        RuleConfig ruleConfig = new RuleConfig(columns, algorithm);
+        return ruleConfig;
+    }
+
+    private void wrapRuleFunction() throws SQLSyntaxErrorException {
+        Map<String, RuleAlgorithm> functions = DdaConfigSingleton.getInstance().getFunctions();
+        MySQLFunctionManager functionManager = new MySQLFunctionManager(true);
+        buildFuncManager(functionManager, functions);
+
+        Set<RuleConfig> ruleConfigSet = DdaConfigSingleton.getInstance().getRules();
+        for (RuleConfig conf : ruleConfigSet) {
+            String algorithmString = conf.getAlgorithm();
+            MySQLLexer lexer = new MySQLLexer(algorithmString);
+            MySQLExprParser parser = new MySQLExprParser(lexer, functionManager, false, MySQLParser.DEFAULT_CHARSET);
+            Expression expression = parser.expression();
+            if (lexer.token() != MySQLToken.EOF) {
+                throw new ConfigException("route algorithm not end with EOF: " + algorithmString);
+            }
+            RuleAlgorithm algorithm;
+            if (expression instanceof RuleAlgorithm) {
+                algorithm = (RuleAlgorithm) expression;
+            } else {
+                algorithm = new ExpressionAdapter(expression);
+            }
+            conf.setRuleAlgorithm(algorithm);
+        }
+    }
+
+    private static void buildFuncManager(MySQLFunctionManager functionManager, Map<String, RuleAlgorithm> functions) {
+        Map<String, FunctionExpression> extFuncPrototypeMap = new HashMap<String, FunctionExpression>(functions.size());
+        for (Map.Entry<String, RuleAlgorithm> en : functions.entrySet()) {
+            extFuncPrototypeMap.put(en.getKey(), (FunctionExpression) en.getValue());
+        }
+        functionManager.addExtendFunction(extFuncPrototypeMap);
     }
 
 }

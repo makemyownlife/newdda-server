@@ -39,8 +39,6 @@ public class DdaRoute {
 
         RouteResultSet rrs = new RouteResultSet(stmt);
 
-        stmt = "select *  from user where id = 2 and name = 'zhangyong' ";
-
         DdaConfigSingleton ddaConfig = DdaConfigSingleton.getInstance();
         Map<String, SchemaConfig> schemas = ddaConfig.getSchemas();
         //是否包含(数据源编号)
@@ -134,8 +132,7 @@ public class DdaRoute {
 
         if (rule == null) {
             if (matchedTable.isRuleRequired()) {
-                throw new IllegalArgumentException("route rule for table " + matchedTable.getName() + " is required: "
-                        + stmt);
+                throw new IllegalArgumentException("route rule for table " + matchedTable.getName() + " is required: " + stmt);
             }
             String[] dataNodes = matchedTable.getDataNodes();
             String sql = visitor.isSchemaTrimmed() ? genSQL(ast, stmt) : stmt;

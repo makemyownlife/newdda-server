@@ -14,7 +14,7 @@ import java.sql.SQLSyntaxErrorException;
 /**
  * Created by zhangyong on 15/8/30.
  */
-public class SQLParserDelegateTest {
+public class SQLParserDelegateUnitTest {
 
     @Before
     public void before(){
