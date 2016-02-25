@@ -22,18 +22,24 @@ public class FrontBackendSession {
     }
 
     //执行sql
-    public void execute(String sql) {
+    public void execute(String stmt) {
         RouteResultSet routeResultSet = null;
         try {
-            routeResultSet = DdaRoute.route(sql, frontDdaChannel.getSchemaId());
+            routeResultSet = DdaRoute.route(stmt, frontDdaChannel.getSchemaId());
         } catch (Exception e) {
             StringBuilder s = new StringBuilder();
-            logger.warn(s.append(this).append(sql).toString(), e);
+            logger.warn(s.append(this).append(stmt).toString(), e);
             String msg = e.getMessage();
             frontDdaChannel.write(
                     ErrorPacketFactory.errorMessage(
                             ErrorCode.ER_PARSE_ERROR,
                             msg == null ? e.getClass().getSimpleName() : msg));
+            return;
+        }
+        if (routeResultSet == null || routeResultSet.getNodes() == null || routeResultSet.getNodes().length == 0) {
+            logger.warn("sorry ,cant find any datanode from sql :{}", stmt);
+            frontDdaChannel.write(
+                    ErrorPacketFactory.errorMessage(ErrorCode.ER_PARSE_ERROR, "CANT FIND ANY DATANODE IN DDA"));
             return;
         }
     }
