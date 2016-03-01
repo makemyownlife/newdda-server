@@ -34,4 +34,12 @@ public final class SystemConfig {
     //默认最常的执行时间 若超过此时间则 超时返回错误
     public static final long DEFAULT_EXECUTE_TIME_OUT = 15 * 1000L;
 
+    public static final int SYSTEM_CLIENT_ASYNC_SEMAPHORE_VALUE = 2048;
+
+    public static int CLIENT_ONEWAY_SEMAPHORE_VALUE = 2048;
+
+    public static final int SYSTEM_SOCKET_SNDBUFSIZE = 65535;
+
+    public static final int SYSTEM_SOCKET_RCVBUFSIZE = 65535;
+
 }
