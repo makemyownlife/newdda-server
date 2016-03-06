@@ -9,12 +9,13 @@ package com.elong.pb.newdda.config;
  */
 public class NettySystemConfig {
 
-    public static int SocketSndbufSize = 65535;
+    public static final int SYSTEM_CLIENT_ASYNC_SEMAPHORE_VALUE = 2048;
 
-    public static int SocketRcvbufSize = 65535;
+    public static int CLIENT_ONEWAY_SEMAPHORE_VALUE = 2048;
 
-    public static int ClientAsyncSemaphoreValue = 2048;
+    public static final int SYSTEM_SOCKET_SNDBUFSIZE = 65535;
 
-    public static int ClientOnewaySemaphoreValue = 2048;
+    public static final int SYSTEM_SOCKET_RCVBUFSIZE = 65535;
+
 
 }

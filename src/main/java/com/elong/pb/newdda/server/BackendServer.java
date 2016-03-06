@@ -27,7 +27,9 @@ public class BackendServer implements BaseServer {
 
     @Override
     public void start() {
-
+        //初始化后端的netty配置
+        BackendClient.getInstance().start();
+        //初始化后端连接池
     }
 
     @Override

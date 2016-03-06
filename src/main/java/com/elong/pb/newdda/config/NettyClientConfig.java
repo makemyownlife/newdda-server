@@ -13,9 +13,9 @@ public class NettyClientConfig {
 
     private int clientCallbackExecutorThreads = Runtime.getRuntime().availableProcessors();
 
-    private int clientOnewaySemaphoreValue = SystemConfig.CLIENT_ONEWAY_SEMAPHORE_VALUE;
+    private int clientOnewaySemaphoreValue = NettySystemConfig.CLIENT_ONEWAY_SEMAPHORE_VALUE;
 
-    private int clientAsyncSemaphoreValue = SystemConfig.SYSTEM_CLIENT_ASYNC_SEMAPHORE_VALUE;
+    private int clientAsyncSemaphoreValue = NettySystemConfig.SYSTEM_CLIENT_ASYNC_SEMAPHORE_VALUE;
 
     private long connectTimeoutMillis = 3000;
 
@@ -23,9 +23,9 @@ public class NettyClientConfig {
 
     private int clientChannelMaxIdleTimeSeconds = 120;
 
-    private int clientSocketSndBufSize = SystemConfig.SYSTEM_SOCKET_SNDBUFSIZE;
+    private int clientSocketSndBufSize = NettySystemConfig.SYSTEM_SOCKET_SNDBUFSIZE;
 
-    private int clientSocketRcvBufSize = SystemConfig.SYSTEM_SOCKET_RCVBUFSIZE;
+    private int clientSocketRcvBufSize = NettySystemConfig.SYSTEM_SOCKET_RCVBUFSIZE;
 
     private boolean clientPooledByteBufAllocatorEnable = false;
 
