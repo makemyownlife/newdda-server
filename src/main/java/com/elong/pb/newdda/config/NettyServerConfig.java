@@ -37,9 +37,9 @@ public class NettyServerConfig {
 
     private int serverChannelMaxIdleTimeSeconds = 120;
 
-    private int serverSocketSndBufSize = NettySystemConfig.SocketSndbufSize;
+    private int serverSocketSndBufSize = NettySystemConfig.SYSTEM_SOCKET_SNDBUFSIZE;
 
-    private int serverSocketRcvBufSize = NettySystemConfig.SocketRcvbufSize;
+    private int serverSocketRcvBufSize = NettySystemConfig.SYSTEM_SOCKET_RCVBUFSIZE;
 
 
     public int getListenPort() {
