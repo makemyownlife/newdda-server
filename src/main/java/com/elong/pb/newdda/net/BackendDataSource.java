@@ -15,6 +15,4 @@ public class BackendDataSource {
 
     private List<BackendDdaChannelPool> backendChannelPoolList;
 
-
-
 }

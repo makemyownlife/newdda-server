@@ -2,6 +2,9 @@ package com.elong.pb.newdda.net;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -17,19 +20,19 @@ public class BackendDdaChannelPool {
 
     private final ReentrantLock lock = new ReentrantLock();
 
-    private final BackendDdaChannel[] items;
+    //池中的最大的连接数
+    private int maxSize;
 
-    private final int maxSize;
+    //正在运行的链接
+    private ArrayBlockingQueue activeQueue;
 
-    //已经在使用的链接
-    private int activeCount;
-
-    //空闲可用的链接
-    private int idleCount;
+    //空闲的链接
+    private ArrayBlockingQueue idleQueue;
 
     public BackendDdaChannelPool(int maxSize) {
         this.maxSize = maxSize;
-        this.items = new BackendDdaChannel[maxSize];
+        this.activeQueue = new ArrayBlockingQueue(maxSize);
+        this.idleQueue = new ArrayBlockingQueue(maxSize);
     }
 
 }

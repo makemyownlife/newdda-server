@@ -39,10 +39,6 @@ public class BackendClient {
     }
 
     public BackendClient() {
-
-    }
-
-    public void start() {
         this.eventLoopGroupWorker = new NioEventLoopGroup(1, new ThreadFactory() {
             private AtomicInteger threadIndex = new AtomicInteger(0);
 
@@ -82,6 +78,10 @@ public class BackendClient {
                         );
                     }
                 });
+    }
+
+    public void start() {
+
     }
 
 
