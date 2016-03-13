@@ -1,7 +1,10 @@
 package com.elong.pb.newdda.server;
 
+import com.elong.pb.newdda.config.DataSourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 /**
  * 后端链接服务的启动 管理mysql相关
@@ -27,9 +30,9 @@ public class BackendServer implements BaseServer {
 
     @Override
     public void start() {
-        //初始化后端的netty配置
-        BackendClient.getInstance().start();
         //初始化后端连接池
+        DdaConfigSingleton ddaConfigSingleton = DdaConfigSingleton.getInstance();
+        Map<String, DataSourceConfig> dataSources = ddaConfigSingleton.getDataSources();
     }
 
     @Override
